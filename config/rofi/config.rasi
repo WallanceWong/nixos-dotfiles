@@ -1,0 +1,9 @@
+@import "~/.cache/wal/colors-rofi.rasi"
+
+configuration {
+    modi: "drun";
+    show-icons: true;
+    font: "JetBrainsMono Nerd Font 11";
+}
+window { border: 2px; border-color: @selected-normal-background; border-radius: 8px; }
+element selected { background-color: @selected-normal-background; }

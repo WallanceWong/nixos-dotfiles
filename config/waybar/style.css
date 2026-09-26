@@ -1,0 +1,21 @@
+@import url("file:///home/Wallance/.cache/wal/colors-waybar.css");
+
+* {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 13px;
+}
+window#waybar {
+    background: @background;
+    color: @foreground;
+}
+#workspaces button {
+    color: @color8;
+    padding: 0 8px;
+}
+#workspaces button.active {
+    color: @color4;
+}
+#clock, #network, #pulseaudio, #battery {
+    padding: 0 10px;
+    color: @foreground;
+}
