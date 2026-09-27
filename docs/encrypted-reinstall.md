@@ -8,28 +8,36 @@ the flake".
 **Read this on your phone — the laptop will be wiped during step 4.**
 
 Time: about 45 minutes, most of it downloading. You need a USB stick (4 GB+, it
-gets erased) and Wi-Fi. Your files come back from the Google Drive backup.
+gets erased) and Wi-Fi. Your files come back from the backup you upload to Google Drive in step 0.
 
 ---
 
 ## 0. Before you start: save your data
 
-Everything on the laptop is erased. Your home folder is backed up to Google
-Drive by restic (see `configuration.nix`), so:
+Everything on the laptop is erased. Your home folder is backed up with restic
+into an encrypted folder, `~/restic-thinkpad`, which you then upload to Google
+Drive in the browser. (Automatic Drive backups need a Google Cloud client ID,
+which this account can't create, so the upload is by hand.)
 
-1. Run a fresh backup and check it finished:
+1. Refresh the backup so it includes everything up to now:
    ```bash
-   sudo systemctl start restic-backups-gdrive
-   restic-gdrive snapshots
+   restic-home backup $HOME \
+     --exclude $HOME/.cache --exclude $HOME/restic-thinkpad \
+     --exclude $HOME/.local/share/Trash --exclude "$HOME/.var/app/*/cache" \
+     --exclude "$HOME/Downloads/*.iso"
+   restic-home snapshots
    ```
-   The newest snapshot's time should be a minute or two ago.
-2. **Save the restic password somewhere off this laptop** (password manager, or
+   The newest snapshot's time should be a minute ago.
+2. Open <https://drive.google.com> in Firefox, click **New → Folder upload**, and
+   pick `restic-thinkpad` from your home folder. Wait until Drive says the upload
+   is complete.
+3. **Save the restic password somewhere off this laptop** (password manager, or
    on paper). It is in `~/.config/restic/password`. Without it the backup
    cannot be decrypted — nobody can recover it.
-3. Firefox: turn on **Firefox Sync** (Settings → Sync) so bookmarks and passwords come back.
-4. Make sure every change in `~/nixos-dotfiles` is committed **and pushed**:
+4. Firefox: turn on **Firefox Sync** (Settings → Sync) so bookmarks and passwords come back.
+5. Make sure every change in `~/nixos-dotfiles` is committed **and pushed**:
    `git -C ~/nixos-dotfiles status` should say "up to date with 'origin/main'" and "nothing to commit".
-5. Note your Wi-Fi password.
+6. Note your Wi-Fi password.
 
 Not in the config, so reinstall by hand afterwards: Flatpak apps (Sober).
 
@@ -143,15 +151,19 @@ reboot
    git commit -am "Hardware config for encrypted install"
    git push
    ```
-4. Restore your files from the backup. First reconnect Google Drive (a browser
-   window opens — log in and allow access), then put the restic password back:
+4. Restore your files from the backup:
+   - In Firefox, open <https://drive.google.com>, right-click the `restic-thinkpad`
+     folder → **Download**. Drive gives you one or more zip files.
+   - Unzip them into your home folder so you get `~/restic-thinkpad/config`,
+     `~/restic-thinkpad/data/`, etc. (If Drive split it into several zips, unzip
+     all of them into the same place.)
+   - Put the restic password back, then restore:
    ```bash
-   rclone config create gdrive drive scope=drive.file
    mkdir -p ~/.config/restic
    read -rsp "restic password: " p; echo; printf %s "$p" > ~/.config/restic/password; unset p
    chmod 600 ~/.config/restic/password
-   restic-gdrive snapshots
-   restic-gdrive restore latest --target / \
+   restic-home snapshots
+   restic-home restore latest --target / \
      --include /home/Wallance/Pictures \
      --include /home/Wallance/Downloads \
      --include /home/Wallance/.claude \
@@ -163,7 +175,7 @@ reboot
    Only your data is restored, not the whole home folder: files like `~/.bashrc`
    and `~/.config/hypr` are links that Home Manager just recreated, and restoring
    the old ones would break them. If you've added other folders (e.g. `Documents`),
-   add an `--include` line for each — `restic-gdrive ls latest /home/Wallance` lists
+   add an `--include` line for each — `restic-home ls latest /home/Wallance` lists
    what's in the backup. Log out (Super + M) afterwards so Firefox and the keyring
    pick up the restored files.
 5. Reinstall Sober:

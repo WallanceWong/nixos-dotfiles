@@ -8,6 +8,8 @@
 		enable = true;
 		shellAliases = {
 			btw = "echo NixOS better than arch, btw";
+			# Encrypted home backup in ~/restic-thinkpad (upload that folder to Google Drive by hand)
+			restic-home = "restic --cache-dir ~/.cache/restic --password-file ~/.config/restic/password -r ~/restic-thinkpad";
 		};
 		profileExtra =''
 			if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = "1" ]; then
