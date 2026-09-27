@@ -28,9 +28,14 @@ which this account can't create, so the upload is by hand.)
    restic-home snapshots
    ```
    The newest snapshot's time should be a minute ago.
-2. Open <https://drive.google.com> in Firefox, click **New → Folder upload**, and
-   pick `restic-thinkpad` from your home folder. Wait until Drive says the upload
-   is complete.
+2. Pack it into one file and upload that to Google Drive (one file is much easier
+   to upload and download than a folder):
+   ```bash
+   tar -cf ~/restic-thinkpad.tar -C ~ restic-thinkpad
+   ```
+   Open <https://drive.google.com>, click **New → File upload**, pick
+   `restic-thinkpad.tar` from your home folder, and wait until Drive says
+   "1 upload complete".
 3. **Save the restic password somewhere off this laptop** (password manager, or
    on paper). It is in `~/.config/restic/password`. Without it the backup
    cannot be decrypted — nobody can recover it.
@@ -154,15 +159,15 @@ reboot
    ```
 4. Restore your files from the backup:
    - Open Firefox with a **throwaway profile** (so your real profile isn't created
-     before it's restored), log in to Google, right-click the `restic-thinkpad`
-     folder → **Download**. Drive gives you one or more zip files in `~/Downloads`:
+     before it's restored), log in to Google, and download `restic-thinkpad.tar`
+     into `~/Downloads`:
      ```bash
      firefox --no-remote --profile "$(mktemp -d)" https://drive.google.com
      ```
-     Close that Firefox window when the download is done.
-   - Unzip them into your home folder so you get `~/restic-thinkpad/config`,
-     `~/restic-thinkpad/data/`, etc. (If Drive split it into several zips, unzip
-     all of them into the same place.)
+     Close that Firefox window when the download is done, then unpack it:
+     ```bash
+     tar -xf ~/Downloads/restic-thinkpad.tar -C ~
+     ```
    - Put the restic password back, then restore:
    ```bash
    mkdir -p ~/.config/restic
