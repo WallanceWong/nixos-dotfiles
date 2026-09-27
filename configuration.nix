@@ -50,6 +50,9 @@
      claude-code
      gh
      brightnessctl
+     grim
+     slurp
+     wl-clipboard
    ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
