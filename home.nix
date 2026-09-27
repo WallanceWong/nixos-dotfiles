@@ -46,6 +46,32 @@
 		gtk.enable = true;
 	};
 
+	# mpv with hardware decoding (intel-media-driver)
+	programs.mpv = {
+		enable = true;
+		config.hwdec = "auto-safe";
+	};
+
+	xdg.mimeApps = {
+		enable = true;
+		defaultApplications =
+			let
+				for = app: types: builtins.listToAttrs (map (t: { name = t; value = app; }) types);
+			in
+			for "firefox.desktop" [
+				"image/png" "image/jpeg" "image/gif" "image/webp" "image/svg+xml" "image/avif" "image/bmp"
+				"application/pdf"
+			]
+			// for "mpv.desktop" [
+				"video/mp4" "video/x-matroska" "video/webm" "video/quicktime" "video/x-msvideo" "video/mpeg" "video/ogg"
+			]
+			// {
+				"inode/directory" = "thunar.desktop";
+				# written by Claude Code before home-manager managed this file
+				"x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";
+			};
+	};
+
 	home.sessionVariables = {
         XDG_DATA_DIRS = "/var/lib/flatpak/exports/share:$XDG_DATA_DIRS";
 };
