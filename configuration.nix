@@ -33,6 +33,8 @@
      ];
    };
 
+  programs.hyprlock.enable = true;
+
   programs.firefox.enable = true;
 
   environment.systemPackages = with pkgs; [
@@ -55,6 +57,7 @@
      wl-clipboard
      mako
      libnotify
+     hypridle
    ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [

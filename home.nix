@@ -20,6 +20,7 @@
 	home.file.".config/waybar".source = ./config/waybar;
 	home.file.".config/rofi".source = ./config/rofi;
 	home.file.".config/kitty".source = ./config/kitty;
+	home.file.".config/mako".source = ./config/mako;
 
 	home.sessionVariables = {
         XDG_DATA_DIRS = "/var/lib/flatpak/exports/share:$XDG_DATA_DIRS";
