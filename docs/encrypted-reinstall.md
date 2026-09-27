@@ -8,26 +8,35 @@ the flake".
 **Read this on your phone — the laptop will be wiped during step 4.**
 
 Time: about 45 minutes, most of it downloading. You need a USB stick (4 GB+, it
-gets erased), Wi-Fi, and a second USB drive or cloud storage for your files.
+gets erased) and Wi-Fi. Your files come back from the Google Drive backup.
 
 ---
 
 ## 0. Before you start: save your data
 
-Everything on the laptop is erased. Copy these somewhere else:
+Everything on the laptop is erased. Your home folder is backed up to Google
+Drive by restic (see `configuration.nix`), so:
 
-- `~/Pictures`, `~/Downloads`, and anything else you've added to your home folder
-- `~/.claude` (Claude Code settings and memory) and `~/.claude.json`
-- Firefox: turn on **Firefox Sync** (Settings → Sync) so bookmarks and passwords come back
-- Make sure every change in `~/nixos-dotfiles` is committed **and pushed**:
-  `git -C ~/nixos-dotfiles status` should say "up to date with 'origin/main'" and "nothing to commit"
-- Note your Wi-Fi password
+1. Run a fresh backup and check it finished:
+   ```bash
+   sudo systemctl start restic-backups-gdrive
+   restic-gdrive snapshots
+   ```
+   The newest snapshot's time should be a minute or two ago.
+2. **Save the restic password somewhere off this laptop** (password manager, or
+   on paper). It is in `~/.config/restic/password`. Without it the backup
+   cannot be decrypted — nobody can recover it.
+3. Firefox: turn on **Firefox Sync** (Settings → Sync) so bookmarks and passwords come back.
+4. Make sure every change in `~/nixos-dotfiles` is committed **and pushed**:
+   `git -C ~/nixos-dotfiles status` should say "up to date with 'origin/main'" and "nothing to commit".
+5. Note your Wi-Fi password.
 
 Not in the config, so reinstall by hand afterwards: Flatpak apps (Sober).
 
 ## 1. Make the installer USB
 
-1. Download the **Minimal ISO, 64-bit Intel/AMD** from <https://nixos.org/download> into `~/Downloads`.
+1. The installer is already downloaded and checksum-verified at `~/Downloads/nixos-minimal.iso`.
+   (If it's missing: <https://channels.nixos.org/nixos-unstable/latest-nixos-minimal-x86_64-linux.iso>.)
 2. Plug in the USB stick and find its name:
    ```bash
    lsblk
@@ -35,7 +44,7 @@ Not in the config, so reinstall by hand afterwards: Flatpak apps (Sober).
    It's the ~4–64 GB disk that is **not** `nvme0n1` — usually `sda`.
 3. Write the ISO (replace `sdX`; this erases the stick):
    ```bash
-   sudo dd if=$(ls ~/Downloads/nixos-minimal-*.iso) of=/dev/sdX bs=4M status=progress oflag=sync
+   sudo dd if=$HOME/Downloads/nixos-minimal.iso of=/dev/sdX bs=4M status=progress oflag=sync
    ```
 
 ## 2. Boot the installer
@@ -134,7 +143,29 @@ reboot
    git commit -am "Hardware config for encrypted install"
    git push
    ```
-4. Copy your saved files back (including `~/.claude`).
+4. Restore your files from the backup. First reconnect Google Drive (a browser
+   window opens — log in and allow access), then put the restic password back:
+   ```bash
+   rclone config create gdrive drive scope=drive.file
+   mkdir -p ~/.config/restic
+   read -rsp "restic password: " p; echo; printf %s "$p" > ~/.config/restic/password; unset p
+   chmod 600 ~/.config/restic/password
+   restic-gdrive snapshots
+   restic-gdrive restore latest --target / \
+     --include /home/Wallance/Pictures \
+     --include /home/Wallance/Downloads \
+     --include /home/Wallance/.claude \
+     --include /home/Wallance/.claude.json \
+     --include /home/Wallance/.config/mozilla \
+     --include /home/Wallance/.local/share/keyrings \
+     --include /home/Wallance/.var
+   ```
+   Only your data is restored, not the whole home folder: files like `~/.bashrc`
+   and `~/.config/hypr` are links that Home Manager just recreated, and restoring
+   the old ones would break them. If you've added other folders (e.g. `Documents`),
+   add an `--include` line for each — `restic-gdrive ls latest /home/Wallance` lists
+   what's in the backup. Log out (Super + M) afterwards so Firefox and the keyring
+   pick up the restored files.
 5. Reinstall Sober:
    ```bash
    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo

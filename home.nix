@@ -66,6 +66,7 @@
 				"video/mp4" "video/x-matroska" "video/webm" "video/quicktime" "video/x-msvideo" "video/mpeg" "video/ogg"
 			]
 			// {
+				"text/plain" = "code.desktop";
 				"inode/directory" = "thunar.desktop";
 				# written by Claude Code before home-manager managed this file
 				"x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";

@@ -55,6 +55,8 @@
      claude-code
      gh
      brightnessctl
+     vscode
+     rclone
      grim
      slurp
      wl-clipboard
@@ -66,6 +68,7 @@
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "claude-code"
+    "vscode"
   ];
 
   services.flatpak.enable = true;
@@ -111,6 +114,34 @@
       echo 80 > /sys/class/power_supply/BAT0/charge_control_end_threshold
     '';
   };
+
+  # Daily encrypted backup of the home folder to Google Drive (restic over rclone).
+  # Needs two files that are NOT in this repo (keep copies somewhere safe):
+  #   ~/.config/restic/password     restic repository password
+  #   ~/.config/rclone/rclone.conf  from `rclone config create gdrive drive scope=drive.file`
+  # Manual run: sudo systemctl start restic-backups-gdrive
+  # Browse/restore: restic-gdrive snapshots / restic-gdrive restore latest --target /
+  services.restic.backups.gdrive = {
+    user = "Wallance";
+    repository = "rclone:gdrive:restic-thinkpad";
+    passwordFile = "/home/Wallance/.config/restic/password";
+    rcloneConfigFile = "/home/Wallance/.config/rclone/rclone.conf";
+    initialize = true;
+    paths = [ "/home/Wallance" ];
+    exclude = [
+      "/home/Wallance/.cache"
+      "/home/Wallance/.local/share/Trash"
+      "/home/Wallance/.var/app/*/cache"
+      "/home/Wallance/Downloads/*.iso"
+    ];
+    timerConfig = {
+      OnCalendar = "daily";
+      Persistent = true;
+    };
+    pruneOpts = [ "--keep-daily 7" "--keep-weekly 4" "--keep-monthly 6" ];
+  };
+  # restic's rclone backend needs rclone on the service's PATH
+  systemd.services.restic-backups-gdrive.path = [ pkgs.rclone ];
 
   system.stateVersion = "26.05"; # Did you read the comment?
 
