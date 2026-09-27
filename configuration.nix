@@ -59,6 +59,7 @@
      wlogout
      pavucontrol
      playerctl
+     cliphist
      (papirus-icon-theme.override { color = "teal"; })
      grim
      slurp

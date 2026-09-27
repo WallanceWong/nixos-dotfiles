@@ -59,6 +59,13 @@
 			.sidebar, placessidebar, placessidebar list { background-color: #05131e; }
 			headerbar, .titlebar, toolbar, .toolbar { background-color: #0c2a3d; background-image: none; border-color: #13384e; }
 			.view:selected, iconview:selected, treeview:selected, row:selected { background-color: #13384e; color: #f0e3a8; }
+			scale highlight, progressbar progress, levelbar block.filled { background-color: #7fc3c6; border-color: #7fc3c6; }
+			scale slider { background-color: #f0e3a8; }
+			switch:checked, checkbutton check:checked, radiobutton radio:checked, check:checked, radio:checked { background-color: #3f6e74; border-color: #7fc3c6; color: #f0e3a8; }
+			notebook > header tab:checked, stackswitcher button:checked { box-shadow: inset 0 -2px #f0e3a8; }
+			entry, combobox button, dropdown button, button.combo { background-color: #0c2a3d; }
+			button:not(.flat):not(.suggested-action):not(.destructive-action) { background-color: #0c2a3d; background-image: none; color: #e3e8e1; border-color: #13384e; }
+			button:not(.flat):hover { background-color: #13384e; }
 		'';
 		# same tint for GTK4 / libadwaita apps
 		gtk4.extraCss = ''
@@ -71,6 +78,21 @@
 			@define-color dialog_bg_color #0c2a3d;
 			@define-color accent_bg_color #3f6e74;
 			@define-color accent_color #7fc3c6;
+			window, .background, .view, headerbar, .titlebar, popover > contents, list, listview, columnview {
+				background-color: #071a28;
+				color: #e3e8e1;
+			}
+			headerbar, .titlebar, notebook > header { background-color: #0c2a3d; background-image: none; border-color: #13384e; }
+			.sidebar, .navigation-sidebar { background-color: #05131e; }
+			row:selected, .view:selected { background-color: #13384e; color: #f0e3a8; }
+			frame, .card, notebook > stack { background-color: #0a2233; border-color: #13384e; }
+			scale highlight, progressbar progress, levelbar block.filled { background-color: #7fc3c6; border-color: #7fc3c6; }
+			scale slider { background-color: #f0e3a8; }
+			switch:checked, checkbutton check:checked, radiobutton radio:checked, check:checked, radio:checked { background-color: #3f6e74; border-color: #7fc3c6; color: #f0e3a8; }
+			notebook > header tab:checked, stackswitcher button:checked { box-shadow: inset 0 -2px #f0e3a8; }
+			entry, combobox button, dropdown button, button.combo { background-color: #0c2a3d; }
+			button:not(.flat):not(.suggested-action):not(.destructive-action) { background-color: #0c2a3d; background-image: none; color: #e3e8e1; border-color: #13384e; }
+			button:not(.flat):hover { background-color: #13384e; }
 		'';
 	};
 	dconf.settings."org/gnome/desktop/interface" = {
@@ -131,7 +153,7 @@
 			};
 			modules = [
 				{ type = "title"; format = "{user-name}@{host-name}"; }
-				{ type = "custom"; format = "\u001b[38;2;63;110;116m─────────────────────────────"; }
+				{ type = "separator"; string = "─"; outputColor = "38;2;63;110;116"; }
 				{ type = "os";       key = ""; format = "{name} {version-id}"; }
 				{ type = "kernel";   key = "󰒓"; }
 				{ type = "packages"; key = "󰏖"; }
@@ -148,6 +170,14 @@
 				{ type = "colors"; symbol = "circle"; }
 			];
 		};
+	};
+
+	programs.eza = {
+		enable = true;
+		enableBashIntegration = true;
+		icons = "auto";
+		git = true;
+		extraOptions = [ "--group-directories-first" ];
 	};
 
 	programs.btop = {

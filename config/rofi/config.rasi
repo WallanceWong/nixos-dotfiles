@@ -6,9 +6,9 @@ configuration {
     icon-theme: "Papirus-Dark";
     font: "JetBrainsMono Nerd Font 11";
     drun-display-format: "{name}";
-    display-drun: "";
-    display-run: "";
-    display-window: "";
+    display-drun: "󰖔";
+    display-run: "";
+    display-window: "";
 }
 
 * {
@@ -76,11 +76,13 @@ element {
     border-radius: 10px;
 }
 
-element normal.normal, element alternate.normal {
+element normal.normal, element alternate.normal,
+element normal.active, element alternate.active {
     background-color: transparent;
+    text-color: @text;
 }
 
-element selected.normal {
+element selected.normal, element selected.active {
     background-color: @surface1;
     text-color: @lamp;
 }

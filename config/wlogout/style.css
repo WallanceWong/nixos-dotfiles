@@ -32,10 +32,10 @@ button:focus, button:active, button:hover {
     background-size: 26%;
 }
 
-#lock     { background-image: image(url("/run/current-system/sw/share/wlogout/icons/lock.png")); }
-#logout   { background-image: image(url("/run/current-system/sw/share/wlogout/icons/logout.png")); }
-#suspend  { background-image: image(url("/run/current-system/sw/share/wlogout/icons/suspend.png")); }
-#reboot   { background-image: image(url("/run/current-system/sw/share/wlogout/icons/reboot.png")); }
-#shutdown { background-image: image(url("/run/current-system/sw/share/wlogout/icons/shutdown.png")); }
+#lock     { background-image: image(url("/home/Wallance/.config/wlogout/icons/lock.png")); }
+#logout   { background-image: image(url("/home/Wallance/.config/wlogout/icons/logout.png")); }
+#suspend  { background-image: image(url("/home/Wallance/.config/wlogout/icons/suspend.png")); }
+#reboot   { background-image: image(url("/home/Wallance/.config/wlogout/icons/reboot.png")); }
+#shutdown { background-image: image(url("/home/Wallance/.config/wlogout/icons/shutdown.png")); }
 
 #shutdown:hover, #shutdown:focus { border-color: #e0786c; color: #e0786c; }
