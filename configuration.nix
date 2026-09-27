@@ -42,6 +42,8 @@
 
   programs.hyprlock.enable = true;
   security.pam.services.hyprlock.enableGnomeKeyring = true;
+  # passwd also changes the keyring password, so the two never drift apart
+  security.pam.services.passwd.enableGnomeKeyring = true;
   services.gnome.gnome-keyring.enable = true;
 
   programs.firefox.enable = true;
