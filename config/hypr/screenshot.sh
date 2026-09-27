@@ -13,4 +13,5 @@ case "$1" in
 	*)
 		grim "$file"
 		;;
-esac && wl-copy --type image/png < "$file"
+esac && wl-copy --type image/png < "$file" \
+	&& notify-send -t 3000 -i "$file" "Screenshot saved" "$(basename "$file") (copied to clipboard)"

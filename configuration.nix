@@ -53,6 +53,8 @@
      grim
      slurp
      wl-clipboard
+     mako
+     libnotify
    ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
