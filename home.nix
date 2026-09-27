@@ -39,6 +39,7 @@
 	dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
 
 	home.pointerCursor = {
+		enable = true;
 		name = "Adwaita";
 		package = pkgs.adwaita-icon-theme;
 		size = 24;
