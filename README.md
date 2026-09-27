@@ -39,6 +39,7 @@ streetlamp cream and city-glow teal).
 | Super + arrows / Super + Shift + arrows | Move focus / move window |
 | Super + 1–5 / Super + Shift + 1–5 | Switch to / move window to workspace |
 | Super + Tab, Super + scroll | Previous workspace, scroll through workspaces |
+| Super + ` (backtick) | Drop-down scratch terminal |
 | 3-finger swipe | Switch workspace |
 | PrtSc | Screenshot full screen |
 | Shift + PrtSc, Super + Shift + S | Screenshot a region |
@@ -60,7 +61,7 @@ Getty autologins on tty1 and `.bash_profile` starts Hyprland, which then:
 - runs hyprlock once — autologin skips the password, and unlocking also unlocks
   the gnome-keyring login keyring (its password must match the login password)
 
-hypridle locks after 5 minutes idle and before sleep, and turns the screen off 30s later.
+hypridle dims the screen after 4½ minutes idle, locks at 5 minutes (and before sleep), and turns the screen off 30s later.
 
 ## How the color scheme works
 
