@@ -49,6 +49,7 @@
      firefox
      claude-code
      gh
+     brightnessctl
    ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
