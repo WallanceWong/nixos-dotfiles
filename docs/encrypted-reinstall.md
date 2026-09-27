@@ -180,7 +180,6 @@ reboot
      --include /home/Wallance/.claude \
      --include /home/Wallance/.claude.json \
      --include /home/Wallance/.config/mozilla \
-     --include /home/Wallance/.local/share/keyrings \
      --include /home/Wallance/.var \
      --exclude /home/Wallance/.config/mozilla/firefox/btea7p9y.default/chrome \
      --exclude /home/Wallance/.config/mozilla/firefox/btea7p9y.default/user.js
@@ -188,12 +187,14 @@ reboot
    **Don't open Firefox normally before this step** — it would create a fresh profile.
    The two `--exclude` lines skip the Firefox theme links, which Home Manager
    has already recreated for the new system.
+   The keyring is deliberately **not** restored: the old one is locked with your
+   old password, and the new system already made one with your new password.
 
    Only your data is restored, not the whole home folder: files like `~/.bashrc`
    and `~/.config/hypr` are links that Home Manager just recreated, and restoring
    the old ones would break them. If you've added other folders (e.g. `Documents`),
    add an `--include` line for each — `restic-home ls latest /home/Wallance` lists
-   what's in the backup. Log out (Super + M) afterwards so Firefox and the keyring
+   what's in the backup. Log out (Super + M) afterwards so Firefox
    pick up the restored files.
 5. Reinstall Sober:
    ```bash
