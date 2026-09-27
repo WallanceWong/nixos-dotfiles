@@ -1,21 +1,123 @@
-@import url("file:///home/Wallance/.cache/wal/colors-waybar.css");
+/* whisper — a floating bar of little lit windows over the city */
+
+@define-color base     rgba(7, 26, 40, 0.82);
+@define-color surface0 #0c2a3d;
+@define-color surface1 #13384e;
+@define-color overlay  #3f6e74;
+@define-color subtext  #9fb5bd;
+@define-color text     #e3e8e1;
+@define-color lamp     #f0e3a8;
+@define-color teal     #7fc3c6;
+@define-color blue     #6d9fd1;
+@define-color red      #e0786c;
+@define-color mustard  #e3b35c;
+@define-color green    #8fbf9a;
 
 * {
     font-family: "JetBrainsMono Nerd Font";
     font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
 }
+
 window#waybar {
-    background: @background;
-    color: @foreground;
+    background: transparent;
+    color: @text;
 }
+
+tooltip {
+    background: rgba(7, 26, 40, 0.95);
+    border: 1px solid @lamp;
+    border-radius: 12px;
+}
+tooltip label {
+    color: @text;
+    padding: 4px;
+}
+
+/* every module is its own softly lit pill */
+#custom-moon, #workspaces, #window, #clock, #mpris, #tray, #pulseaudio,
+#backlight, #network, #bluetooth, #power-profiles-daemon, #battery, #custom-power {
+    background: @base;
+    border: 1px solid rgba(240, 227, 168, 0.10);
+    border-radius: 14px;
+    padding: 0 14px;
+    margin: 0;
+}
+
+#custom-moon {
+    color: @lamp;
+    font-size: 17px;
+    padding: 0 15px 0 13px;
+}
+#custom-moon:hover { background: @surface1; }
+
+/* workspaces are stars — the lit one is yours */
+#workspaces { padding: 0 6px; }
 #workspaces button {
-    color: @color8;
-    padding: 0 8px;
+    color: @overlay;
+    padding: 0 6px;
+    background: transparent;
+    transition: all 0.3s ease;
 }
+#workspaces button.empty { color: rgba(63, 110, 116, 0.6); }
+#workspaces button:not(.empty) { color: @subtext; }
 #workspaces button.active {
-    color: @color4;
+    color: @lamp;
+    text-shadow: 0 0 8px rgba(240, 227, 168, 0.6);
 }
-#clock, #network, #pulseaudio, #battery {
-    padding: 0 10px;
-    color: @foreground;
+#workspaces button.urgent { color: @red; }
+#workspaces button:hover {
+    background: transparent;
+    box-shadow: none;
+    color: @teal;
 }
+
+#window {
+    color: @subtext;
+    font-weight: 500;
+}
+window#waybar.empty #window { color: @overlay; }
+
+#clock {
+    color: @lamp;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 0 18px;
+    border-color: rgba(240, 227, 168, 0.25);
+}
+
+#mpris { color: @teal; font-weight: 500; }
+#mpris.paused { color: @overlay; }
+
+#pulseaudio        { color: @teal; }
+#pulseaudio.muted  { color: @overlay; }
+#backlight         { color: @lamp; }
+#network           { color: @blue; }
+#network.disconnected { color: @red; }
+#bluetooth         { color: @blue; }
+#bluetooth.off, #bluetooth.disabled { color: @overlay; }
+#power-profiles-daemon { color: @green; font-size: 15px; }
+#power-profiles-daemon.performance { color: @mustard; }
+#power-profiles-daemon.power-saver { color: @teal; }
+
+#battery           { color: @green; }
+#battery.charging, #battery.plugged { color: @lamp; }
+#battery.warning:not(.charging) { color: @mustard; }
+#battery.critical:not(.charging) {
+    color: @red;
+    animation: blink 1.2s ease-in-out infinite alternate;
+}
+@keyframes blink { to { color: @text; } }
+
+#tray { padding: 0 10px; }
+#tray > .needs-attention { background: @red; border-radius: 8px; }
+
+#custom-power {
+    color: @red;
+    font-size: 15px;
+    padding: 0 15px 0 13px;
+}
+#custom-power:hover { background: @surface1; }

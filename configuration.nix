@@ -50,13 +50,16 @@
      hyprpaper
      rofi
      thunar
-     python3Packages.pywal
      firefox
      claude-code
      gh
      brightnessctl
      vscode
      restic
+     wlogout
+     pavucontrol
+     playerctl
+     (papirus-icon-theme.override { color = "teal"; })
      grim
      slurp
      wl-clipboard

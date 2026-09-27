@@ -1,0 +1,41 @@
+/* whisper — where to go when the night is over */
+
+* {
+    background-image: none;
+    box-shadow: none;
+    font-family: "JetBrainsMono Nerd Font";
+}
+
+window {
+    background-color: rgba(3, 11, 18, 0.62);
+}
+
+button {
+    color: #e3e8e1;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: rgba(7, 26, 40, 0.88);
+    background-repeat: no-repeat;
+    background-position: center 42%;
+    background-size: 22%;
+    border: 2px solid rgba(240, 227, 168, 0.12);
+    border-radius: 22px;
+    margin: 10px;
+    padding-top: 110px;
+    transition: all 0.25s ease;
+}
+
+button:focus, button:active, button:hover {
+    color: #f0e3a8;
+    background-color: #13384e;
+    border-color: #f0e3a8;
+    background-size: 26%;
+}
+
+#lock     { background-image: image(url("/run/current-system/sw/share/wlogout/icons/lock.png")); }
+#logout   { background-image: image(url("/run/current-system/sw/share/wlogout/icons/logout.png")); }
+#suspend  { background-image: image(url("/run/current-system/sw/share/wlogout/icons/suspend.png")); }
+#reboot   { background-image: image(url("/run/current-system/sw/share/wlogout/icons/reboot.png")); }
+#shutdown { background-image: image(url("/run/current-system/sw/share/wlogout/icons/shutdown.png")); }
+
+#shutdown:hover, #shutdown:focus { border-color: #e0786c; color: #e0786c; }
