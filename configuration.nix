@@ -48,6 +48,7 @@
      python3Packages.pywal
      firefox
      claude-code
+     gh
    ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
