@@ -143,11 +143,12 @@
 	programs.fastfetch = {
 		enable = true;
 		settings = {
-			# NixOS snowflake, two-tone like the official logo: denim blue and city teal
+			# Tux: body in muted city-glow (dark but visible on navy), moonlight belly,
+			# mustard beak and feet
 			logo = {
-				source = "nixos";
-				color = { "1" = "38;2;109;159;209"; "2" = "38;2;127;195;198"; "3" = "38;2;109;159;209"; "4" = "38;2;127;195;198"; "5" = "38;2;109;159;209"; "6" = "38;2;127;195;198"; };
-				padding = { top = 1; left = 1; right = 3; };
+				source = "Linux";
+				color = { "1" = "38;2;227;232;225"; "2" = "38;2;63;110;116"; "3" = "38;2;227;179;92"; };
+				padding = { top = 1; left = 2; right = 4; };
 			};
 			display = {
 				separator = "  ";
