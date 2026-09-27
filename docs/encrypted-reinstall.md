@@ -127,7 +127,8 @@ Install (this downloads a few GB). It asks for a new **root** password at the en
 nixos-install --flake /mnt/home/Wallance/nixos-dotfiles#hyprland-btw
 ```
 
-Set your user password and give yourself your home folder back:
+Set your user password (choose a **new** one — the old one was written in a chat
+log) and give yourself your home folder back:
 ```bash
 nixos-enter --root /mnt -c 'passwd Wallance'
 nixos-enter --root /mnt -c 'chown -R Wallance:users /home/Wallance'
@@ -170,8 +171,14 @@ reboot
      --include /home/Wallance/.claude.json \
      --include /home/Wallance/.config/mozilla \
      --include /home/Wallance/.local/share/keyrings \
-     --include /home/Wallance/.var
+     --include /home/Wallance/.var \
+     --exclude /home/Wallance/.config/mozilla/firefox/btea7p9y.default/chrome \
+     --exclude /home/Wallance/.config/mozilla/firefox/btea7p9y.default/user.js
    ```
+   **Don't open Firefox before this step** — it would create a fresh profile.
+   The two `--exclude` lines skip the Firefox theme links, which Home Manager
+   has already recreated for the new system.
+
    Only your data is restored, not the whole home folder: files like `~/.bashrc`
    and `~/.config/hypr` are links that Home Manager just recreated, and restoring
    the old ones would break them. If you've added other folders (e.g. `Documents`),
