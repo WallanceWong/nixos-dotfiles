@@ -19,6 +19,7 @@ streetlamp cream and city-glow teal).
 - `config/firefox/` — `userChrome.css` / `userContent.css` + `user.js`, linked into the Firefox profile (restart Firefox to see them)
 - `config/vscode/` — starter VS Code settings; copied into place only if VS Code has none yet, so they stay editable
 - `wallpapers/wall.jpg` — the wallpaper
+- `assets/tux.png` — the Tux fastfetch shows in new terminals (from the Papirus icon theme)
 - `docs/encrypted-reinstall.md` — reinstalling with full-disk encryption, then Secure Boot
 
 ## Keybindings
