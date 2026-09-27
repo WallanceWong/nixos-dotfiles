@@ -13,6 +13,10 @@
   networking.hostName = "nixos"; 
   networking.networkmanager.enable = true;
 
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
+
   time.timeZone = "Asia/Malaysia";
   services.getty.autologinUser = "Wallance";
 
@@ -50,47 +54,13 @@
     "claude-code"
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes"];
+  services.flatpak.enable = true;
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
-
-
-
-
-
-
-
-
-
-
+  hardware.graphics.enable = true;
  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  nix.settings.experimental-features = [ "nix-command" "flakes"];
 
   system.stateVersion = "26.05"; # Did you read the comment?
 
