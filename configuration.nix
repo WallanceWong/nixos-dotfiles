@@ -17,7 +17,7 @@
   hardware.bluetooth.powerOnBoot = true;
   services.blueman.enable = true;
 
-  time.timeZone = "Asia/Malaysia";
+  time.timeZone = "Asia/Kuching";
   services.getty.autologinUser = "Wallance";
 
   programs.hyprland = {
@@ -59,6 +59,8 @@
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
   hardware.graphics.enable = true;
+
+  zramSwap.enable = true;
  
   nix.settings.experimental-features = [ "nix-command" "flakes"];
 

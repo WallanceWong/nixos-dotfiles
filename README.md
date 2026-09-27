@@ -6,6 +6,7 @@ Home Manager, and pywal-generated colors from a wallpaper.
 ## Structure
 
 - `flake.nix`, `configuration.nix`, `home.nix` — NixOS system config (copy your working versions here)
+- `hardware-configuration.nix` — hardware scan for this ThinkPad (machine-specific; replace it on other machines)
 - `config/hypr/` — Hyprland config + hyprpaper wallpaper config
 - `config/waybar/` — Waybar bar config + style (colors pulled from pywal)
 - `config/rofi/` — Rofi launcher theme (colors pulled from pywal)
@@ -38,5 +39,5 @@ sudo nixos-rebuild switch --flake ~/nixos-dotfiles#hyprland-btw
 ## Setup on a fresh machine
 
 1. Clone this repo to `~/nixos-dotfiles`
-2. Copy `hardware-configuration.nix` from `/etc/nixos/` (machine-specific, not tracked here)
+2. Overwrite the tracked `hardware-configuration.nix` with the new machine's `/etc/nixos/hardware-configuration.nix` and `git add` it (it must stay tracked — flakes can't see untracked files)
 3. `sudo nixos-rebuild switch --flake ~/nixos-dotfiles#hyprland-btw`

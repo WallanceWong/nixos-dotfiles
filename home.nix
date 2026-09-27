@@ -7,7 +7,7 @@
 	programs.bash = {
 		enable = true;
 		shellAliases = {
-			btw = "NixOS better than arch, btw";
+			btw = "echo NixOS better than arch, btw";
 		};
 		profileExtra =''
 			if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = "1" ]; then
