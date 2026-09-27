@@ -31,6 +31,20 @@
 		After = [ "graphical-session-pre.target" ];
 	};
 
+	# Dark theme for GTK apps and the portal (Firefox and libadwaita apps follow color-scheme)
+	gtk = {
+		enable = true;
+		theme = { name = "Adwaita-dark"; package = pkgs.gnome-themes-extra; };
+	};
+	dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+
+	home.pointerCursor = {
+		name = "Adwaita";
+		package = pkgs.adwaita-icon-theme;
+		size = 24;
+		gtk.enable = true;
+	};
+
 	home.sessionVariables = {
         XDG_DATA_DIRS = "/var/lib/flatpak/exports/share:$XDG_DATA_DIRS";
 };

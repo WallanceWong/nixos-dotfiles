@@ -73,6 +73,14 @@
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
   hardware.graphics.enable = true;
+  # VA-API video decoding for Intel Arc (Firefox, mpv)
+  hardware.graphics.extraPackages = [ pkgs.intel-media-driver ];
+
+  # waybar, rofi and kitty are configured for this font
+  fonts.packages = [ pkgs.nerd-fonts.jetbrains-mono ];
+
+  # needed by home-manager dconf settings (dark mode)
+  programs.dconf.enable = true;
 
   zramSwap.enable = true;
  
