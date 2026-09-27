@@ -153,8 +153,13 @@ reboot
    git push
    ```
 4. Restore your files from the backup:
-   - In Firefox, open <https://drive.google.com>, right-click the `restic-thinkpad`
-     folder → **Download**. Drive gives you one or more zip files.
+   - Open Firefox with a **throwaway profile** (so your real profile isn't created
+     before it's restored), log in to Google, right-click the `restic-thinkpad`
+     folder → **Download**. Drive gives you one or more zip files in `~/Downloads`:
+     ```bash
+     firefox --no-remote --profile "$(mktemp -d)" https://drive.google.com
+     ```
+     Close that Firefox window when the download is done.
    - Unzip them into your home folder so you get `~/restic-thinkpad/config`,
      `~/restic-thinkpad/data/`, etc. (If Drive split it into several zips, unzip
      all of them into the same place.)
@@ -175,7 +180,7 @@ reboot
      --exclude /home/Wallance/.config/mozilla/firefox/btea7p9y.default/chrome \
      --exclude /home/Wallance/.config/mozilla/firefox/btea7p9y.default/user.js
    ```
-   **Don't open Firefox before this step** — it would create a fresh profile.
+   **Don't open Firefox normally before this step** — it would create a fresh profile.
    The two `--exclude` lines skip the Firefox theme links, which Home Manager
    has already recreated for the new system.
 
