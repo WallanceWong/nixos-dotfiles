@@ -91,7 +91,7 @@
 
   services.fwupd.enable = true;
   services.power-profiles-daemon.enable = true;
-  services.thermald.enable = true;
+  services.upower.enable = true;
 
   # Stop charging at 80% to extend battery lifespan (start must stay below end)
   systemd.services.battery-charge-threshold = {

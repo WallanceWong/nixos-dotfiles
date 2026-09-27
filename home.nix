@@ -22,6 +22,15 @@
 	home.file.".config/kitty".source = ./config/kitty;
 	home.file.".config/mako".source = ./config/mako;
 
+	# Hyprland is launched from the login shell, not systemd, so bind
+	# graphical-session.target to this target and start it from hyprland.conf
+	systemd.user.targets.hyprland-session.Unit = {
+		Description = "Hyprland compositor session";
+		BindsTo = [ "graphical-session.target" ];
+		Wants = [ "graphical-session-pre.target" ];
+		After = [ "graphical-session-pre.target" ];
+	};
+
 	home.sessionVariables = {
         XDG_DATA_DIRS = "/var/lib/flatpak/exports/share:$XDG_DATA_DIRS";
 };
