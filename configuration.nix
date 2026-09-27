@@ -19,6 +19,12 @@
   services.blueman.enable = true;
 
   time.timeZone = "Asia/Kuching";
+
+  # whisper palette for the text consoles (TTYs)
+  console.colors = [
+    "071a28" "e0786c" "8fbf9a" "e3b35c" "6d9fd1" "b69ad6" "7fc3c6" "c5d0cc"
+    "3f6e74" "f0998f" "aad6b3" "f0e3a8" "93bde6" "cdb7e6" "a6dcdc" "eef1ea"
+  ];
   services.getty.autologinUser = "Wallance";
 
   programs.hyprland = {
