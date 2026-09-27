@@ -143,12 +143,11 @@
 	programs.fastfetch = {
 		enable = true;
 		settings = {
-			# Tux (from the Papirus icon theme), drawn as a real image by kitty
+			# Tux: body in muted city-glow (dark but visible on navy), moonlight belly,
+			# mustard beak and feet
 			logo = {
-				type = "kitty-direct";
-				source = "~/nixos-dotfiles/assets/tux.png";
-				width = 32;
-				height = 16;
+				source = "Linux";
+				color = { "1" = "38;2;227;232;225"; "2" = "38;2;63;110;116"; "3" = "38;2;227;179;92"; };
 				padding = { top = 1; left = 2; right = 4; };
 			};
 			display = {
