@@ -143,11 +143,10 @@
 	programs.fastfetch = {
 		enable = true;
 		settings = {
+			# NixOS snowflake, two-tone like the official logo: denim blue and city teal
 			logo = {
-				type = "kitty-direct";
-				source = "~/nixos-dotfiles/wallpapers/fetch.png";
-				width = 26;
-				height = 13;
+				source = "nixos";
+				color = { "1" = "38;2;109;159;209"; "2" = "38;2;127;195;198"; "3" = "38;2;109;159;209"; "4" = "38;2;127;195;198"; "5" = "38;2;109;159;209"; "6" = "38;2;127;195;198"; };
 				padding = { top = 1; left = 1; right = 3; };
 			};
 			display = {

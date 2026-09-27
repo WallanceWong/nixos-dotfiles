@@ -18,7 +18,7 @@ streetlamp cream and city-glow teal).
 - `config/wlogout/` — power menu, with lamp-coloured icons
 - `config/firefox/` — `userChrome.css` / `userContent.css` + `user.js`, linked into the Firefox profile (restart Firefox to see them)
 - `config/vscode/` — starter VS Code settings; copied into place only if VS Code has none yet, so they stay editable
-- `wallpapers/wall.jpg` — the wallpaper; `wallpapers/fetch.png` is the crop fastfetch shows
+- `wallpapers/wall.jpg` — the wallpaper
 - `docs/encrypted-reinstall.md` — reinstalling with full-disk encryption, then Secure Boot
 
 ## Keybindings
