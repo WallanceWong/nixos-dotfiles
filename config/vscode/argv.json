@@ -1,0 +1,4 @@
+{
+  // use the gnome-keyring (unlocked at login) for saved logins
+  "password-store": "gnome-libsecret"
+}

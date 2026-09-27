@@ -1,0 +1,16 @@
+/* whisper — new tab / home page background */
+@-moz-document url("about:newtab"), url("about:home"), url("about:blank") {
+  body, html {
+    background-color: #071a28 !important;
+    color: #e3e8e1 !important;
+  }
+  .search-handoff-button, .search-inner-wrapper input, .fake-textbox,
+  .top-site-outer .tile, .top-site-outer .top-site-icon {
+    background-color: #0c2a3d !important;
+    border: 1px solid #13384e !important;
+    border-radius: 14px !important;
+    color: #e3e8e1 !important;
+    box-shadow: none !important;
+  }
+  .top-site-outer .title, .top-site-outer .sponsored-label { color: #9fb5bd !important; }
+}

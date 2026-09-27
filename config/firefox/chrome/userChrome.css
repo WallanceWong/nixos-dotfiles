@@ -1,0 +1,80 @@
+/* whisper — Firefox toolbars and tabs in the night-sky palette.
+   Needs toolkit.legacyUserProfileCustomizations.stylesheets (see user.js). */
+
+:root {
+  --w-base:     #071a28;
+  --w-mantle:   #05131e;
+  --w-surface0: #0c2a3d;
+  --w-surface1: #13384e;
+  --w-overlay:  #3f6e74;
+  --w-subtext:  #9fb5bd;
+  --w-text:     #e3e8e1;
+  --w-lamp:     #f0e3a8;
+  --w-teal:     #7fc3c6;
+
+  --toolbox-bgcolor: var(--w-base) !important;
+  --toolbox-bgcolor-inactive: var(--w-base) !important;
+  --toolbox-textcolor: var(--w-text) !important;
+  --toolbox-textcolor-inactive: var(--w-subtext) !important;
+  --toolbar-bgcolor: var(--w-surface0) !important;
+  --toolbar-color: var(--w-text) !important;
+  --tab-selected-bgcolor: var(--w-surface1) !important;
+  --tab-selected-textcolor: var(--w-lamp) !important;
+  --tab-hover-background-color: color-mix(in srgb, var(--w-surface1) 60%, transparent) !important;
+  --toolbar-field-background-color: var(--w-base) !important;
+  --toolbar-field-focus-background-color: var(--w-mantle) !important;
+  --toolbar-field-color: var(--w-text) !important;
+  --toolbar-field-focus-color: var(--w-text) !important;
+  --toolbar-field-border-color: var(--w-surface1) !important;
+  --toolbar-field-focus-border-color: var(--w-lamp) !important;
+  --focus-outline-color: var(--w-lamp) !important;
+  --urlbarView-highlight-background: var(--w-surface1) !important;
+  --urlbarView-highlight-color: var(--w-lamp) !important;
+  --arrowpanel-background: var(--w-surface0) !important;
+  --arrowpanel-color: var(--w-text) !important;
+  --arrowpanel-border-color: var(--w-surface1) !important;
+  --sidebar-background-color: var(--w-base) !important;
+  --sidebar-text-color: var(--w-text) !important;
+  --button-hover-bgcolor: color-mix(in srgb, var(--w-surface1) 80%, transparent) !important;
+  --toolbarbutton-icon-fill-attention: var(--w-teal) !important;
+}
+
+#navigator-toolbox {
+  background-color: var(--w-base) !important;
+  border-bottom: 1px solid var(--w-surface1) !important;
+}
+
+/* selected tab: a lit window with a lamp-coloured underline */
+.tabbrowser-tab[selected] .tab-background {
+  background: var(--w-surface1) !important;
+  box-shadow: inset 0 -2px 0 var(--w-lamp) !important;
+}
+.tabbrowser-tab[selected] .tab-label { color: var(--w-lamp) !important; }
+.tabbrowser-tab:not([selected]) .tab-label { color: var(--w-subtext) !important; }
+
+#urlbar-background, .urlbar-background { border-radius: 10px !important; }
+#urlbar[focused] #urlbar-background, #urlbar[focused] .urlbar-background {
+  outline: 1px solid var(--w-lamp) !important;
+}
+
+/* Firefox's dark theme paints these directly, so override them by element */
+#TabsToolbar, #titlebar {
+  background-color: var(--w-base) !important;
+  background-image: none !important;
+}
+#nav-bar, #PersonalToolbar, #toolbar-menubar, #notifications-toolbar {
+  background-color: var(--w-surface0) !important;
+  background-image: none !important;
+  color: var(--w-text) !important;
+  border-color: var(--w-surface1) !important;
+}
+#urlbar-background, .urlbar-background, #searchbar {
+  background-color: var(--w-base) !important;
+  border: 1px solid var(--w-surface1) !important;
+}
+#PersonalToolbar .toolbarbutton-text, #PersonalToolbar label { color: var(--w-subtext) !important; }
+notification-message, .notificationbox-stack notification-message {
+  --message-bar-background-color: var(--w-surface0) !important;
+  --message-bar-text-color: var(--w-text) !important;
+  border-color: var(--w-surface1) !important;
+}

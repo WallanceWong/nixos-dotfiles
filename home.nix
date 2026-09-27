@@ -1,4 +1,4 @@
-{config, pkgs, ...}:
+{config, pkgs, lib, ...}:
 
 {
 	home.username ="Wallance";
@@ -27,6 +27,9 @@
 	home.file.".config/kitty".source = ./config/kitty;
 	home.file.".config/mako".source = ./config/mako;
 	home.file.".config/wlogout".source = ./config/wlogout;
+	# Firefox theme; the profile folder name comes from ~/.config/mozilla/firefox/profiles.ini
+	home.file.".config/mozilla/firefox/btea7p9y.default/chrome".source = ./config/firefox/chrome;
+	home.file.".config/mozilla/firefox/btea7p9y.default/user.js".source = ./config/firefox/user.js;
 
 	# Hyprland is launched from the login shell, not systemd, so bind
 	# graphical-session.target to this target and start it from hyprland.conf
@@ -233,6 +236,19 @@
 			theme[process_end]="#e0786c"
 		'';
 	};
+
+	# VS Code starter settings in the whisper palette. Copied only if missing, so
+	# VS Code can keep editing them (a home.file link would be read-only).
+	home.activation.vscodeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+		if [ ! -e "$HOME/.config/Code/User/settings.json" ]; then
+			run mkdir -p "$HOME/.config/Code/User"
+			run install -m 644 ${./config/vscode/settings.json} "$HOME/.config/Code/User/settings.json"
+		fi
+		if [ ! -e "$HOME/.vscode/argv.json" ]; then
+			run mkdir -p "$HOME/.vscode"
+			run install -m 644 ${./config/vscode/argv.json} "$HOME/.vscode/argv.json"
+		fi
+	'';
 
 	# mpv with hardware decoding (intel-media-driver)
 	programs.mpv = {

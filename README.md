@@ -16,6 +16,8 @@ streetlamp cream and city-glow teal).
 - `config/kitty/` — terminal; `whisper.conf` is the 16-colour palette
 - `config/mako/` — notifications and the OSD popup style
 - `config/wlogout/` — power menu, with lamp-coloured icons
+- `config/firefox/` — `userChrome.css` / `userContent.css` + `user.js`, linked into the Firefox profile (restart Firefox to see them)
+- `config/vscode/` — starter VS Code settings; copied into place only if VS Code has none yet, so they stay editable
 - `wallpapers/wall.jpg` — the wallpaper; `wallpapers/fetch.png` is the crop fastfetch shows
 - `docs/encrypted-reinstall.md` — reinstalling with full-disk encryption, then Secure Boot
 
@@ -80,7 +82,8 @@ own format, so changing a colour means editing these files:
 | denim / shirt / skirt / bushes | `#6d9fd1` `#e0786c` `#e3b35c` `#8fbf9a` | small details, terminal colours |
 
 Files: `config/hypr/colors.conf`, `config/waybar/style.css`, `config/rofi/config.rasi`,
-`config/kitty/whisper.conf`, `config/mako/config`, `config/wlogout/style.css`, the GTK
+`config/kitty/whisper.conf`, `config/mako/config`, `config/wlogout/style.css`,
+`config/firefox/chrome/*.css`, `config/vscode/settings.json`, the GTK
 CSS and btop theme in `home.nix`, and `console.colors` in `configuration.nix`.
 
 ## Power and maintenance
