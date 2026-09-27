@@ -195,7 +195,7 @@ reboot
    the old ones would break them. If you've added other folders (e.g. `Documents`),
    add an `--include` line for each — `restic-home ls latest /home/Wallance` lists
    what's in the backup. Log out (Super + M) afterwards so Firefox
-   pick up the restored files.
+   picks up the restored files.
 5. Reinstall Sober:
    ```bash
    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
