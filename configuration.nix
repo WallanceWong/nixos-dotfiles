@@ -35,7 +35,7 @@
 
   users.users.Wallance = {
      isNormalUser = true;
-     extraGroups = [ "wheel" "gamemode" ]; # Enable ‘sudo’ for the user.
+     extraGroups = [ "wheel" "gamemode" "dialout" "uucp" ]; # Enable ‘sudo’ for the user.
      packages = with pkgs; [
        tree
      ];
@@ -133,6 +133,13 @@
   };
 
   system.stateVersion = "26.05"; # Did you read the comment?
+ 
+  # 1. Provide total read/write clearances to the hardware chip
+services.udev.extraRules = ''
+  SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE="0666", TAG+="uaccess"
+  SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="5523", MODE="0666", TAG+="uaccess"
+  KERNEL=="ttyUSB*", MODE="0666", TAG+="uaccess"
+'';
 
 }
 
