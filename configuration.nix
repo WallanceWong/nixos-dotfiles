@@ -4,6 +4,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./pictoblox.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -81,6 +82,7 @@
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "claude-code"
     "vscode"
+    "PictoBlox-Setup"
   ];
 
   services.flatpak.enable = true;
