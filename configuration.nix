@@ -35,7 +35,7 @@
 
   users.users.Wallance = {
      isNormalUser = true;
-     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+     extraGroups = [ "wheel" "gamemode" ]; # Enable ‘sudo’ for the user.
      packages = with pkgs; [
        tree
      ];
@@ -88,6 +88,9 @@
   services.flatpak.enable = true;
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+
+  # Feral GameMode; Sober (flatpak) requests it through the portal
+  programs.gamemode.enable = true;
 
   hardware.graphics.enable = true;
   # VA-API video decoding for Intel Arc (Firefox, mpv)
