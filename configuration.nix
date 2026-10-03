@@ -95,7 +95,8 @@
   hardware.graphics.enable = true;
   # VA-API video decoding for Intel Arc (Firefox, mpv)
   hardware.graphics.extraPackages = [ pkgs.intel-media-driver ];
-
+  hardware.graphics.enable32Bit = true;
+  
   # waybar, rofi and kitty are configured for this font
   fonts.packages = [ pkgs.nerd-fonts.jetbrains-mono ];
 
