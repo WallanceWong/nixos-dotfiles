@@ -42,14 +42,16 @@ Singleton {
     Component.onCompleted: { Quickshell.execDetached(["pkill", "-f", "audio-client-name=whisper-ambience"]); settle.restart(); }
     Timer { id: settle; interval: 1500; onTriggered: root.active = root.wanted }
 
-    property real level: active ? Settings.ambienceVolume * 0.6 : 0
+    property real level: active ? Settings.ambienceVolume : 0
     Behavior on level { NumberAnimation { duration: 2500; easing.type: Easing.InOutSine } }
 
     readonly property var node: Audio.streams.find(n => n.properties["application.name"] === "whisper-ambience") ?? null
     // the stream's volume can only be set once PipeWire has bound it
     Connections { target: root.node; function onReadyChanged() { root.apply(); } }
     onLevelChanged: apply()
-    onNodeChanged: apply()
+    onNodeChanged: { if (!node && started && active) revive.restart(); apply(); }
+    // if the player dies (or is killed), start it again a moment later
+    Timer { id: revive; interval: 3000; onTriggered: if (!root.node && root.active) { root.started = false; root.apply(); } }
     onActiveChanged: apply()
 
     // mpv runs detached (only if its stream isn't there yet) and is stopped by name

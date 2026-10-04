@@ -45,7 +45,7 @@ Singleton {
             property bool meteors: true
             property bool fireflies: true
             property bool ambience: false
-            property real ambienceVolume: 0.35
+            property real ambienceVolume: 0.6
             property bool corners: true
             property bool batterySaver: true
             property bool autoGameMode: true
