@@ -1,6 +1,9 @@
 {config, pkgs, lib, ...}:
 
 {
+	# whisper theme: colours for everything + the Quickshell desktop (theme/whisper.nix)
+	imports = [ ./theme/whisper.nix ];
+
 	home.username ="Wallance";
 	home.homeDirectory = "/home/Wallance";
 	home.stateVersion = "26.05";
@@ -27,9 +30,7 @@
 	home.file.".config/kitty".source = ./config/kitty;
 	home.file.".config/mako".source = ./config/mako;
 	home.file.".config/wlogout".source = ./config/wlogout;
-	# Firefox theme; the profile folder name comes from ~/.config/mozilla/firefox/profiles.ini
-	home.file.".config/mozilla/firefox/btea7p9y.default/chrome".source = ./config/firefox/chrome;
-	home.file.".config/mozilla/firefox/btea7p9y.default/user.js".source = ./config/firefox/user.js;
+	# Firefox theme files are linked by theme/whisper.nix
 
 	# Hyprland is launched from the login shell, not systemd, so bind
 	# graphical-session.target to this target and start it from hyprland.conf
@@ -45,58 +46,7 @@
 		enable = true;
 		theme = { name = "Adwaita-dark"; package = pkgs.gnome-themes-extra; };
 		iconTheme = { name = "Papirus-Dark"; package = pkgs.papirus-icon-theme.override { color = "teal"; }; };
-		# tint Adwaita-dark into the whisper night-sky navy (GTK3 apps like Thunar)
-		gtk3.extraCss = ''
-			@define-color theme_bg_color #071a28;
-			@define-color theme_base_color #0a2233;
-			@define-color theme_fg_color #e3e8e1;
-			@define-color theme_text_color #e3e8e1;
-			@define-color theme_selected_bg_color #3f6e74;
-			@define-color theme_selected_fg_color #f0e3a8;
-			@define-color borders #13384e;
-			@define-color unfocused_borders #0c2a3d;
-			window, .background, .sidebar, placessidebar, .view, treeview, iconview, headerbar, .titlebar {
-				background-color: #071a28;
-				color: #e3e8e1;
-			}
-			.sidebar, placessidebar, placessidebar list { background-color: #05131e; }
-			headerbar, .titlebar, toolbar, .toolbar { background-color: #0c2a3d; background-image: none; border-color: #13384e; }
-			.view:selected, iconview:selected, treeview:selected, row:selected { background-color: #13384e; color: #f0e3a8; }
-			scale highlight, progressbar progress, levelbar block.filled { background-color: #7fc3c6; border-color: #7fc3c6; }
-			scale slider { background-color: #f0e3a8; }
-			switch:checked, checkbutton check:checked, radiobutton radio:checked, check:checked, radio:checked { background-color: #3f6e74; border-color: #7fc3c6; color: #f0e3a8; }
-			notebook > header tab:checked, stackswitcher button:checked { box-shadow: inset 0 -2px #f0e3a8; }
-			entry, combobox button, dropdown button, button.combo { background-color: #0c2a3d; }
-			button:not(.flat):not(.suggested-action):not(.destructive-action) { background-color: #0c2a3d; background-image: none; color: #e3e8e1; border-color: #13384e; }
-			button:not(.flat):hover { background-color: #13384e; }
-		'';
-		# same tint for GTK4 / libadwaita apps
-		gtk4.extraCss = ''
-			@define-color window_bg_color #071a28;
-			@define-color view_bg_color #0a2233;
-			@define-color headerbar_bg_color #0c2a3d;
-			@define-color sidebar_bg_color #05131e;
-			@define-color card_bg_color #0c2a3d;
-			@define-color popover_bg_color #0c2a3d;
-			@define-color dialog_bg_color #0c2a3d;
-			@define-color accent_bg_color #3f6e74;
-			@define-color accent_color #7fc3c6;
-			window, .background, .view, headerbar, .titlebar, popover > contents, list, listview, columnview {
-				background-color: #071a28;
-				color: #e3e8e1;
-			}
-			headerbar, .titlebar, notebook > header { background-color: #0c2a3d; background-image: none; border-color: #13384e; }
-			.sidebar, .navigation-sidebar { background-color: #05131e; }
-			row:selected, .view:selected { background-color: #13384e; color: #f0e3a8; }
-			frame, .card, notebook > stack { background-color: #0a2233; border-color: #13384e; }
-			scale highlight, progressbar progress, levelbar block.filled { background-color: #7fc3c6; border-color: #7fc3c6; }
-			scale slider { background-color: #f0e3a8; }
-			switch:checked, checkbutton check:checked, radiobutton radio:checked, check:checked, radio:checked { background-color: #3f6e74; border-color: #7fc3c6; color: #f0e3a8; }
-			notebook > header tab:checked, stackswitcher button:checked { box-shadow: inset 0 -2px #f0e3a8; }
-			entry, combobox button, dropdown button, button.combo { background-color: #0c2a3d; }
-			button:not(.flat):not(.suggested-action):not(.destructive-action) { background-color: #0c2a3d; background-image: none; color: #e3e8e1; border-color: #13384e; }
-			button:not(.flat):hover { background-color: #13384e; }
-		'';
+		# colours: gtk3/gtk4 extraCss come from theme/whisper.nix
 	};
 	dconf.settings."org/gnome/desktop/interface" = {
 		color-scheme = "prefer-dark";
@@ -122,10 +72,7 @@
 			add_newline = true;
 			format = "$directory$git_branch$git_status$nix_shell$cmd_duration$line_break$character";
 			palette = "whisper";
-			palettes.whisper = {
-				lamp = "#f0e3a8"; teal = "#7fc3c6"; blue = "#6d9fd1";
-				subtext = "#9fb5bd"; red = "#e0786c"; mustard = "#e3b35c";
-			};
+			# palettes.whisper comes from theme/whisper.nix
 			directory = {
 				format = "[󰖔 ](lamp)[$path]($style)[$read_only]($read_only_style) ";
 				style = "bold teal";
@@ -191,50 +138,7 @@
 			rounded_corners = true;
 			vim_keys = true;
 		};
-		themes.whisper = ''
-			theme[main_bg]="#071a28"
-			theme[main_fg]="#e3e8e1"
-			theme[title]="#f0e3a8"
-			theme[hi_fg]="#7fc3c6"
-			theme[selected_bg]="#13384e"
-			theme[selected_fg]="#f0e3a8"
-			theme[inactive_fg]="#3f6e74"
-			theme[graph_text]="#9fb5bd"
-			theme[meter_bg]="#0c2a3d"
-			theme[proc_misc]="#7fc3c6"
-			theme[cpu_box]="#3f6e74"
-			theme[mem_box]="#3f6e74"
-			theme[net_box]="#3f6e74"
-			theme[proc_box]="#3f6e74"
-			theme[div_line]="#13384e"
-			theme[temp_start]="#7fc3c6"
-			theme[temp_mid]="#f0e3a8"
-			theme[temp_end]="#e0786c"
-			theme[cpu_start]="#7fc3c6"
-			theme[cpu_mid]="#f0e3a8"
-			theme[cpu_end]="#e0786c"
-			theme[free_start]="#8fbf9a"
-			theme[free_mid]="#7fc3c6"
-			theme[free_end]="#6d9fd1"
-			theme[cached_start]="#6d9fd1"
-			theme[cached_mid]="#7fc3c6"
-			theme[cached_end]="#a6dcdc"
-			theme[available_start]="#f0e3a8"
-			theme[available_mid]="#e3b35c"
-			theme[available_end]="#e0786c"
-			theme[used_start]="#7fc3c6"
-			theme[used_mid]="#f0e3a8"
-			theme[used_end]="#e0786c"
-			theme[download_start]="#6d9fd1"
-			theme[download_mid]="#7fc3c6"
-			theme[download_end]="#f0e3a8"
-			theme[upload_start]="#8fbf9a"
-			theme[upload_mid]="#f0e3a8"
-			theme[upload_end]="#e3b35c"
-			theme[process_start]="#7fc3c6"
-			theme[process_mid]="#f0e3a8"
-			theme[process_end]="#e0786c"
-		'';
+		# themes.whisper comes from theme/whisper.nix
 	};
 
 	# VS Code starter settings in the whisper palette. Copied only if missing, so

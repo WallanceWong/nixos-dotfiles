@@ -1,16 +1,18 @@
+@import url("whisper-colors.css");   /* generated from theme/palette.json */
+
 /* whisper — new tab / home page background */
 @-moz-document url("about:newtab"), url("about:home"), url("about:blank") {
   body, html {
-    background-color: #071a28 !important;
-    color: #e3e8e1 !important;
+    background-color: var(--w-base) !important;
+    color: var(--w-text) !important;
   }
   .search-handoff-button, .search-inner-wrapper input, .fake-textbox,
   .top-site-outer .tile, .top-site-outer .top-site-icon {
-    background-color: #0c2a3d !important;
-    border: 1px solid #13384e !important;
+    background-color: var(--w-surface0) !important;
+    border: 1px solid var(--w-surface1) !important;
     border-radius: 14px !important;
-    color: #e3e8e1 !important;
+    color: var(--w-text) !important;
     box-shadow: none !important;
   }
-  .top-site-outer .title, .top-site-outer .sponsored-label { color: #9fb5bd !important; }
+  .top-site-outer .title, .top-site-outer .sponsored-label { color: var(--w-subtext) !important; }
 }

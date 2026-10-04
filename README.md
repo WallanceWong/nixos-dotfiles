@@ -1,23 +1,24 @@
-# NixOS + Hyprland Dotfiles
+# NixOS + Hyprland Dotfiles — whisper
 
-Rice setup for Wallance's ThinkPad E14 Gen 7, running NixOS with Hyprland,
-Home Manager, and **whisper** — a hand-picked palette taken from the wallpaper
-(a starry night over the city lights: night-sky navy, moonlight text,
-streetlamp cream and city-glow teal).
+Rice for Wallance's ThinkPad E14 Gen 7: NixOS, Hyprland and Home Manager, with
+**whisper-shell**, a desktop built in [Quickshell](https://quickshell.org) around
+the wallpaper — a starry night over the city lights from *Whisper of the Heart*.
+The painting is alive: its own stars twinkle, the city shimmers, the streetlamps
+breathe, fireflies drift and a shooting star crosses now and then.
 
 ## Structure
 
-- `flake.nix`, `configuration.nix`, `home.nix` — NixOS system config; `home.nix` also holds the GTK tint, cursor, icons, starship, fastfetch, btop and eza
+- `flake.nix`, `configuration.nix`, `home.nix` — the NixOS system and the user config
 - `hardware-configuration.nix` — hardware scan for this ThinkPad (machine-specific; replace it on other machines)
-- `config/hypr/colors.conf` — the whisper palette, sourced by Hyprland and hyprlock
-- `config/hypr/` — Hyprland, hyprpaper (wallpaper), hyprlock (lock screen), hypridle (idle), `screenshot.sh`, `osd.sh` (volume/brightness popups)
-- `config/waybar/` — floating bar; workspaces are stars
-- `config/rofi/` — launcher (also used for the window switcher and clipboard history)
-- `config/kitty/` — terminal; `whisper.conf` is the 16-colour palette
-- `config/mako/` — notifications and the OSD popup style
-- `config/wlogout/` — power menu, with lamp-coloured icons
-- `config/firefox/` — `userChrome.css` / `userContent.css` + `user.js`, linked into the Firefox profile (restart Firefox to see them)
-- `config/vscode/` — starter VS Code settings; copied into place only if VS Code has none yet, so they stay editable
+- `theme/palette.json` — **the one palette**. Every colour on the desktop comes from here
+- `theme/whisper.nix` — generates each program's colours from the palette (Hyprland, hyprlock, kitty, GTK, Firefox, btop, starship, nano, satty, fcitx5, the TTY) and starts whisper-shell
+- `theme/scene.json` — where the stars, city lights, lamps and windows are in the painting (for the living wallpaper)
+- `config/quickshell/` — **whisper-shell**: `shell.qml`, `modules/` (wallpaper, bar, panels…), `services/` (audio, notifications…), `components/`, `assets/` (glows, sounds)
+- `config/hypr/` — Hyprland, hyprlock (lock screen), hypridle (idle), hyprpaper, `screenshot.sh`, `annotate.sh`, `picker.sh`
+- `config/kitty/` — terminal settings (colours are generated)
+- `config/firefox/` — `userChrome.css` / `userContent.css` + `user.js`, linked into the Firefox profile
+- `config/vscode/` — starter VS Code settings; copied only if VS Code has none yet
+- `config/waybar/`, `config/mako/`, `config/rofi/`, `config/wlogout/` — the previous setup, kept as a fallback (Super + Ctrl + B)
 - `wallpapers/wall.jpg` — the wallpaper
 - `docs/encrypted-reinstall.md` — reinstalling with full-disk encryption, then Secure Boot
 
@@ -26,65 +27,80 @@ streetlamp cream and city-glow teal).
 | Keys | Action |
 | --- | --- |
 | Super + Q | Terminal (kitty) |
-| Super + Space, Super + R | App launcher (rofi) |
+| Super + Space, Super + R | Launcher — apps; type `=` for a calculator |
 | Super + W | Switch to an open window |
+| Super + Shift + V | Clipboard history |
+| Super + . | Emoji picker (copies the emoji) |
+| Super + Tab, 3-finger swipe up | Overview of all workspaces with live window previews (drag windows between them) |
+| Super + N | Control centre (Wi-Fi, Bluetooth, volume, brightness, toggles, notifications) |
+| Super + Shift + N | Do not disturb on/off |
+| Super + D | Dashboard (calendar, music, system) |
+| Super + G | Game mode on/off |
+| Super + Escape | Power menu (lock, sleep, log out, restart, shut down) |
+| Super + L | Lock screen |
 | Super + E | File manager (thunar) |
 | Super + C | Close window |
 | Super + F | Fullscreen |
 | Super + V | Toggle floating |
 | Super + J | Flip the split direction |
-| Super + Shift + V | Clipboard history |
-| Super + N / Super + Shift + N | Bring back the last notification / dismiss all |
-| Super + L | Lock screen |
-| Super + Escape | Power menu (lock, log out, sleep, restart, shut down) |
+| Super + ` (backtick) | Drop-down scratch terminal |
 | Super + M | Log out (exit Hyprland) |
 | Super + arrows / Super + Shift + arrows | Move focus / move window |
 | Super + 1–5 / Super + Shift + 1–5 | Switch to / move window to workspace |
-| Super + Tab, Super + scroll | Previous workspace, scroll through workspaces |
-| Super + ` (backtick) | Drop-down scratch terminal |
-| 3-finger swipe | Switch workspace |
+| Super + Shift + Tab, Super + scroll | Previous workspace, scroll through workspaces |
+| 3-finger swipe left/right | Switch workspace |
 | PrtSc | Screenshot full screen |
 | Shift + PrtSc, Super + Shift + S | Screenshot a region |
+| Super + Shift + A | Screenshot a region and draw on it (Enter copies, Ctrl+S saves) |
+| Super + Shift + R / Super + Alt + R | Record a region / the whole screen (same key stops) |
+| Super + Shift + C | Colour picker (copies the hex code) |
+| Ctrl + Space | Switch typing between English and Chinese (pinyin) |
 | Volume / mute / mic-mute / brightness keys | Work as labelled, with a popup |
 | Play/pause, next, previous keys | Control the current media player |
+| Super + Ctrl + R | Restart whisper-shell |
+| Super + Ctrl + B | Rescue: stop whisper-shell and start the old waybar setup |
 
-Screenshots are saved to `~/Pictures/Screenshots/` and copied to the clipboard.
-In the bar: click the moon for the launcher, hover the clock for a calendar
-(click it for the full date), volume for the mixer, Wi-Fi for
-`nmtui`, Bluetooth for the Bluetooth manager, and the power icon for the power menu.
+Screenshots go to `~/Pictures/Screenshots/`, recordings to `~/Videos/Recordings/`.
+In the bar: the moon opens the launcher, the stars are your workspaces (the lit
+one is where you are), the clock opens the dashboard, and the status pill
+(中/EN, Wi-Fi, Bluetooth, volume, battery) opens the control centre. A small lamp
+dot on it means unread notifications.
+
+## Typing Chinese
+
+fcitx5 with pinyin starts at login. Press **Ctrl + Space** to switch between
+English and Chinese — the bar shows **EN** or **中**. Type pinyin, pick with the
+number keys or Space; `-`/`=` page through candidates.
+
+## Game mode
+
+Roblox (Sober) always runs without blur, animations or shadows, and may tear
+for lower input lag. Notifications don't pop up over fullscreen games (they wait
+in the control centre). **Super + G** turns on full game mode: every effect,
+gap and animation off and Do Not Disturb on; press it again to restore.
 
 ## What runs at login
 
 Getty autologins on tty1 and `.bash_profile` starts Hyprland, which then:
 
-- starts hyprpaper, waybar, mako, the clipboard watcher and the polkit agent
-- starts `hyprland-session.target`, which activates `graphical-session.target`
-  (required by xdg-desktop-portal and hypridle's user service)
+- starts the clipboard watcher and fcitx5
+- starts `hyprland-session.target`, which activates `graphical-session.target` —
+  that starts **whisper-shell** (systemd user service), xdg-desktop-portal and hypridle
 - runs hyprlock once — autologin skips the password, and unlocking also unlocks
   the gnome-keyring login keyring (its password must match the login password)
 
-hypridle dims the screen after 4½ minutes idle, locks at 5 minutes (and before sleep), and turns the screen off 30s later.
+hypridle dims the screen after 4½ minutes idle, locks at 5 minutes (and before
+sleep), and turns the screen off 30s later. whisper-shell is also the
+notification daemon and the polkit (admin password) agent.
 
-## How the color scheme works
+## Changing colours and the shell
 
-The palette was sampled from `wallpapers/wall.jpg` and tuned by hand (pywal's
-automatic colours came out muddy for this image). It lives in each program's
-own format, so changing a colour means editing these files:
-
-| Colour | Hex | Used for |
-| --- | --- | --- |
-| night | `#071a28` | backgrounds |
-| sky / horizon | `#0c2a3d` `#13384e` `#1d4a60` | surfaces, selections |
-| city glow | `#3f6e74` | muted accents, inactive items |
-| moonlight | `#e3e8e1` | text |
-| streetlamp | `#f0e3a8` | main accent: borders, clock, highlights |
-| city lights | `#7fc3c6` | second accent |
-| denim / shirt / skirt / bushes | `#6d9fd1` `#e0786c` `#e3b35c` `#8fbf9a` | small details, terminal colours |
-
-Files: `config/hypr/colors.conf`, `config/waybar/style.css`, `config/rofi/config.rasi`,
-`config/kitty/whisper.conf`, `config/mako/config`, `config/wlogout/style.css`,
-`config/firefox/chrome/*.css`, `config/vscode/settings.json`, the GTK
-CSS and btop theme in `home.nix`, and `console.colors` in `configuration.nix`.
+- Colours: edit `theme/palette.json`. whisper-shell picks it up immediately;
+  everything else on the next rebuild.
+- The shell: `~/.config/quickshell` links straight to `config/quickshell/`, and
+  Quickshell reloads itself when a file is saved — no rebuild needed. Its log:
+  `journalctl --user -u whisper-shell -f`.
+- Soft UI sounds can be turned off in the control centre (Sounds tile).
 
 ## Power and maintenance
 

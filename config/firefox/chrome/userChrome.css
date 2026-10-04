@@ -1,17 +1,9 @@
+@import url("whisper-colors.css");   /* generated from theme/palette.json */
+
 /* whisper — Firefox toolbars and tabs in the night-sky palette.
    Needs toolkit.legacyUserProfileCustomizations.stylesheets (see user.js). */
 
 :root {
-  --w-base:     #071a28;
-  --w-mantle:   #05131e;
-  --w-surface0: #0c2a3d;
-  --w-surface1: #13384e;
-  --w-overlay:  #3f6e74;
-  --w-subtext:  #9fb5bd;
-  --w-text:     #e3e8e1;
-  --w-lamp:     #f0e3a8;
-  --w-teal:     #7fc3c6;
-
   --toolbox-bgcolor: var(--w-base) !important;
   --toolbox-bgcolor-inactive: var(--w-base) !important;
   --toolbox-textcolor: var(--w-text) !important;

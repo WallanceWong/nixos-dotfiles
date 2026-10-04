@@ -1,0 +1,28 @@
+{
+  "_comment": "whisper — the one palette. Sampled from wallpapers/wall.jpg (night sky, city lights, streetlamp). Edit here; the shell reads it live, everything else picks it up on rebuild.",
+
+  "crust":    "#030b12",
+  "mantle":   "#05131e",
+  "base":     "#071a28",
+  "sunken":   "#0a2233",
+  "surface0": "#0c2a3d",
+  "surface1": "#13384e",
+  "surface2": "#1d4a60",
+  "overlay":  "#3f6e74",
+  "subtext":  "#9fb5bd",
+  "text":     "#e3e8e1",
+
+  "lamp":     "#f0e3a8",
+  "lampDim":  "#c9b979",
+  "teal":     "#7fc3c6",
+  "blue":     "#6d9fd1",
+  "red":      "#e0786c",
+  "mustard":  "#e3b35c",
+  "green":    "#8fbf9a",
+  "violet":   "#b69ad6",
+
+  "terminal": [
+    "#0c2a3d", "#e0786c", "#8fbf9a", "#e3b35c", "#6d9fd1", "#b69ad6", "#7fc3c6", "#c5d0cc",
+    "#3f6e74", "#f0998f", "#aad6b3", "#f0e3a8", "#93bde6", "#cdb7e6", "#a6dcdc", "#eef1ea"
+  ]
+}

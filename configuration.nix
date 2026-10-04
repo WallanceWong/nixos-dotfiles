@@ -1,5 +1,10 @@
 {config, lib, pkgs, ...}:
 
+let
+  # the one palette (see theme/palette.json)
+  palette = builtins.fromJSON (builtins.readFile ./theme/palette.json);
+  hex = c: lib.removePrefix "#" c;
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -21,11 +26,8 @@
 
   time.timeZone = "Asia/Kuching";
 
-  # whisper palette for the text consoles (TTYs)
-  console.colors = [
-    "071a28" "e0786c" "8fbf9a" "e3b35c" "6d9fd1" "b69ad6" "7fc3c6" "c5d0cc"
-    "3f6e74" "f0998f" "aad6b3" "f0e3a8" "93bde6" "cdb7e6" "a6dcdc" "eef1ea"
-  ];
+  # whisper palette for the text consoles (TTYs); colour 0 is the background
+  console.colors = [ (hex palette.base) ] ++ map hex (lib.drop 1 palette.terminal);
   services.getty.autologinUser = "Wallance";
 
   programs.hyprland = {
@@ -77,7 +79,47 @@
      libnotify
      hypridle
      hyprpolkitagent
+     # whisper-shell (the desktop) and its tools
+     quickshell
+     satty          # draw on screenshots
+     hyprpicker     # colour picker
    ];
+
+  # screen recording with the GPU encoder, without a permission prompt each time
+  programs.gpu-screen-recorder.enable = true;
+
+  # Chinese input: fcitx5 with pinyin (Ctrl+Space switches English / 中文)
+  i18n.inputMethod = {
+    enable = true;
+    type = "fcitx5";
+    fcitx5 = {
+      waylandFrontend = true;
+      addons = with pkgs; [ qt6Packages.fcitx5-chinese-addons fcitx5-gtk ];
+      settings.inputMethod = {
+        GroupOrder."0" = "Default";
+        "Groups/0" = {
+          Name = "Default";
+          "Default Layout" = "us";
+          DefaultIM = "pinyin";
+        };
+        "Groups/0/Items/0".Name = "keyboard-us";
+        "Groups/0/Items/1".Name = "pinyin";
+      };
+      settings.addons = {
+        classicui.globalSection = {
+          Theme = "whisper";
+          DarkTheme = "whisper";
+          Font = "Nunito 12";
+          MenuFont = "Nunito 11";
+          "Vertical Candidate List" = "False";
+        };
+        pinyin.globalSection = {
+          PageSize = 7;
+          CloudPinyinEnabled = "False";
+        };
+      };
+    };
+  };
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "claude-code"
@@ -97,8 +139,13 @@
   hardware.graphics.extraPackages = [ pkgs.intel-media-driver ];
   hardware.graphics.enable32Bit = true;
   
-  # waybar, rofi and kitty are configured for this font
-  fonts.packages = [ pkgs.nerd-fonts.jetbrains-mono ];
+  fonts.packages = with pkgs; [
+    nerd-fonts.jetbrains-mono   # terminal, bar numbers
+    nunito                      # whisper-shell text
+    material-symbols            # whisper-shell icons
+    noto-fonts-cjk-sans         # Chinese / Japanese text
+    noto-fonts-cjk-serif        # the vertical Japanese date in the sky
+  ];
 
   # needed by home-manager dconf settings (dark mode)
   programs.dconf.enable = true;
