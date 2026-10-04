@@ -21,7 +21,7 @@ Singleton {
     }
 
     function start(target) {
-        const stamp = new Date().toISOString().replace(/[:T]/g, "-").slice(0, 19);
+        const stamp = Qt.formatDateTime(new Date(), "yyyy-MM-dd_HH-mm-ss");   // local time
         lastFile = dir + "/rec-" + stamp + ".mp4";
         rec.command = ["sh", "-c", 'mkdir -p "$1" && shift && exec gpu-screen-recorder "$@"', "sh", dir]
             .concat(target).concat(["-f", "60", "-a", "default_output", "-o", lastFile]);
