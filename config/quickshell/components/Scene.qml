@@ -48,8 +48,8 @@ Item {
         level = p > level ? level + (p - level) * 0.6 : level * 0.86;
     }
 
-    // how visible the stars are right now (they fade a little in daylight)
-    readonly property real starVis: Settings.skyClock ? 1 - Astro.day * 0.7 - Astro.twilight * 0.25 : 1
+    // how visible the stars are right now (a little less at dusk)
+    readonly property real starVis: Settings.skyClock ? 1 - Astro.twilight * 0.2 : 1
 
     // ═════════════════════ sky layer ═════════════════════
     Item {
@@ -199,7 +199,8 @@ Item {
     }
 
     // ── time of night, over the whole world (under the lights) ──
-    // deepest after midnight, a warm edge at twilight, haze by day
+    // the painting is a night: never lighter than it, a little deeper after
+    // midnight, a faint warm edge at dusk and dawn
     Rectangle {
         anchors.fill: parent
         visible: Settings.skyClock
@@ -218,18 +219,12 @@ Item {
             GradientStop { position: 1.0; color: "transparent" }
         }
     }
-    Rectangle {
-        anchors.fill: parent
-        visible: Settings.skyClock && Astro.day > 0
-        color: Theme.teal
-        opacity: Astro.day * 0.14
-    }
 
     // the city's glow on the haze, brightening with the music
     Rectangle {
         x: 0; width: parent.width
         y: scene.my(1640); height: scene.my(2330) - scene.my(1640)
-        opacity: 0.08 + scene.level * 0.5
+        opacity: scene.level * 0.5
         gradient: Gradient {
             GradientStop { position: 0.0; color: "transparent" }
             GradientStop { position: 0.63; color: Qt.alpha(Theme.teal, 0.8) }

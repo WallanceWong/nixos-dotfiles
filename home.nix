@@ -154,10 +154,12 @@
 		fi
 	'';
 
-	# mpv with hardware decoding (intel-media-driver)
+	# mpv with hardware decoding (intel-media-driver). Audio goes through
+	# pipewire-pulse: with rtkit on, mpv's native PipeWire output gets a realtime
+	# thread that overruns its time limit and the kernel kills mpv.
 	programs.mpv = {
 		enable = true;
-		config.hwdec = "auto-safe";
+		config = { hwdec = "auto-safe"; ao = "pulse"; };
 	};
 
 	xdg.mimeApps = {

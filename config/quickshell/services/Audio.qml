@@ -16,10 +16,12 @@ Singleton {
     readonly property real micVolume: source?.audio?.volume ?? 0
     readonly property bool micMuted: source?.audio?.muted ?? false
 
-    // application streams, for the per-app mixer
-    readonly property var streams: Pipewire.nodes.values.filter(n => n.isStream && n.audio && !n.isSink && n.properties["media.class"] === "Stream/Output/Audio")
+    // application streams, for the per-app mixer. A node's properties only fill
+    // in once it is tracked, so track every stream first, then filter.
+    readonly property var allStreams: Pipewire.nodes.values.filter(n => n.isStream)
+    readonly property var streams: allStreams.filter(n => n.audio && n.properties["media.class"] === "Stream/Output/Audio")
 
-    PwObjectTracker { objects: [root.sink, root.source].concat(root.streams) }
+    PwObjectTracker { objects: [root.sink, root.source].concat(root.allStreams) }
 
     readonly property string icon: muted || volume < 0.005 ? "volume_off"
                                  : volume < 0.34 ? "volume_mute"

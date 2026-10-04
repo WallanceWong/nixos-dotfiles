@@ -87,7 +87,7 @@ PanelWindow {
                 columnSpacing: 10
                 rowSpacing: 10
                 Tile { Layout.fillWidth: true; icon: "music_note"; title: "Interface sounds"; subtitle: "soft ticks and chimes"; active: Settings.sounds; onToggled: Settings.sounds = !Settings.sounds }
-                Tile { Layout.fillWidth: true; icon: "nights_stay"; title: "Night ambience"; subtitle: Ambience.playing ? "crickets and the far-off city" : Settings.ambience ? "waits for an empty desktop" : "crickets, very quietly"; active: Settings.ambience; onToggled: Settings.ambience = !Settings.ambience }
+                Tile { Layout.fillWidth: true; icon: "nights_stay"; title: "Night ambience"; subtitle: Ambience.playing ? "crickets and the far-off city" : Settings.ambience ? "waits for silence" : "crickets, very quietly"; active: Settings.ambience; onToggled: Settings.ambience = !Settings.ambience }
             }
             Slider {
                 Layout.fillWidth: true
