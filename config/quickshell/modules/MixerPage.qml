@@ -30,7 +30,7 @@ ColumnLayout {
                 spacing: 8
                 IconImage {
                     implicitSize: 18
-                    source: Quickshell.iconPath(app.node.properties["application.icon-name"] ?? (DesktopEntries.heuristicLookup(app.name)?.icon ?? "audio-x-generic"), "audio-x-generic")
+                    source: Theme.icon(app.node.properties["application.icon-name"] ?? (DesktopEntries.heuristicLookup(app.name)?.icon ?? "audio-x-generic"), "audio-x-generic")
                 }
                 Label { Layout.fillWidth: true; text: app.name; font.pixelSize: 12 }
             }

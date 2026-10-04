@@ -14,10 +14,9 @@ Singleton {
 
     function iconFor(n) {
         if (n.image) return n.image;
-        if (n.appIcon) return n.appIcon.startsWith("/") || n.appIcon.startsWith("file:") ? n.appIcon
-                                                     : Quickshell.iconPath(n.appIcon, "dialog-information");
+        if (n.appIcon) return Theme.icon(n.appIcon, "dialog-information");
         const entry = DesktopEntries.heuristicLookup(n.desktopEntry || n.appName);
-        return Quickshell.iconPath(entry?.icon ?? "dialog-information", "dialog-information");
+        return Theme.icon(entry?.icon ?? "dialog-information", "dialog-information");
     }
 
     function clearHistory() { history.clear(); unread = 0; }
@@ -38,7 +37,7 @@ Singleton {
                 appName: n.appName || "notification",
                 summary: n.summary,
                 body: n.body,
-                icon: n.appIcon ? Quickshell.iconPath(n.appIcon, "dialog-information") : root.iconFor(n),
+                icon: n.appIcon ? Theme.icon(n.appIcon, "dialog-information") : root.iconFor(n),
                 time: Date.now()
             });
             if (root.history.count > 60) root.history.remove(60, root.history.count - 60);

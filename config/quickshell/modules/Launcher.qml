@@ -244,7 +244,7 @@ PanelWindow {
                             IconImage {
                                 anchors.fill: parent
                                 visible: !item.modelData.glyph && !item.modelData.emoji
-                                source: visible ? Quickshell.iconPath(item.modelData.icon ?? "", "application-x-executable") : ""
+                                source: visible ? Theme.icon(item.modelData.icon ?? "", "application-x-executable") : ""
                                 asynchronous: true
                             }
                             Icon { anchors.centerIn: parent; visible: !!item.modelData.glyph; icon: item.modelData.icon ?? ""; size: 22; color: Theme.teal }

@@ -144,7 +144,7 @@ PanelWindow {
                                         IconImage {
                                             anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 4 }
                                             implicitSize: Math.min(26, parent.height * 0.4)
-                                            source: Quickshell.iconPath(DesktopEntries.heuristicLookup(win.ipc?.class ?? "")?.icon ?? "application-x-executable", "application-x-executable")
+                                            source: Theme.icon(DesktopEntries.heuristicLookup(win.ipc?.class ?? "")?.icon ?? "application-x-executable", "application-x-executable")
                                         }
                                     }
                                     MouseArea {

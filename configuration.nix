@@ -16,6 +16,8 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.configurationLimit = 10;
+  # only root may read /boot (systemd-boot warns otherwise: its random seed lives there)
+  fileSystems."/boot".options = lib.mkForce [ "fmask=0077" "dmask=0077" ];
 
   networking.hostName = "nixos"; 
   networking.networkmanager.enable = true;
@@ -168,6 +170,8 @@ in
   services.fwupd.enable = true;
   services.power-profiles-daemon.enable = true;
   services.upower.enable = true;
+  # realtime scheduling for PipeWire: fewer audio crackles under load (games)
+  security.rtkit.enable = true;
 
   # Stop charging at 80% to extend battery lifespan (start must stay below end)
   systemd.services.battery-charge-threshold = {

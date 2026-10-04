@@ -59,4 +59,12 @@ Singleton {
     readonly property int normal: 260
     readonly property int slow: 420
     readonly property int easing: Easing.OutCubic
+
+    // icon by theme name ("firefox") or by file path ("/nix/store/…/kitty.png")
+    function icon(name, fallback) {
+        if (!name) return Quickshell.iconPath(fallback ?? "application-x-executable");
+        if (name.startsWith("/")) return "file://" + name;
+        if (name.startsWith("file:") || name.startsWith("image:")) return name;
+        return Quickshell.iconPath(name, fallback ?? "application-x-executable");
+    }
 }
