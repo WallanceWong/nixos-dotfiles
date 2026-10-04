@@ -37,6 +37,7 @@ Scope {
         function brightness(): void { Brightness.refresh(true); }
         function gamemode(): void { Desktop.setGameMode(!Settings.gameMode); }
         function lock(): void { Locker.lock(); }
+        function launch(id: string): void { const e = DesktopEntries.byId(id) ?? DesktopEntries.heuristicLookup(id); if (e) Desktop.launchEntry(e); }
         function locked(): bool { return Locker.locked; }
         // Feral GameMode hooks (programs.gamemode.settings.custom)
         function gamestart(): void { Automations.gameStarted(); }

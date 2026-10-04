@@ -94,7 +94,7 @@ PanelWindow {
                 const s = Math.max(fuzzy(q, a.name), fuzzy(q, a.genericName) * 0.8, fuzzy(q, Array.isArray(a.keywords) ? a.keywords.join(" ") : String(a.keywords ?? "")) * 0.6, fuzzy(q, a.id) * 0.5);
                 if (s < 0) continue;
                 out.push({ entry: a, score: s + Math.min(25, (counts[a.id] ?? 0) * 2.5), icon: a.icon, name: a.name, desc: a.comment || a.genericName || "",
-                           run: () => { Settings.bumpLaunch(a.id); a.execute(); } });
+                           run: () => { Settings.bumpLaunch(a.id); Desktop.launchEntry(a); } });
             }
             out.sort((x, y) => y.score - x.score || x.name.localeCompare(y.name));
             const v = q.length > 1 ? calc(q) : null;

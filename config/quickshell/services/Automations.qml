@@ -57,7 +57,7 @@ Singleton {
     property string board: ""           // e.g. "Arduino Uno · ttyACM0", "" when none
     property var known: []
 
-    function openBoardApp() { Quickshell.execDetached(["pictoblox"]); }
+    function openBoardApp() { Desktop.launch(["pictoblox"]); }
 
     // one line per port: "ttyUSB0|1a86|USB Serial"
     Process {
