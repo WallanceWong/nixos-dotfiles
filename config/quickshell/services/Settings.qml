@@ -22,6 +22,7 @@ Singleton {
     property alias corners: adapter.corners
     property alias batterySaver: adapter.batterySaver
     property alias autoGameMode: adapter.autoGameMode
+    property alias autoPower: adapter.autoPower
 
     // not persisted: game mode always starts off
     property bool gameMode: false
@@ -49,6 +50,7 @@ Singleton {
             property bool corners: true
             property bool batterySaver: true
             property bool autoGameMode: true
+            property bool autoPower: true
         }
     }
 

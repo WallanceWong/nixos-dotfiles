@@ -106,6 +106,7 @@ PanelWindow {
                 rowSpacing: 10
                 Tile { Layout.fillWidth: true; icon: "rounded_corner"; title: "Rounded screen"; subtitle: "soft corners on every monitor"; active: Settings.corners; onToggled: Settings.corners = !Settings.corners }
                 Tile { Layout.fillWidth: true; icon: "battery_saver"; title: "Battery saver"; subtitle: Automations.saving ? "on now — effects resting" : "below 20%, the night goes still"; active: Settings.batterySaver; onToggled: Settings.batterySaver = !Settings.batterySaver }
+                Tile { Layout.fillWidth: true; icon: "bolt"; title: "Charger-aware power"; subtitle: "performance plugged in, balanced on battery"; active: Settings.autoPower; onToggled: Settings.autoPower = !Settings.autoPower }
                 Tile { Layout.fillWidth: true; icon: "sports_esports"; title: "Auto game mode"; subtitle: "when a game asks for gamemode"; active: Settings.autoGameMode; onToggled: Settings.autoGameMode = !Settings.autoGameMode }
                 Tile { Layout.fillWidth: true; icon: "developer_board"; title: "Boards"; subtitle: Automations.board ? "plugged in: " + Automations.board : "Arduino / CH340 watcher"; active: Automations.board !== ""; onToggled: Automations.openBoardApp() }
             }

@@ -23,7 +23,7 @@ Singleton {
 
     readonly property bool shouldSave: Settings.batterySaver && onBattery && pct < (saving ? 0.25 : 0.2)
     onShouldSaveChanged: Qt.callLater(apply)
-    Component.onCompleted: Qt.callLater(apply)
+    Component.onCompleted: { Qt.callLater(apply); Qt.callLater(followCharger); }
 
     function apply() {
         if (shouldSave === saving) return;
@@ -38,6 +38,14 @@ Singleton {
             if (PowerProfiles.profile === PowerProfile.PowerSaver) PowerProfiles.profile = profileBefore;
             if (!Settings.gameMode) Quickshell.execDetached(["hyprctl", "reload"]);
         }
+    }
+
+    // ── charger-aware power: performance plugged in, balanced on battery ──
+    // (battery saver takes over below 20%)
+    onOnBatteryChanged: Qt.callLater(followCharger)
+    function followCharger() {
+        if (!Settings.autoPower || saving || !bat?.isLaptopBattery) return;
+        PowerProfiles.profile = onBattery ? PowerProfile.Balanced : PowerProfile.Performance;
     }
 
     // ── auto game mode ──

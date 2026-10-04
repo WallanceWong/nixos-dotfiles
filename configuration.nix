@@ -10,12 +10,15 @@ in
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./pictoblox.nix
+      ./performance.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.configurationLimit = 10;
+  # 1 s menu (was 5): hold Space while booting to stay in it and pick an older generation
+  boot.loader.timeout = 1;
   # only root may read /boot (systemd-boot warns otherwise: its random seed lives there)
   fileSystems."/boot".options = lib.mkForce [ "fmask=0077" "dmask=0077" ];
 
