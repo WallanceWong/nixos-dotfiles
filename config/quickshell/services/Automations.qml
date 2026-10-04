@@ -46,6 +46,10 @@ Singleton {
     function followCharger() {
         if (!Settings.autoPower || saving || !bat?.isLaptopBattery) return;
         PowerProfiles.profile = onBattery ? PowerProfile.Balanced : PowerProfile.Performance;
+        // the shimmering window border redraws the screen every frame (~2% CPU,
+        // and the GPU never idles): keep it on the charger, rest it on battery
+        if (!Settings.gameMode)
+            Quickshell.execDetached(["hyprctl", "keyword", "animation", onBattery ? "borderangle,0" : "borderangle,1,120,linear,loop"]);
     }
 
     // ── auto game mode ──

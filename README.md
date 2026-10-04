@@ -122,6 +122,30 @@ hypridle dims the screen after 4½ minutes idle, locks at 5 minutes (and before
 sleep), and turns the screen off 30s later. whisper-shell is also the
 notification daemon and the polkit (admin password) agent.
 
+## Performance
+
+`performance.nix` — every change here was measured on this laptop (Core Ultra 5
+225H, 16 GB, single RAM stick) before it was kept:
+
+- **More room in memory:** zram swap up to all of RAM (zstd), and the kernel is
+  told swapping to it is cheap — many more apps stay open before anything slows.
+- **No freezes when memory runs out:** earlyoom ends the single biggest process
+  (browser tabs first; never Hyprland, the shell, kitty or audio).
+- **Wi-Fi:** power saving is off on the charger (router round trip 7.2 → 2.2 ms,
+  jitter 3.8 → 0.3 ms) and on with battery; BBR for steadier transfers.
+- **Charger-aware:** whisper-shell switches Performance ↔ Balanced with the
+  charger, and rests the shimmering border on battery (it redraws every frame).
+- **Smaller things:** `noatime`, Firefox GPU video decoding and WebRender,
+  1 s boot menu, launcher apps in their own systemd scopes.
+
+Tried and dropped: sched_ext schedulers (the kernel's own was as good or better
+overall), thermald (refuses to run on ThinkPads with Lenovo's DYTC), capping the
+fast cores under load (+17% synthetic, nothing in real work).
+
+The real bottleneck is memory bandwidth: one 16 GB stick runs single-channel.
+**A second 16 GB DDR5-5600 SO-DIMM** (the second slot is empty) is the upgrade
+that would make the biggest difference — to everything, games included.
+
 ## Changing colours and the shell
 
 - Colours: edit `theme/palette.json`. whisper-shell picks it up immediately;
