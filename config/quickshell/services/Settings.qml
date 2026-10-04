@@ -10,6 +10,18 @@ Singleton {
     property alias sounds: adapter.sounds
     property alias dnd: adapter.dnd
     property alias launchCounts: adapter.launchCounts
+    // living scene
+    property alias parallax: adapter.parallax
+    property alias musicReactive: adapter.musicReactive
+    property alias moon: adapter.moon
+    property alias skyClock: adapter.skyClock
+    property alias meteors: adapter.meteors
+    property alias fireflies: adapter.fireflies
+    property alias ambience: adapter.ambience
+    property alias ambienceVolume: adapter.ambienceVolume
+    property alias corners: adapter.corners
+    property alias batterySaver: adapter.batterySaver
+    property alias autoGameMode: adapter.autoGameMode
 
     // not persisted: game mode always starts off
     property bool gameMode: false
@@ -26,6 +38,17 @@ Singleton {
             property bool sounds: true
             property bool dnd: false
             property var launchCounts: ({})
+            property bool parallax: true
+            property bool musicReactive: true
+            property bool moon: true
+            property bool skyClock: true
+            property bool meteors: true
+            property bool fireflies: true
+            property bool ambience: false
+            property real ambienceVolume: 0.35
+            property bool corners: true
+            property bool batterySaver: true
+            property bool autoGameMode: true
         }
     }
 
