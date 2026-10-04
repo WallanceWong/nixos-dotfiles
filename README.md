@@ -6,15 +6,22 @@ the wallpaper — a starry night over the city lights from *Whisper of the Heart
 The painting is alive: its own stars twinkle, the city shimmers, the streetlamps
 breathe, fireflies drift and a shooting star crosses now and then.
 
+It is also two layers deep: the sky drifts behind the foreground as you change
+workspace, carries **tonight's real moon** (its true phase), and is tinted by the
+**real time of day** over Kuching (worked out offline from the sun's position).
+The city lights and their glow on the haze follow whatever music is playing.
+Each of these can be switched off in **whisper settings** (Super + ,).
+
 ## Structure
 
 - `flake.nix`, `configuration.nix`, `home.nix` — the NixOS system and the user config
 - `hardware-configuration.nix` — hardware scan for this ThinkPad (machine-specific; replace it on other machines)
 - `theme/palette.json` — **the one palette**. Every colour on the desktop comes from here
-- `theme/whisper.nix` — generates each program's colours from the palette (Hyprland, hyprlock, kitty, GTK, Firefox, btop, starship, nano, satty, fcitx5, the TTY) and starts whisper-shell
+- `theme/whisper.nix` — generates each program's colours from the palette (Hyprland, hyprlock, kitty, GTK, Qt, Firefox, btop, starship, nano, satty, fcitx5, the TTY) and starts whisper-shell
 - `theme/scene.json` — where the stars, city lights, lamps and windows are in the painting (for the living wallpaper)
+- `wallpapers/layers/` — the painting split into `sky.jpg` and `foreground.png` (for the depth effect); stacked, they are the original
 - `config/quickshell/` — **whisper-shell**: `shell.qml`, `modules/` (wallpaper, bar, panels…), `services/` (audio, notifications…), `components/`, `assets/` (glows, sounds)
-- `config/hypr/` — Hyprland, hyprlock (lock screen), hypridle (idle), hyprpaper, `screenshot.sh`, `annotate.sh`, `picker.sh`
+- `config/hypr/` — Hyprland, hypridle (idle), `lock.sh` (locks with whisper-shell, hyprlock as the fallback), hyprlock, hyprpaper, `screenshot.sh`, `annotate.sh`, `picker.sh`
 - `config/kitty/` — terminal settings (colours are generated)
 - `config/firefox/` — `userChrome.css` / `userContent.css` + `user.js`, linked into the Firefox profile
 - `config/vscode/` — starter VS Code settings; copied only if VS Code has none yet
@@ -38,6 +45,8 @@ breathe, fireflies drift and a shooting star crosses now and then.
 | Super + G | Game mode on/off |
 | Super + Escape | Power menu (lock, sleep, log out, restart, shut down) |
 | Super + L | Lock screen |
+| Super + / | Every shortcut, searchable (read live from Hyprland) |
+| Super + , | whisper settings: depth, music, moon, sky clock, ambience, corners, automations |
 | Super + E | File manager (thunar) |
 | Super + C | Close window |
 | Super + F | Fullscreen |
@@ -78,6 +87,26 @@ Roblox (Sober) always runs without blur, animations or shadows, and may tear
 for lower input lag. Notifications don't pop up over fullscreen games (they wait
 in the control centre). **Super + G** turns on full game mode: every effect,
 gap and animation off and Do Not Disturb on; press it again to restore.
+With **auto game mode** (on by default), a game that asks Feral GameMode for
+help — Sober does — switches game mode on by itself, and off when it quits.
+
+## Lock screen
+
+whisper-shell draws the lock screen itself: the same living night, a lamp-lit
+clock, tonight's moon, now playing, battery and how many notifications came in.
+Just type — each letter is a firefly — and press Enter (Esc clears). It checks
+the password with PAM (the `hyprlock` service, so the keyring unlocks too). If
+the shell crashes while locked, systemd restarts it and it locks again; if the
+shell can't be reached at all, `lock.sh` falls back to hyprlock.
+
+## Automations
+
+- **Battery saver** — below 20% on battery the night goes still (no animation
+  or blur, power-saver profile) until you plug in.
+- **Boards** — plug in an Arduino or CH340 board and a note shows its port, with
+  a button that opens PictoBlox.
+- **Night ambience** (off by default) — crickets and the far-off city, very
+  quietly, only while the desktop is empty (or locked) and nothing else plays.
 
 ## What runs at login
 
@@ -86,8 +115,8 @@ Getty autologins on tty1 and `.bash_profile` starts Hyprland, which then:
 - starts the clipboard watcher and fcitx5
 - starts `hyprland-session.target`, which activates `graphical-session.target` —
   that starts **whisper-shell** (systemd user service), xdg-desktop-portal and hypridle
-- runs hyprlock once — autologin skips the password, and unlocking also unlocks
-  the gnome-keyring login keyring (its password must match the login password)
+- locks once (`lock.sh login`) — autologin skips the password, and unlocking also
+  unlocks the gnome-keyring login keyring (its password must match the login password)
 
 hypridle dims the screen after 4½ minutes idle, locks at 5 minutes (and before
 sleep), and turns the screen off 30s later. whisper-shell is also the

@@ -23,7 +23,7 @@ PanelWindow {
     onOpenChanged: if (open) { selected = 0; keys.forceActiveFocus(); }
 
     readonly property var actions: [
-        { icon: "lock", name: "Lock", key: "l", cmd: ["sh", "-c", "pidof hyprlock || hyprlock"] },
+        { icon: "lock", name: "Lock", key: "l", fn: () => Locker.lock() },
         { icon: "bedtime", name: "Sleep", key: "s", cmd: ["systemctl", "suspend"] },
         { icon: "logout", name: "Log out", key: "e", cmd: ["hyprctl", "dispatch", "exit"] },
         { icon: "restart_alt", name: "Restart", key: "r", cmd: ["systemctl", "reboot"] },
@@ -32,7 +32,7 @@ PanelWindow {
     function run(i) {
         const a = actions[i];
         Panels.close();
-        Quickshell.execDetached(a.cmd);
+        if (a.fn) a.fn(); else Quickshell.execDetached(a.cmd);
     }
 
     Rectangle {

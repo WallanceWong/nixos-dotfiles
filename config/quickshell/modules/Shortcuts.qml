@@ -23,6 +23,8 @@ Scope {
     Shortcut { name: "recordscreen"; description: "Record the whole screen"; onPressed: Recorder.toggle(false) }
     Shortcut { name: "brightness"; description: "Show brightness"; onPressed: brightnessDelay.restart() }
     Shortcut { name: "ime"; description: "Switch English / Chinese"; onPressed: Ime.toggle() }
+    Shortcut { name: "cheatsheet"; description: "Keyboard shortcuts"; onPressed: Panels.toggle("cheatsheet") }
+    Shortcut { name: "settings"; description: "whisper settings"; onPressed: Panels.toggle("settings") }
 
     // brightnessctl runs from the same key; read the new value a moment later
     Timer { id: brightnessDelay; interval: 90; onTriggered: Brightness.refresh(true) }
@@ -34,6 +36,11 @@ Scope {
         function close(): void { Panels.close(); }
         function brightness(): void { Brightness.refresh(true); }
         function gamemode(): void { Desktop.setGameMode(!Settings.gameMode); }
+        function lock(): void { Locker.lock(); }
+        function locked(): bool { return Locker.locked; }
+        // Feral GameMode hooks (programs.gamemode.settings.custom)
+        function gamestart(): void { Automations.gameStarted(); }
+        function gameend(): void { Automations.gameEnded(); }
         function notify(): void { Quickshell.execDetached(["notify-send", "-a", "whisper", "-i", "weather-clear-night", "a quiet night", "the city is still awake below"]); }
     }
 }

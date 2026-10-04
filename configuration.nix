@@ -133,8 +133,29 @@ in
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
-  # Feral GameMode; Sober (flatpak) requests it through the portal
-  programs.gamemode.enable = true;
+  # Feral GameMode; Sober (flatpak) requests it through the portal.
+  # Its hooks flip whisper-shell's game mode on and off (if auto game mode is on).
+  programs.gamemode = let
+    # gamemoded runs hooks without WAYLAND_DISPLAY, which qs needs to find the shell
+    hook = what: pkgs.writeShellScript "whisper-game${what}" ''
+      if [ -z "$WAYLAND_DISPLAY" ]; then
+        for s in "''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/wayland-*; do
+          case "$s" in *.lock) continue ;; esac
+          export WAYLAND_DISPLAY="''${s##*/}"; break
+        done
+      fi
+      exec /run/current-system/sw/bin/qs ipc call whisper game${what}
+    '';
+  in {
+    enable = true;
+    settings.custom = { start = "${hook "start"}"; end = "${hook "end"}"; };
+  };
+
+  # Qt apps follow the palette too (qt5ct/qt6ct; colours in theme/whisper.nix)
+  qt = {
+    enable = true;
+    platformTheme = "qt5ct";
+  };
 
   hardware.graphics.enable = true;
   # VA-API video decoding for Intel Arc (Firefox, mpv)
@@ -142,7 +163,8 @@ in
   hardware.graphics.enable32Bit = true;
   
   fonts.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono   # terminal, bar numbers
+    nerd-fonts.jetbrains-mono   # bar numbers, fallback mono
+    maple-mono.NF               # terminal (rounded, with Nerd Font icons)
     nunito                      # whisper-shell text
     material-symbols            # whisper-shell icons
     noto-fonts-cjk-sans         # Chinese / Japanese text

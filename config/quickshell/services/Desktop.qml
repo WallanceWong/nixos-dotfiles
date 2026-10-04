@@ -14,7 +14,7 @@ Singleton {
     readonly property bool fullscreen: !!Hyprland.activeToplevel?.wayland?.fullscreen
 
     // animate the living wallpaper only when nothing covers it
-    readonly property bool skyVisible: windowCount === 0 && !Settings.gameMode
+    readonly property bool skyVisible: windowCount === 0 && !Settings.gameMode && !Automations.saving
 
     property bool dndBeforeGame: false
 

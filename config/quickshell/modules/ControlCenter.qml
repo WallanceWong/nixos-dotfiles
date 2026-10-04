@@ -119,7 +119,7 @@ Scope {
                             Connections { target: root; function onOpenChanged() { if (root.open) uptimeFile.reload(); } }
                         }
                         IconButton { icon: "screenshot_region"; tooltip: "Screenshot"; onClicked: { Panels.close(); Quickshell.execDetached(["sh", "-c", "sleep 0.4; " + Theme.dots + "/config/hypr/screenshot.sh region"]); } }
-                        IconButton { icon: "lock"; onClicked: { Panels.close(); Quickshell.execDetached(["sh", "-c", "pidof hyprlock || hyprlock"]); } }
+                        IconButton { icon: "lock"; onClicked: Locker.lock() }
                         IconButton { icon: "power_settings_new"; iconColor: Theme.red; onClicked: Panels.show("power") }
                     }
 

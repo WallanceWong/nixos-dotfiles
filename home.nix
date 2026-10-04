@@ -44,7 +44,7 @@
 	# Dark theme for GTK apps and the portal (Firefox and libadwaita apps follow color-scheme)
 	gtk = {
 		enable = true;
-		theme = { name = "Adwaita-dark"; package = pkgs.gnome-themes-extra; };
+		theme = { name = "adw-gtk3-dark"; package = pkgs.adw-gtk3; };
 		iconTheme = { name = "Papirus-Dark"; package = pkgs.papirus-icon-theme.override { color = "teal"; }; };
 		# colours: gtk3/gtk4 extraCss come from theme/whisper.nix
 	};

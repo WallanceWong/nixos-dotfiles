@@ -22,6 +22,35 @@ let
     button:not(.flat):not(.suggested-action):not(.destructive-action) { background-color: ${p.surface0}; background-image: none; color: ${p.text}; border-color: ${p.surface1}; }
     button:not(.flat):hover { background-color: ${p.surface1}; }
   '';
+  # Qt palette rows, in qtct order:
+  # WindowText Button Light Midlight Dark Mid Text BrightText ButtonText
+  # Base Window Shadow Highlight HighlightedText Link LinkVisited AlternateBase
+  # NoRole ToolTipBase ToolTipText PlaceholderText Accent
+  qtRow = cs: lib.concatStringsSep ", " cs;
+  qtActive = [ p.text p.surface0 p.surface2 p.surface1 p.crust p.mantle p.text p.lamp p.text
+             p.sunken p.base p.crust p.overlay p.lamp p.teal p.violet p.surface0
+             p.base p.surface0 p.text p.overlay p.teal ];
+  qtDisabled = [ p.overlay p.surface0 p.surface1 p.surface0 p.crust p.mantle p.overlay p.overlay p.overlay
+               p.sunken p.base p.crust p.surface1 p.subtext p.overlay p.overlay p.surface0
+               p.base p.surface0 p.overlay p.surface2 p.overlay ];
+  qtScheme = ''
+    [ColorScheme]
+    active_colors=${qtRow qtActive}
+    disabled_colors=${qtRow qtDisabled}
+    inactive_colors=${qtRow qtActive}
+  '';
+  qtConf = ct: ''
+    [Appearance]
+    color_scheme_path=${config.xdg.configHome}/${ct}/colors/whisper.conf
+    custom_palette=true
+    icon_theme=Papirus-Dark
+    standard_dialogs=xdgdesktopportal
+    style=Fusion
+
+    [Fonts]
+    fixed="Maple Mono NF,10"
+    general="Nunito,10"
+  '';
 in
 {
   # ── the shell ───────────────────────────────────────────────────
@@ -109,6 +138,15 @@ in
 
   # ── GTK (Adwaita-dark, tinted into the night sky) ───────────────
   gtk.gtk3.extraCss = ''
+    @define-color window_bg_color ${p.base};
+    @define-color view_bg_color ${p.sunken};
+    @define-color headerbar_bg_color ${p.surface0};
+    @define-color sidebar_bg_color ${p.mantle};
+    @define-color card_bg_color ${p.surface0};
+    @define-color popover_bg_color ${p.surface0};
+    @define-color dialog_bg_color ${p.surface0};
+    @define-color accent_bg_color ${p.overlay};
+    @define-color accent_color ${p.teal};
     @define-color theme_bg_color ${p.base};
     @define-color theme_base_color ${p.sunken};
     @define-color theme_fg_color ${p.text};
@@ -237,6 +275,12 @@ in
     [color-palette]
     palette = ["${p.lamp}", "${p.teal}", "${p.red}", "${p.mustard}", "${p.green}", "${p.blue}", "${p.text}"]
   '';
+
+  # ── Qt (qt5ct / qt6ct, Fusion tinted into the night) ────────────
+  xdg.configFile."qt5ct/colors/whisper.conf".text = qtScheme;
+  xdg.configFile."qt6ct/colors/whisper.conf".text = qtScheme;
+  xdg.configFile."qt5ct/qt5ct.conf".text = qtConf "qt5ct";
+  xdg.configFile."qt6ct/qt6ct.conf".text = qtConf "qt6ct";
 
   # ── fcitx5 (Chinese input) candidate window ─────────────────────
   xdg.dataFile."fcitx5/themes/whisper/theme.conf".text = ''
