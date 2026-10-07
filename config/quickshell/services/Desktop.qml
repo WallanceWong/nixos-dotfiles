@@ -52,4 +52,15 @@ Singleton {
         saver = true;
     }
     function stopSaver() { saver = false; }
+
+    // When a monitor goes away (unplugged, or a test output removed), Qt can
+    // leave the remaining screens' surfaces blank — wallpaper and bar vanish.
+    // A quiet reload a moment later redraws everything.
+    property int lastScreens: Quickshell.screens.length
+    readonly property int screenCount: Quickshell.screens.length
+    onScreenCountChanged: {
+        if (screenCount < lastScreens) redraw.restart();
+        lastScreens = screenCount;
+    }
+    Timer { id: redraw; interval: 1500; onTriggered: Quickshell.reload(false) }
 }
