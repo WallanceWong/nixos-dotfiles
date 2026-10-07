@@ -43,4 +43,13 @@ Singleton {
     function launchEntry(e) {
         launch(e.runInTerminal ? ["kitty", "-e"].concat(e.command) : e.command, e.workingDirectory);
     }
+
+    // screensaver (modules/Screensaver.qml), started by hypridle
+    property bool saver: false
+    function startSaver() {
+        if (!Settings.screensaver || Locker.locked || Settings.gameMode || fullscreen) return;
+        Panels.close();
+        saver = true;
+    }
+    function stopSaver() { saver = false; }
 }

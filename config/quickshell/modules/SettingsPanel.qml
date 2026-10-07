@@ -104,6 +104,7 @@ PanelWindow {
                 columns: 2
                 columnSpacing: 10
                 rowSpacing: 10
+                Tile { Layout.fillWidth: true; icon: "nightlight"; title: "Screensaver"; subtitle: "the night fills the screen after 2 min idle"; active: Settings.screensaver; onToggled: Settings.screensaver = !Settings.screensaver }
                 Tile { Layout.fillWidth: true; icon: "rounded_corner"; title: "Rounded screen"; subtitle: "soft corners on every monitor"; active: Settings.corners; onToggled: Settings.corners = !Settings.corners }
                 Tile { Layout.fillWidth: true; icon: "battery_saver"; title: "Battery saver"; subtitle: Automations.saving ? "on now — effects resting" : "below 20%, the night goes still"; active: Settings.batterySaver; onToggled: Settings.batterySaver = !Settings.batterySaver }
                 Tile { Layout.fillWidth: true; icon: "bolt"; title: "Charger-aware power"; subtitle: "performance plugged in, balanced on battery"; active: Settings.autoPower; onToggled: Settings.autoPower = !Settings.autoPower }

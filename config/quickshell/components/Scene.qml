@@ -16,6 +16,7 @@ Item {
     property bool animate: false        // run the twinkles (only while visible)
     property real shift: 0               // sideways offset of the sky layer, in pixels
     readonly property real maxShift: 44
+    property real meteorRate: 1          // shooting stars per usual amount (the screensaver asks for more)
     property bool showDate: true
 
     FileView { id: sceneFile; path: Theme.dots + "/theme/scene.json"; blockLoading: true }
@@ -175,9 +176,9 @@ Item {
             Timer {
                 running: scene.animate && Settings.meteors
                 repeat: true
-                interval: 40000 + Math.random() * 70000
+                interval: (40000 + Math.random() * 70000) / scene.meteorRate
                 onTriggered: {
-                    interval = 40000 + Math.random() * 70000;
+                    interval = (40000 + Math.random() * 70000) / scene.meteorRate;
                     const b = scene.info.sky;
                     meteor.x = scene.mx(b[0] + Math.random() * (b[2] - b[0]) * 0.55) - meteor.width;
                     meteor.y = scene.my(b[1] + Math.random() * (b[3] - b[1]) * 0.45);

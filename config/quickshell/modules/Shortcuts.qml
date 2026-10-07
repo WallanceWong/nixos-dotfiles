@@ -9,22 +9,28 @@ import qs.services
 Scope {
     component Shortcut: GlobalShortcut { appid: "quickshell" }
 
-    Shortcut { name: "launcher"; description: "App launcher"; onPressed: Panels.launcher("apps") }
-    Shortcut { name: "clipboard"; description: "Clipboard history"; onPressed: Panels.launcher("clipboard") }
-    Shortcut { name: "emoji"; description: "Emoji picker"; onPressed: Panels.launcher("emoji") }
-    Shortcut { name: "windows"; description: "Window switcher"; onPressed: Panels.launcher("windows") }
-    Shortcut { name: "overview"; description: "Workspace overview"; onPressed: Panels.toggle("overview") }
-    Shortcut { name: "control"; description: "Control centre"; onPressed: Panels.toggle("control") }
-    Shortcut { name: "dashboard"; description: "Dashboard"; onPressed: Panels.toggle("dashboard") }
-    Shortcut { name: "power"; description: "Power menu"; onPressed: Panels.toggle("power") }
-    Shortcut { name: "gamemode"; description: "Toggle game mode"; onPressed: Desktop.setGameMode(!Settings.gameMode) }
-    Shortcut { name: "dnd"; description: "Toggle do not disturb"; onPressed: Settings.dnd = !Settings.dnd }
-    Shortcut { name: "record"; description: "Record a region"; onPressed: Recorder.toggle(true) }
-    Shortcut { name: "recordscreen"; description: "Record the whole screen"; onPressed: Recorder.toggle(false) }
-    Shortcut { name: "brightness"; description: "Show brightness"; onPressed: brightnessDelay.restart() }
-    Shortcut { name: "ime"; description: "Switch English / Chinese"; onPressed: Ime.toggle() }
-    Shortcut { name: "cheatsheet"; description: "Keyboard shortcuts"; onPressed: Panels.toggle("cheatsheet") }
-    Shortcut { name: "settings"; description: "whisper settings"; onPressed: Panels.toggle("settings") }
+    // global keys — not in a test instance (WHISPER_ONLY), so it never steals them
+    LazyLoader {
+        active: !Quickshell.env("WHISPER_ONLY")
+        Scope {
+            Shortcut { name: "launcher"; description: "App launcher"; onPressed: Panels.launcher("apps") }
+            Shortcut { name: "clipboard"; description: "Clipboard history"; onPressed: Panels.launcher("clipboard") }
+            Shortcut { name: "emoji"; description: "Emoji picker"; onPressed: Panels.launcher("emoji") }
+            Shortcut { name: "windows"; description: "Window switcher"; onPressed: Panels.launcher("windows") }
+            Shortcut { name: "overview"; description: "Workspace overview"; onPressed: Panels.toggle("overview") }
+            Shortcut { name: "control"; description: "Control centre"; onPressed: Panels.toggle("control") }
+            Shortcut { name: "dashboard"; description: "Dashboard"; onPressed: Panels.toggle("dashboard") }
+            Shortcut { name: "power"; description: "Power menu"; onPressed: Panels.toggle("power") }
+            Shortcut { name: "gamemode"; description: "Toggle game mode"; onPressed: Desktop.setGameMode(!Settings.gameMode) }
+            Shortcut { name: "dnd"; description: "Toggle do not disturb"; onPressed: Settings.dnd = !Settings.dnd }
+            Shortcut { name: "record"; description: "Record a region"; onPressed: Recorder.toggle(true) }
+            Shortcut { name: "recordscreen"; description: "Record the whole screen"; onPressed: Recorder.toggle(false) }
+            Shortcut { name: "brightness"; description: "Show brightness"; onPressed: brightnessDelay.restart() }
+            Shortcut { name: "ime"; description: "Switch English / Chinese"; onPressed: Ime.toggle() }
+            Shortcut { name: "cheatsheet"; description: "Keyboard shortcuts"; onPressed: Panels.toggle("cheatsheet") }
+            Shortcut { name: "settings"; description: "whisper settings"; onPressed: Panels.toggle("settings") }
+        }
+    }
 
     // brightnessctl runs from the same key; read the new value a moment later
     Timer { id: brightnessDelay; interval: 90; onTriggered: Brightness.refresh(true) }
@@ -37,6 +43,9 @@ Scope {
         function brightness(): void { Brightness.refresh(true); }
         function gamemode(): void { Desktop.setGameMode(!Settings.gameMode); }
         function lock(): void { Locker.lock(); }
+        // hypridle: screensaver after 2 minutes idle, wake on any input
+        function screensaver(): void { Desktop.startSaver(); }
+        function wake(): void { Desktop.stopSaver(); }
         function launch(id: string): void { const e = DesktopEntries.byId(id) ?? DesktopEntries.heuristicLookup(id); if (e) Desktop.launchEntry(e); }
         function locked(): bool { return Locker.locked; }
         // Feral GameMode hooks (programs.gamemode.settings.custom)

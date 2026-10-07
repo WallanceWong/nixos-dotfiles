@@ -16,6 +16,7 @@ ShellRoot {
     Overview {}
     PowerMenu {}
     PolkitDialog {}
+    Screensaver {}
     Lock {}
     Cheatsheet {}
     SettingsPanel {}

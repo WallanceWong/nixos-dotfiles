@@ -23,6 +23,7 @@ Singleton {
     property alias batterySaver: adapter.batterySaver
     property alias autoGameMode: adapter.autoGameMode
     property alias autoPower: adapter.autoPower
+    property alias screensaver: adapter.screensaver
 
     // not persisted: game mode always starts off
     property bool gameMode: false
@@ -51,6 +52,7 @@ Singleton {
             property bool batterySaver: true
             property bool autoGameMode: true
             property bool autoPower: true
+            property bool screensaver: true
         }
     }
 

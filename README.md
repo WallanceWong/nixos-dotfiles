@@ -122,6 +122,9 @@ Getty autologins on tty1 and `.bash_profile` starts Hyprland, which then:
 - locks once (`lock.sh login`) — autologin skips the password, and unlocking also
   unlocks the gnome-keyring login keyring (its password must match the login password)
 
+After 2 minutes idle the **screensaver** fills the screen with the night — a slow
+drift across the painting, more shooting stars, a clock that wanders so nothing
+burns in; any key, click or real mouse move ends it (switch it off in Super + ,).
 hypridle dims the screen after 4½ minutes idle, locks at 5 minutes (and before
 sleep), and turns the screen off 30s later. whisper-shell is also the
 notification daemon and the polkit (admin password) agent.
