@@ -153,6 +153,19 @@ The real bottleneck is memory bandwidth: one 16 GB stick runs single-channel.
 **A second 16 GB DDR5-5600 SO-DIMM** (the second slot is empty) is the upgrade
 that would make the biggest difference — to everything, games included.
 
+## Printing
+
+CUPS finds printers on the network (Avahi) and over USB (ipp-usb). Add one in
+**Print Settings**, and pick the **driverless / IPP Everywhere** model — not
+Gutenprint — for any recent printer, or jobs "complete" without printing. The
+home printer (HP DeskJet 2800, on Wi-Fi) was set up with:
+
+    sudo lpadmin -p HP-DeskJet-2800-series -E -m everywhere \
+      -v ipp://HP2C58B91CB072.local:631/ipp/print && sudo lpadmin -d HP-DeskJet-2800-series
+
+(Kept out of the Nix config on purpose: declaring it makes every boot fail
+when the printer is switched off.)
+
 ## Changing colours and the shell
 
 - Colours: edit `theme/palette.json`. whisper-shell picks it up immediately;

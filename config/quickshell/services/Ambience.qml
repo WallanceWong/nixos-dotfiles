@@ -19,10 +19,14 @@ Singleton {
     // background, a paused video): listen to each one, and count it as playing
     // only if it was audible in the last few seconds
     property double lastHeard: 0
-    readonly property bool othersAudible: heardRecently
+    readonly property bool othersAudible: heardRecently || unmeasurable
     property bool heardRecently: false
+    // the level meter can't read mono streams (Roblox's is one): count those as
+    // playing rather than let the crickets talk over them
+    readonly property var measurable: others.filter(n => (n.audio?.channels?.length ?? 0) >= 2)
+    readonly property bool unmeasurable: others.length > measurable.length
     Instantiator {
-        model: Settings.ambience ? root.others : []
+        model: Settings.ambience ? root.measurable : []
         delegate: PwNodePeakMonitor {
             required property var modelData
             node: modelData
