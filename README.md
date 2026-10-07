@@ -81,6 +81,10 @@ fcitx5 with pinyin starts at login. Press **Ctrl + Space** to switch between
 English and Chinese — the bar shows **EN** or **中**. Type pinyin, pick with the
 number keys or Space; `-`/`=` page through candidates.
 
+WeChat is the Flathub app (`flatpak install flathub com.tencent.WeChat`), with
+`flatpak override --env=XMODIFIERS=@im=fcitx com.tencent.WeChat` so pinyin works
+in it (it's an X11 app and talks to fcitx5 over XIM).
+
 ## Game mode
 
 Roblox (Sober) always runs without blur, animations or shadows, and may tear
