@@ -10,6 +10,9 @@
 		};
 	
 	outputs = {nixpkgs, home-manager, ...}: {
+		# nix develop ~/nixos-dotfiles#kernel  /  #osdev  (devshells.nix)
+		devShells.x86_64-linux = import ./devshells.nix nixpkgs.legacyPackages.x86_64-linux;
+
 		nixosConfigurations.hyprland-btw = nixpkgs.lib.nixosSystem {
 			system = "x86_64-linux";
 			modules = [

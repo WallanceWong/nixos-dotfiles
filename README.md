@@ -166,6 +166,40 @@ home printer (HP DeskJet 2800, on Wi-Fi) was set up with:
 (Kept out of the Nix config on purpose: declaring it makes every boot fail
 when the printer is switched off.)
 
+## OS and kernel development
+
+`dev.nix` (system) + `devshells.nix` (toolchains) + `pkgs/virtme-ng.nix`.
+
+**Always available:** gcc/make, gdb (all architectures), QEMU (all
+architectures, KVM), `vng`, clangd, bear, ccache (25 GB), cscope/ctags, nasm,
+strace/ltrace, perf (no sudo for your own processes), bpftrace, trace-cmd,
+xorriso/mtools, and man pages for syscalls/libc/POSIX (`man 2 mmap`).
+
+**Linux kernel** — `nix develop ~/nixos-dotfiles#kernel`:
+
+    git clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git ~/src/linux
+    cd ~/src/linux && nix develop ~/nixos-dotfiles#kernel
+    vng --kconfig                 # small config that boots in QEMU
+    make -j$(nproc) CC="ccache gcc"     # or LLVM=1 (clang); Rust: make LLVM=1 rustavailable
+    vng                           # boot it: your files, your shell, the new kernel
+    vng -- uname -r               # or just run one command in it
+    make compile_commands.json    # (scripts/clang-tools) so clangd in VS Code understands the tree
+
+Measured here: a `vng --kconfig` build of Linux 7.2.7 takes about 5 minutes and
+boots in under half a second. GDB: `vng --debug` then
+`gdb vmlinux -ex "target remote :1234"` (vmlinux-gdb.py helpers load for ~/src).
+
+**Your own OS** — `nix develop ~/nixos-dotfiles#osdev`: `x86_64-elf-gcc`,
+`i686-elf-gcc`, `riscv64-none-elf-gcc`, `aarch64-none-elf-gcc`, clang/lld
+(`--target=x86_64-elf`), nasm, Limine, GRUB (`grub-mkrescue`), and UEFI firmware
+for QEMU (`qemu-system-x86_64 -bios $OVMF`).
+
+**Per project:** `echo "use flake ~/nixos-dotfiles#kernel" > .envrc && direnv allow`
+— the shell loads whenever you `cd` in.
+
+**VS Code:** clangd, x86 assembly, linker scripts, Native Debug (GDB → QEMU),
+Nix IDE; C files use kernel style (tabs, 8 wide, rulers at 80/100).
+
 ## Changing colours and the shell
 
 - Colours: edit `theme/palette.json`. whisper-shell picks it up immediately;

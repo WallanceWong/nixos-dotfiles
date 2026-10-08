@@ -12,6 +12,7 @@ in
       ./pictoblox.nix
       ./performance.nix
       ./printing.nix
+      ./dev.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
