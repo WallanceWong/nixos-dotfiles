@@ -6,6 +6,9 @@
   services.printing = {
     enable = true;
     drivers = [ pkgs.gutenprint ];
+    # no cups-browsed: it adds a second, automatic queue for every network
+    # printer next to the one set up in Print Settings (the HP showed twice)
+    browsed.enable = false;
   };
   services.avahi = {
     enable = true;
