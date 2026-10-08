@@ -40,6 +40,7 @@
     nasm
     strace ltrace
     xorriso mtools dosfstools         # bootable ISOs / FAT images for your OS
+    cdrkit                            # genisoimage (GRUB Legacy / El Torito tutorials)
     file xxd hexyl
   ];
 
