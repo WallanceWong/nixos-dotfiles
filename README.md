@@ -186,8 +186,9 @@ xorriso/mtools, and man pages for syscalls/libc/POSIX (`man 2 mmap`).
     make compile_commands.json    # (scripts/clang-tools) so clangd in VS Code understands the tree
 
 Measured here: a `vng --kconfig` build of Linux 7.2.7 takes about 5 minutes and
-boots in under half a second. GDB: `vng --debug` then
-`gdb vmlinux -ex "target remote :1234"` (vmlinux-gdb.py helpers load for ~/src).
+boots in under half a second. GDB: start it with `vng --debug`, then run
+`vng --gdb` in a second terminal (the kernel's vmlinux-gdb.py helpers load for
+anything under ~/src).
 
 **Your own OS** — `nix develop ~/nixos-dotfiles#osdev`: `x86_64-elf-gcc`,
 `i686-elf-gcc`, `riscv64-none-elf-gcc`, `aarch64-none-elf-gcc`, clang/lld
