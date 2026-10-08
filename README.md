@@ -194,6 +194,14 @@ anything under ~/src).
 `i686-elf-gcc`, `riscv64-none-elf-gcc`, `aarch64-none-elf-gcc`, clang/lld
 (`--target=x86_64-elf`), nasm, Limine, GRUB (`grub-mkrescue`), and UEFI firmware
 for QEMU (`qemu-system-x86_64 -bios $OVMF`).
+For tutorials that use **GRUB Legacy**: `$STAGE2_ELTORITO` (GRUB 0.97 from
+Debian, `pkgs/grub-legacy-stage2.nix`) and `genisoimage`. Copy it writable — the
+Nix store is read-only and `-boot-info-table` writes into it:
+
+    install -m 644 $STAGE2_ELTORITO iso/boot/grub/stage2_eltorito
+    genisoimage -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 \
+      -A os -input-charset utf8 -quiet -boot-info-table -o os.iso iso
+    qemu-system-i386 -cdrom os.iso -serial stdio
 
 **Per project:** `echo "use flake ~/nixos-dotfiles#kernel" > .envrc && direnv allow`
 — the shell loads whenever you `cd` in.

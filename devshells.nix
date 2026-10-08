@@ -7,6 +7,7 @@ let
   llvm = pkgs.llvmPackages;
   cross = t: pkgs.pkgsCross.${t}.buildPackages;
   virtme-ng = pkgs.callPackage ./pkgs/virtme-ng.nix { };
+  grub-legacy = pkgs.callPackage ./pkgs/grub-legacy-stage2.nix { };
 in
 {
   # ── Linux kernel ─────────────────────────────────────────────────
@@ -52,12 +53,15 @@ in
       nasm gnumake cmake ninja meson
       qemu gdb
       limine grub2 xorriso mtools dosfstools parted
+      cdrkit                            # genisoimage (older tutorials)
+      grub-legacy                       # GRUB 0.97 stages: $STAGE2_ELTORITO
       OVMF.fd                           # UEFI firmware: qemu -bios $OVMF
     ];
     OVMF = "${pkgs.OVMF.fd}/FV/OVMF.fd";
+    STAGE2_ELTORITO = "${grub-legacy}/share/grub/i386-pc/stage2_eltorito";
     hardeningDisable = [ "all" ];       # freestanding code: no stack protector, no PIE
     shellHook = ''
-      echo "osdev shell — x86_64-elf-gcc, i686-elf-gcc, riscv64-none-elf-gcc, aarch64-none-elf-gcc, clang --target=…, qemu-system-*, \$OVMF"
+      echo "osdev shell — x86_64-elf-gcc, i686-elf-gcc, riscv64-none-elf-gcc, aarch64-none-elf-gcc, clang --target=…, qemu-system-*, \$OVMF, \$STAGE2_ELTORITO"
     '';
   };
 }
