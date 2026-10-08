@@ -33,6 +33,7 @@
     gcc gnumake                       # quick one-off builds (project shells bring their own)
     gdb                               # all targets: x86, ARM, RISC-V; QEMU's gdbstub
     qemu                              # every architecture, with KVM on x86
+    bochs                             # x86 emulator with a built-in debugger
     (callPackage ./pkgs/virtme-ng.nix { })   # `vng`: boot a freshly built kernel in seconds
     clang-tools                       # clangd (editor), clang-format, clang-tidy
     bear ccache
@@ -43,6 +44,17 @@
     cdrkit                            # genisoimage (GRUB Legacy / El Torito tutorials)
     file xxd hexyl
   ];
+
+  # Bochs: tutorials point at /usr/share/bochs (and the old VGABIOS name without
+  # .bin); provide those, and $BXSHARE for configs that use it
+  systemd.tmpfiles.rules = let b = "${pkgs.bochs}/share/bochs"; in [
+    "d /usr/share/bochs 0755 root root -"
+    "L+ /usr/share/bochs/BIOS-bochs-latest - - - - ${b}/BIOS-bochs-latest"
+    "L+ /usr/share/bochs/VGABIOS-lgpl-latest - - - - ${b}/VGABIOS-lgpl-latest.bin"
+    "L+ /usr/share/bochs/VGABIOS-lgpl-latest.bin - - - - ${b}/VGABIOS-lgpl-latest.bin"
+    "L+ /usr/share/bochs/keymaps - - - - ${b}/keymaps"
+  ];
+  environment.sessionVariables.BXSHARE = "${pkgs.bochs}/share/bochs";
 
   home-manager.users.Wallance = {
     # GDB: history, readable output, and allow the kernel's vmlinux-gdb.py helpers
