@@ -1,0 +1,79 @@
+{
+  "name": "whisper",
+  "displayName": "Whisper",
+  "description": "The whisper rice for VS Code: a night sky over the city, lit by a streetlamp. Colours come from theme/palette.json.",
+  "version": "1.0.0",
+  "publisher": "whisper",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Themes",
+    "Other"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Whisper",
+        "uiTheme": "vs-dark",
+        "path": "./themes/whisper-color-theme.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "whisper.night",
+        "title": "Whisper: Night (focus) mode"
+      },
+      {
+        "command": "whisper.moon",
+        "title": "Whisper: Tonight's moon"
+      }
+    ],
+    "colors": [
+      {
+        "id": "whisper.moon",
+        "description": "The moon in the status bar",
+        "defaults": {
+          "dark": "#f0e3a8",
+          "light": "#8a7a30",
+          "highContrast": "#f0e3a8"
+        }
+      }
+    ],
+    "snippets": [
+      {
+        "language": "c",
+        "path": "./snippets/c.json"
+      },
+      {
+        "language": "cpp",
+        "path": "./snippets/c.json"
+      },
+      {
+        "language": "asm-intel-x86-generic",
+        "path": "./snippets/asm.json"
+      },
+      {
+        "language": "linkerscript",
+        "path": "./snippets/ld.json"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "whisper.night",
+        "key": "ctrl+k ctrl+n"
+      }
+    ]
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": true
+  }
+}

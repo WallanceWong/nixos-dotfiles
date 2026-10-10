@@ -166,6 +166,40 @@ home printer (HP DeskJet 2800, on Wi-Fi) was set up with:
 (Kept out of the Nix config on purpose: declaring it makes every boot fail
 when the printer is switched off.)
 
+## VS Code — whisper
+
+`theme/vscode/` (`module.nix`, `gen.py`, `workbench.css.in`, `extension.js`,
+`snippets/`). Everything is generated from `theme/palette.json`, so a palette
+change recolours VS Code with the rest of the desktop on the next rebuild.
+
+- **The Whisper theme** — ~545 interface colours and syntax for C, assembly
+  (x86 mnemonics teal, registers violet, directives blue), Nix, Make, linker
+  scripts and markup; function names glow lamp-gold, comments are Maple Mono's
+  cursive italics; the terminal uses kitty's 16 colours. Built as a real `.vsix`
+  and reinstalled automatically when it changes.
+- **Inside VS Code** — it's installed patched: the interface is in Nunito, the
+  caret glows like the streetlamp, popups and the command palette are rounded
+  glass, a lamp-lit crescent replaces the VS Code logo, and the empty editor
+  shows the moon. (Its integrity checksum is updated, so no "corrupt" warning.)
+- **Frosted glass** — Hyprland draws the window at 95% (90% unfocused) so the
+  living wallpaper glows through the blur, like kitty.
+- **Status bar** — tonight's moon with its Japanese name and date
+  (`● 新月 十月十日`); click it for the phase and days to the full moon.
+- **Night mode** — `Ctrl+K Ctrl+N` (or "Whisper: Night mode"): fullscreen,
+  centred, nothing but the code.
+- **OS-dev snippets** — in C: `kmain`, `portio`, `serial`, `gdt`, `idt`,
+  `panic`, `packed`; in assembly: `multiboot`, `isr`, `lgdt`, `portio`; in
+  linker scripts: `kernel-ld`.
+- **Also** — Maple Mono with ligatures (Noto Sans Mono CJK for Chinese), Material
+  icons in the palette, inline errors (Error Lens), smooth caret, sticky scroll,
+  file nesting (`.o` under `.c`, `flake.lock` under `flake.nix`), dimmed
+  unfocused splits, a minimap that appears on hover.
+
+The marketplace extensions it relies on (Material icons, Error Lens, clangd,
+x86 assembly, linker scripts, Native Debug, Nix IDE) are installed on rebuild
+if missing. Settings live in `~/.config/Code/User/settings.json` (a starter
+copy is in `config/vscode/`).
+
 ## OS and kernel development
 
 `dev.nix` (system) + `devshells.nix` (toolchains) + `pkgs/virtme-ng.nix`.

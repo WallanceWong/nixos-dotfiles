@@ -13,6 +13,7 @@ in
       ./performance.nix
       ./printing.nix
       ./dev.nix
+      ./theme/vscode/module.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -72,7 +73,6 @@ in
      claude-code
      gh
      brightnessctl
-     vscode
      restic
      wlogout
      pavucontrol

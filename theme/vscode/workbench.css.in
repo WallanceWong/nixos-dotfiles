@@ -1,0 +1,130 @@
+/* ── whisper: the night, lit by a streetlamp ─────────────────────────────
+   Appended to VS Code's workbench CSS at build time (theme/vscode/default.nix);
+   {colour} placeholders are filled from theme/palette.json by gen.py. */
+
+/* the interface speaks Nunito, like the rest of the desktop; code stays mono */
+.monaco-workbench,
+.monaco-workbench .part > .title,
+.monaco-workbench .monaco-list,
+.monaco-workbench .quick-input-widget,
+.monaco-workbench .statusbar,
+.monaco-workbench .tabs-container .tab,
+.monaco-workbench .notification-toast,
+.monaco-workbench .monaco-menu,
+.monaco-workbench .settings-editor,
+.monaco-workbench .monaco-hover {
+  font-family: "Nunito", sans-serif !important;
+}
+.monaco-workbench .tabs-container .tab .label-name { font-weight: 700; letter-spacing: .1px; }
+.monaco-workbench .part > .title > .title-label h2,
+.monaco-workbench .pane-header h3.title { font-weight: 800 !important; letter-spacing: .6px; }
+.monaco-workbench .statusbar { font-weight: 700; }
+
+/* ── the caret is the streetlamp ── */
+.monaco-editor .cursors-layer .cursor {
+  border-radius: 1px;
+  box-shadow: 0 0 6px 1px {lamp_a55}, 0 0 14px 2px {lamp_a22};
+}
+.monaco-editor .cursors-layer.cursor-block-style .cursor { box-shadow: 0 0 10px 2px {lamp_a33}; }
+
+/* the line you're on: a faint lamp-lit edge on the left */
+.monaco-editor .current-line { box-shadow: inset 2px 0 0 {lamp_a33}; }
+
+/* ── floating things: rounded glass with a soft lamp rim ── */
+.monaco-workbench .quick-input-widget {
+  border-radius: 16px !important;
+  border: 1px solid {lamp_a1f} !important;
+  box-shadow: 0 18px 48px {crust_aaa}, 0 0 0 1px {crust_a80}, 0 0 28px {lamp_a10} !important;
+  overflow: hidden;
+  top: 12vh !important;
+}
+.monaco-workbench .quick-input-widget .quick-input-header { padding-top: 10px !important; }
+.monaco-workbench .quick-input-widget .monaco-inputbox {
+  border-radius: 10px !important;
+  padding: 2px 4px;
+}
+.monaco-workbench .quick-input-list .monaco-list-row { border-radius: 8px; margin: 0 6px; width: calc(100% - 12px) !important; }
+
+.monaco-editor .suggest-widget,
+.monaco-editor .monaco-hover,
+.monaco-workbench .monaco-hover,
+.monaco-editor .parameter-hints-widget,
+.monaco-editor .find-widget,
+.monaco-workbench .context-view .monaco-menu,
+.monaco-workbench .notifications-toasts .notification-toast,
+.monaco-workbench .notifications-center,
+.monaco-editor .peekview-widget,
+.monaco-editor .rename-box,
+.monaco-workbench .debug-toolbar {
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 12px 32px {crust_aaa}, 0 0 18px {lamp_a0c} !important;
+}
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row { border-radius: 7px; }
+.monaco-workbench .context-view .monaco-menu .action-item .action-label { border-radius: 6px; }
+.monaco-editor .find-widget { margin-right: 8px; }
+
+/* ── tabs: the active one glows from above, like a lit window ── */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active {
+  background-image: linear-gradient(to bottom, {lamp_a14}, transparent 70%) !important;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active .tab-border-top-container {
+  box-shadow: 0 0 10px 1px {lamp_a66};
+}
+
+/* ── activity bar: the selected view is a lamp in the dark ── */
+.monaco-workbench .activitybar > .content :not(.monaco-menu) > .monaco-action-bar .action-item.checked .active-item-indicator::before {
+  box-shadow: 0 0 10px 1px {lamp_a66};
+}
+.monaco-workbench .activitybar > .content :not(.monaco-menu) > .monaco-action-bar .action-item.checked .action-label {
+  filter: drop-shadow(0 0 6px {lamp_a55});
+}
+
+/* ── scrollbars: thin, rounded, quiet ── */
+.monaco-scrollable-element > .scrollbar > .slider { border-radius: 8px !important; }
+.monaco-scrollable-element > .scrollbar.vertical > .slider { width: 6px !important; left: 4px !important; }
+.monaco-scrollable-element > .scrollbar.horizontal > .slider { height: 6px !important; top: 4px !important; }
+
+/* ── command centre in the title bar: a small glass pill ── */
+.monaco-workbench .part.titlebar .command-center .agent-status-pill,
+.monaco-workbench .part.titlebar .command-center .command-center-center {
+  border-radius: 10px !important;
+}
+
+/* ── a lamp-lit crescent instead of the blue VS Code logo ── */
+.monaco-workbench .part.titlebar .window-appicon {
+  background-image: url("data:image/svg+xml;utf8,{moon_svg}") !important;
+  background-size: 26px 26px !important;
+  background-position: center !important;
+  filter: drop-shadow(0 0 4px {lamp_a44});
+}
+
+/* ── the empty editor: tonight's moon instead of the VS Code logo ── */
+.monaco-workbench .part.editor .editor-group-watermark .letterpress {
+  background-image: url("data:image/svg+xml;utf8,{moon_svg}") !important;
+  background-size: 160px 160px !important;
+  background-position: center !important;
+  opacity: .85;
+  filter: drop-shadow(0 0 24px {lamp_a33});
+}
+.monaco-workbench .part.editor .editor-group-watermark .shortcuts dl dt,
+.monaco-workbench .part.editor .editor-group-watermark .shortcuts dl dd {
+  color: {subtext} !important;
+}
+.monaco-workbench .part.editor .editor-group-watermark .shortcuts .monaco-keybinding-key {
+  border-radius: 6px !important;
+  color: {lamp} !important;
+  background: {surface1} !important;
+  border: 1px solid {lamp_a1f} !important;
+  border-bottom-color: {crust} !important;
+}
+
+/* ── small kindnesses ── */
+.monaco-workbench .monaco-inputbox { border-radius: 8px; }
+.monaco-workbench .monaco-button { border-radius: 8px !important; }
+.monaco-workbench .monaco-select-box { border-radius: 8px !important; }
+.monaco-workbench .badge .badge-content,
+.monaco-workbench .activity-bar-badge .badge-content { box-shadow: 0 0 8px {lamp_a55}; }
+.monaco-workbench .statusbar-item.whisper-moon { letter-spacing: .5px; }
+.monaco-editor .bracket-match { border-radius: 3px; }
+.monaco-editor .selected-text, .monaco-editor .selectionHighlight { border-radius: 3px; }

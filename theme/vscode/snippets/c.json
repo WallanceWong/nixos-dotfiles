@@ -1,0 +1,140 @@
+{
+  "kernel entry (VGA hello)": {
+    "prefix": "kmain",
+    "description": "kmain() that writes to the VGA text buffer",
+    "body": [
+      "#include <stdint.h>",
+      "#include <stddef.h>",
+      "",
+      "static volatile uint16_t *const vga = (uint16_t *)0xB8000;",
+      "",
+      "void kmain(void)",
+      "{",
+      "\tconst char *msg = \"${1:hello from a quiet night}\";",
+      "\tfor (size_t i = 0; msg[i]; i++)",
+      "\t\tvga[i] = (uint16_t)msg[i] | (uint16_t)${2:0x0E} << 8;",
+      "\tfor (;;)",
+      "\t\t__asm__ volatile (\"hlt\");",
+      "}"
+    ]
+  },
+  "port I/O (outb / inb / io_wait)": {
+    "prefix": "portio",
+    "description": "inline x86 port I/O helpers",
+    "body": [
+      "static inline void outb(uint16_t port, uint8_t val)",
+      "{",
+      "\t__asm__ volatile (\"outb %b0, %w1\" : : \"a\"(val), \"Nd\"(port) : \"memory\");",
+      "}",
+      "",
+      "static inline uint8_t inb(uint16_t port)",
+      "{",
+      "\tuint8_t ret;",
+      "\t__asm__ volatile (\"inb %w1, %b0\" : \"=a\"(ret) : \"Nd\"(port) : \"memory\");",
+      "\treturn ret;",
+      "}",
+      "",
+      "static inline void io_wait(void)",
+      "{",
+      "\toutb(0x80, 0);",
+      "}"
+    ]
+  },
+  "serial port (COM1) logging": {
+    "prefix": "serial",
+    "description": "initialise COM1 and print strings (needs outb/inb)",
+    "body": [
+      "#define COM1 0x3F8",
+      "",
+      "void serial_init(void)",
+      "{",
+      "\toutb(COM1 + 1, 0x00);\t/* no interrupts */",
+      "\toutb(COM1 + 3, 0x80);\t/* DLAB on */",
+      "\toutb(COM1 + 0, 0x03);\t/* 38400 baud */",
+      "\toutb(COM1 + 1, 0x00);",
+      "\toutb(COM1 + 3, 0x03);\t/* 8N1 */",
+      "\toutb(COM1 + 2, 0xC7);\t/* FIFO */",
+      "}",
+      "",
+      "void serial_puts(const char *s)",
+      "{",
+      "\tfor (; *s; s++) {",
+      "\t\twhile (!(inb(COM1 + 5) & 0x20))",
+      "\t\t\t;",
+      "\t\toutb(COM1, (uint8_t)*s);",
+      "\t}",
+      "}"
+    ]
+  },
+  "GDT entry": {
+    "prefix": "gdt",
+    "description": "GDT entry struct, pointer and setter",
+    "body": [
+      "struct gdt_entry {",
+      "\tuint16_t limit_low;",
+      "\tuint16_t base_low;",
+      "\tuint8_t  base_mid;",
+      "\tuint8_t  access;",
+      "\tuint8_t  granularity;",
+      "\tuint8_t  base_high;",
+      "} __attribute__((packed));",
+      "",
+      "struct gdt_ptr {",
+      "\tuint16_t limit;",
+      "\tuint32_t base;",
+      "} __attribute__((packed));",
+      "",
+      "static struct gdt_entry gdt[${1:3}];",
+      "",
+      "static void gdt_set(int i, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran)",
+      "{",
+      "\tgdt[i] = (struct gdt_entry){",
+      "\t\t.limit_low = limit & 0xFFFF, .base_low = base & 0xFFFF,",
+      "\t\t.base_mid = (base >> 16) & 0xFF, .access = access,",
+      "\t\t.granularity = ((limit >> 16) & 0x0F) | (gran & 0xF0),",
+      "\t\t.base_high = (base >> 24) & 0xFF,",
+      "\t};",
+      "}"
+    ]
+  },
+  "IDT gate": {
+    "prefix": "idt",
+    "description": "32-bit IDT gate struct and setter",
+    "body": [
+      "struct idt_gate {",
+      "\tuint16_t offset_low;",
+      "\tuint16_t selector;",
+      "\tuint8_t  zero;",
+      "\tuint8_t  type_attr;",
+      "\tuint16_t offset_high;",
+      "} __attribute__((packed));",
+      "",
+      "static struct idt_gate idt[256];",
+      "",
+      "static void idt_set(uint8_t vec, void (*handler)(void), uint8_t flags)",
+      "{",
+      "\tuint32_t addr = (uint32_t)handler;",
+      "\tidt[vec] = (struct idt_gate){",
+      "\t\t.offset_low = addr & 0xFFFF, .selector = ${1:0x08},",
+      "\t\t.type_attr = flags, .offset_high = addr >> 16,",
+      "\t};",
+      "}"
+    ]
+  },
+  "packed struct": {
+    "prefix": "packed",
+    "body": ["struct ${1:name} {", "\t$0", "} __attribute__((packed));"]
+  },
+  "kernel panic": {
+    "prefix": "panic",
+    "body": [
+      "__attribute__((noreturn)) void panic(const char *why)",
+      "{",
+      "\t${1:serial_puts}(\"PANIC: \");",
+      "\t$1(why);",
+      "\tfor (;;)",
+      "\t\t__asm__ volatile (\"cli; hlt\");",
+      "}"
+    ]
+  }
+}

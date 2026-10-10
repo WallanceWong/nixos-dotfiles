@@ -1,0 +1,79 @@
+{
+  "multiboot header + loader (NASM)": {
+    "prefix": "multiboot",
+    "description": "Multiboot 1 header, stack and call to kmain",
+    "body": [
+      "global loader",
+      "extern kmain",
+      "",
+      "MAGIC_NUMBER equ 0x1BADB002",
+      "FLAGS        equ ${1:0x0}",
+      "CHECKSUM     equ -(MAGIC_NUMBER + FLAGS)",
+      "KERNEL_STACK_SIZE equ 4096",
+      "",
+      "section .bss",
+      "align 4",
+      "kernel_stack:",
+      "    resb KERNEL_STACK_SIZE",
+      "",
+      "section .text",
+      "align 4",
+      "    dd MAGIC_NUMBER",
+      "    dd FLAGS",
+      "    dd CHECKSUM",
+      "",
+      "loader:",
+      "    mov esp, kernel_stack + KERNEL_STACK_SIZE",
+      "    call kmain",
+      ".loop:",
+      "    cli",
+      "    hlt",
+      "    jmp .loop"
+    ]
+  },
+  "ISR stub without error code (NASM)": {
+    "prefix": "isr",
+    "body": [
+      "global isr${1:0}",
+      "isr$1:",
+      "    push dword 0          ; dummy error code",
+      "    push dword $1         ; interrupt number",
+      "    jmp isr_common"
+    ]
+  },
+  "load GDT and reload segments (NASM)": {
+    "prefix": "lgdt",
+    "body": [
+      "global gdt_flush",
+      "gdt_flush:",
+      "    mov eax, [esp + 4]",
+      "    lgdt [eax]",
+      "    mov ax, ${1:0x10}",
+      "    mov ds, ax",
+      "    mov es, ax",
+      "    mov fs, ax",
+      "    mov gs, ax",
+      "    mov ss, ax",
+      "    jmp ${2:0x08}:.flush",
+      ".flush:",
+      "    ret"
+    ]
+  },
+  "outb / inb (NASM, cdecl)": {
+    "prefix": "portio",
+    "body": [
+      "global outb",
+      "outb:                     ; outb(port, data)",
+      "    mov al, [esp + 8]",
+      "    mov dx, [esp + 4]",
+      "    out dx, al",
+      "    ret",
+      "",
+      "global inb",
+      "inb:                      ; inb(port)",
+      "    mov dx, [esp + 4]",
+      "    in al, dx",
+      "    ret"
+    ]
+  }
+}
