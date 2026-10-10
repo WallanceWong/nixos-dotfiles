@@ -75,5 +75,10 @@
       "supported": true
     },
     "virtualWorkspaces": true
+  },
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#071a28",
+    "theme": "dark"
   }
 }

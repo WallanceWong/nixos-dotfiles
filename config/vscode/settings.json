@@ -130,5 +130,32 @@
   "accessibility.dimUnfocused.opacity": 0.78,
   "editor.minimap.autohide": "mouseover",
   "terminal.integrated.tabs.defaultColor": "terminal.ansiCyan",
-  "terminal.integrated.tabs.defaultIcon": "terminal-bash"
+  "terminal.integrated.tabs.defaultIcon": "terminal-bash",
+  "window.controlsStyle": "hidden",
+  "material-icon-theme.folders.associations": {
+    "kernel": "core",
+    "boot": "dist",
+    "drivers": "plugin",
+    "arch": "linux",
+    "x86": "linux",
+    "i386": "linux",
+    "mm": "resource",
+    "memory": "resource",
+    "fs": "shared",
+    "interrupts": "controller",
+    "isr": "controller",
+    "iso": "target",
+    "libc": "lib",
+    "klib": "lib",
+    "tools": "tools",
+    "userspace": "robot",
+    "user": "robot"
+  },
+  "files.associations": {
+    "bochsrc*": "ini",
+    "menu.lst": "ini",
+    "grub.cfg": "shellscript",
+    "*.inc": "asm-intel-x86-generic",
+    "*.lds": "linkerscript"
+  }
 }
