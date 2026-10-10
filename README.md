@@ -196,7 +196,9 @@ change recolours VS Code with the rest of the desktop on the next rebuild.
 - **Also** — Maple Mono with ligatures (Noto Sans Mono CJK for Chinese), Material
   icons in the palette, inline errors (Error Lens), smooth caret, sticky scroll,
   file nesting (`.o` under `.c`, `flake.lock` under `flake.nix`), dimmed
-  unfocused splits, a minimap that appears on hover.
+  unfocused splits, a minimap that appears on hover, no window buttons (Hyprland
+  tiles it), and folder icons for an OS tree (`kernel`, `boot`, `drivers`,
+  `arch`, `mm`, `fs`, `iso`). Open it with **Super + Shift + E**.
 
 The marketplace extensions it relies on (Material icons, Error Lens, clangd,
 x86 assembly, linker scripts, Native Debug, Nix IDE) are installed on rebuild
