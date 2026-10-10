@@ -814,12 +814,16 @@ types = """<?xml version="1.0" encoding="utf-8"?>
   <Default Extension=".svg" ContentType="image/svg+xml"/><Default Extension=".md" ContentType="text/markdown"/>
 </Types>
 """
+# fixed timestamps and order: the same inputs always give the same .vsix
+def entry(name):
+    return zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
 with zipfile.ZipFile(vsix, "w", zipfile.ZIP_DEFLATED) as z:
-    z.writestr("extension.vsixmanifest", manifest)
-    z.writestr("[Content_Types].xml", types)
-    for root, _, files in os.walk(out):
-        for f in files:
+    z.writestr(entry("extension.vsixmanifest"), manifest)
+    z.writestr(entry("[Content_Types].xml"), types)
+    for root, dirs, files in sorted(os.walk(out)):
+        dirs.sort()
+        for f in sorted(files):
             full = os.path.join(root, f)
             if full == vsix or f == "whisper-workbench.css": continue
-            z.write(full, "extension/" + os.path.relpath(full, out))
+            z.writestr(entry("extension/" + os.path.relpath(full, out)), open(full, "rb").read(), zipfile.ZIP_DEFLATED)
 print(f"whisper vscode: {len(colors)} colours, {len(tokens)} syntax rules -> {os.path.basename(vsix)}")
