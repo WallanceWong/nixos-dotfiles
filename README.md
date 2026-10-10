@@ -169,6 +169,8 @@ when the printer is switched off.)
 
 ## VS Code — whisper
 
+![VS Code with the whisper theme: kernel C and boot assembly side by side, the terminal below, the night wallpaper glowing through](docs/vscode-whisper.jpg)
+
 `theme/vscode/` (`module.nix`, `gen.py`, `workbench.css.in`, `extension.js`,
 `snippets/`). Everything is generated from `theme/palette.json`, so a palette
 change recolours VS Code with the rest of the desktop on the next rebuild.
