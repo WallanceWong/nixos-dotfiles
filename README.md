@@ -48,6 +48,7 @@ Each of these can be switched off in **whisper settings** (Super + ,).
 | Super + / | Every shortcut, searchable (read live from Hyprland) |
 | Super + , | whisper settings: depth, music, moon, sky clock, ambience, corners, automations |
 | Super + E | File manager (thunar) |
+| Super + Shift + E | VS Code (whisper-themed) |
 | Super + C | Close window |
 | Super + F | Fullscreen |
 | Super + V | Toggle floating |

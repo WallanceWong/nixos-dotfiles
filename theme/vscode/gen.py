@@ -45,7 +45,6 @@ teal, blue, red, mustard, green, violet = p["teal"], p["blue"], p["red"], p["mus
 comment = mix(ov, sub, 0.25)          # faint, like writing in pencil on the night
 quiet = mix(ov, sub, 0.35)            # secondary labels: readable, but stepping back
 tealLight, blueLight = term[14], term[12]
-lampSoft = a(lamp, 0.85)
 
 # ── workbench ────────────────────────────────────────────────────────────
 colors = {
