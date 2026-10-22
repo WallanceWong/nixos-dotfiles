@@ -1,72 +1,240 @@
 @import url("whisper-colors.css");   /* generated from theme/palette.json */
+@import url("whisper-tokens.css");   /* Firefox's own colour variables → palette */
 
-/* whisper — Firefox toolbars and tabs in the night-sky palette.
-   Needs toolkit.legacyUserProfileCustomizations.stylesheets (see user.js). */
+/* whisper — Firefox's window: the night, lit by a streetlamp.
+   Needs toolkit.legacyUserProfileCustomizations.stylesheets (see user.js).
+   Colours live in whisper-tokens.css; this file is shape and light. */
 
+/* the interface speaks Nunito, like the rest of the desktop */
 :root {
-  --toolbox-bgcolor: var(--w-base) !important;
-  --toolbox-bgcolor-inactive: var(--w-base) !important;
-  --toolbox-textcolor: var(--w-text) !important;
-  --toolbox-textcolor-inactive: var(--w-subtext) !important;
-  --toolbar-bgcolor: var(--w-surface0) !important;
-  --toolbar-color: var(--w-text) !important;
-  --tab-selected-bgcolor: var(--w-surface1) !important;
+  --w-font: "Nunito", sans-serif;
+  font-family: var(--w-font) !important;
+  --tab-border-radius: 9px !important;
+  --tab-selected-bgcolor: var(--w-surface0) !important;
   --tab-selected-textcolor: var(--w-lamp) !important;
-  --tab-hover-background-color: color-mix(in srgb, var(--w-surface1) 60%, transparent) !important;
-  --toolbar-field-background-color: var(--w-base) !important;
-  --toolbar-field-focus-background-color: var(--w-mantle) !important;
-  --toolbar-field-color: var(--w-text) !important;
-  --toolbar-field-focus-color: var(--w-text) !important;
-  --toolbar-field-border-color: var(--w-surface1) !important;
-  --toolbar-field-focus-border-color: var(--w-lamp) !important;
-  --focus-outline-color: var(--w-lamp) !important;
-  --urlbarView-highlight-background: var(--w-surface1) !important;
-  --urlbarView-highlight-color: var(--w-lamp) !important;
-  --arrowpanel-background: var(--w-surface0) !important;
-  --arrowpanel-color: var(--w-text) !important;
-  --arrowpanel-border-color: var(--w-surface1) !important;
-  --sidebar-background-color: var(--w-base) !important;
-  --sidebar-text-color: var(--w-text) !important;
-  --button-hover-bgcolor: color-mix(in srgb, var(--w-surface1) 80%, transparent) !important;
-  --toolbarbutton-icon-fill-attention: var(--w-teal) !important;
+  --tab-hover-background-color: color-mix(in srgb, var(--w-surface0) 55%, transparent) !important;
+  --tab-loading-fill: var(--w-lamp) !important;
+  --tab-attention-icon-color: var(--w-lamp) !important;
+  /* address bar and its results (Firefox 157 names) */
+  --urlbar-background-color: var(--w-sunken) !important;
+  --urlbar-background-color-focus: var(--w-mantle) !important;
+  --urlbar-border-radius: 12px !important;
+  --urlbar-box-background-color: var(--w-surface0) !important;
+  --urlbar-box-background-color-hover: var(--w-surface1) !important;
+  --urlbar-box-background-color-active: var(--w-surface2) !important;
+  --urlbar-box-background-color-focus: var(--w-surface0) !important;
+  --urlbar-box-text-color: var(--w-text) !important;
+  --urlbarview-background-color-selected: var(--w-surface1) !important;
+  --urlbarview-background-color-hover: color-mix(in srgb, var(--w-surface0) 80%, transparent) !important;
+  --urlbarview-text-color-selected: var(--w-text) !important;
+  --urlbarview-text-color-action: var(--w-teal) !important;
+  --urlbarview-text-color-secondary: var(--w-subtext) !important;
+  --urlbarview-separator-color: var(--w-surface1) !important;
+  --urlbarview-border-radius: 12px !important;
+  --identity-box-margin-inline: 6px !important;
+  --chrome-content-separator-color: var(--w-surface0) !important;
+  --tabs-navbar-separator-color: transparent !important;
+  --inactive-titlebar-opacity: 1 !important;   /* Hyprland already shows which window has focus */
 }
+:root, menupopup, panel, tooltip, #urlbar, .urlbarView {
+  font-family: var(--w-font) !important;
+}
+#urlbar-input, .urlbar-input { font-family: var(--w-font) !important; font-weight: 600; }
 
+/* no window buttons: Hyprland closes windows (Super+Q), as in VS Code */
+.titlebar-buttonbox-container, .titlebar-spacer[type="post-tabs"] { display: none !important; }
+
+/* ── the tab strip: the darkest band, tabs float in it like lit windows ── */
 #navigator-toolbox {
-  background-color: var(--w-base) !important;
-  border-bottom: 1px solid var(--w-surface1) !important;
+  background-color: var(--w-mantle) !important;
+  border-bottom: none !important;
 }
-
-/* selected tab: a lit window with a lamp-coloured underline */
-.tabbrowser-tab[selected] .tab-background {
-  background: var(--w-surface1) !important;
-  box-shadow: inset 0 -2px 0 var(--w-lamp) !important;
+#TabsToolbar, #titlebar {
+  background-color: var(--w-mantle) !important;
+  background-image: none !important;
 }
+.tabbrowser-tab { padding-inline: 2px !important; }
+.tabbrowser-tab .tab-background {
+  border-radius: var(--tab-border-radius) !important;
+  transition: background-color .2s ease, box-shadow .3s ease !important;
+}
+/* the selected tab glows from above, with a lamp line along its top */
+.tabbrowser-tab[selected] .tab-background,
+.tabbrowser-tab[multiselected] .tab-background {
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--w-lamp) 12%, transparent), transparent 75%),
+              var(--w-surface0) !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--w-lamp) 55%, transparent),
+              0 0 14px color-mix(in srgb, var(--w-lamp) 10%, transparent),
+              0 2px 6px var(--w-crust) !important;
+  outline: none !important;
+}
+.tabbrowser-tab:not([selected]):hover .tab-background {
+  background-color: color-mix(in srgb, var(--w-surface0) 60%, transparent) !important;
+}
+.tab-label { font-weight: 700 !important; letter-spacing: .1px; }
 .tabbrowser-tab[selected] .tab-label { color: var(--w-lamp) !important; }
 .tabbrowser-tab:not([selected]) .tab-label { color: var(--w-subtext) !important; }
-
-#urlbar-background, .urlbar-background { border-radius: 10px !important; }
-#urlbar[focused] #urlbar-background, #urlbar[focused] .urlbar-background {
-  outline: 1px solid var(--w-lamp) !important;
+.tabbrowser-tab:not([selected]) .tab-icon-image { opacity: .75; }
+.tab-close-button { border-radius: 6px !important; opacity: .6; }
+.tab-close-button:hover { opacity: 1; background-color: var(--w-surface1) !important; }
+/* a tab playing sound: the label turns teal, like music on the bar */
+.tabbrowser-tab[soundplaying] .tab-label { color: var(--w-teal) !important; }
+.tab-icon-overlay[soundplaying], .tab-audio-button { fill: var(--w-teal) !important; }
+/* a background tab that changed (a new message …): its dot is lamplight */
+:root { --tab-attention-dot-color: var(--w-lamp) !important; }
+.tab-label[attention]:not([selected]) { color: var(--w-text) !important; }
+/* pinned tabs: little glass squares */
+.tabbrowser-tab[pinned] .tab-background { border-radius: 8px !important; }
+/* new-tab and list buttons in the strip */
+#tabs-newtab-button, #new-tab-button, #alltabs-button { opacity: .7; }
+#tabs-newtab-button:hover, #new-tab-button:hover, #alltabs-button:hover { opacity: 1; }
+/* tab groups take the palette's colours */
+tab-group {
+  --tab-group-color-blue: var(--w-blue) !important;
+  --tab-group-color-cyan: var(--w-teal) !important;
+  --tab-group-color-green: var(--w-green) !important;
+  --tab-group-color-yellow: var(--w-lamp) !important;
+  --tab-group-color-orange: var(--w-mustard) !important;
+  --tab-group-color-red: var(--w-red) !important;
+  --tab-group-color-purple: var(--w-violet) !important;
 }
 
-/* Firefox's dark theme paints these directly, so override them by element */
-#TabsToolbar, #titlebar {
-  background-color: var(--w-base) !important;
-  background-image: none !important;
-}
+/* ── the toolbar ── */
 #nav-bar, #PersonalToolbar, #toolbar-menubar, #notifications-toolbar {
-  background-color: var(--w-surface0) !important;
+  background-color: var(--w-base) !important;
   background-image: none !important;
   color: var(--w-text) !important;
-  border-color: var(--w-surface1) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
-#urlbar-background, .urlbar-background, #searchbar {
-  background-color: var(--w-base) !important;
+#nav-bar { border-top: 1px solid var(--w-surface0) !important; }
+#PersonalToolbar { padding-bottom: 4px !important; }
+#PersonalToolbar .toolbarbutton-1, #PersonalToolbar .bookmark-item { border-radius: 7px !important; }
+#PersonalToolbar .toolbarbutton-text, #PersonalToolbar label { color: var(--w-subtext) !important; font-weight: 600; }
+#PersonalToolbar .bookmark-item:hover label { color: var(--w-text) !important; }
+.toolbarbutton-1 > .toolbarbutton-icon,
+.toolbarbutton-1 > .toolbarbutton-badge-stack,
+.toolbarbutton-1 > .toolbarbutton-text { border-radius: 8px !important; }
+/* the button whose panel is open glows */
+.toolbarbutton-1[open] > .toolbarbutton-icon,
+.toolbarbutton-1[open] > .toolbarbutton-badge-stack {
+  fill: var(--w-lamp) !important;
+  background-color: var(--w-surface1) !important;
+}
+.toolbarbutton-1:not([disabled]):hover > .toolbarbutton-icon,
+.toolbarbutton-1:not([disabled]):hover > .toolbarbutton-badge-stack { fill: var(--w-text) !important; }
+/* the download button fills with lamp light while a download runs */
+#downloads-indicator-progress-inner { fill: var(--w-lamp) !important; }
+#downloads-button[attention="success"] .toolbarbutton-badge { background: var(--w-green) !important; }
+
+/* ── the address bar: a pill of night glass; focused, it catches the lamp ── */
+#urlbar-background, .urlbar-background {
+  border-radius: 12px !important;
+  background-color: var(--w-sunken) !important;
+  border: 1px solid color-mix(in srgb, var(--w-surface1) 70%, transparent) !important;
+  box-shadow: inset 0 1px 2px var(--w-crust) !important;
+  transition: border-color .25s ease, box-shadow .35s ease !important;
+}
+#urlbar[focused] #urlbar-background, #urlbar[focused] .urlbar-background,
+#urlbar[open] #urlbar-background, #urlbar[open] .urlbar-background {
+  background-color: var(--w-mantle) !important;
+  border-color: color-mix(in srgb, var(--w-lamp) 45%, transparent) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--w-lamp) 12%, transparent),
+              0 0 22px color-mix(in srgb, var(--w-lamp) 14%, transparent),
+              0 14px 40px var(--w-crust) !important;
+}
+#urlbar-input::placeholder, .urlbar-input::placeholder { color: var(--w-overlay) !important; opacity: 1 !important; }
+#urlbar ::selection { background-color: color-mix(in srgb, var(--w-lamp) 30%, transparent) !important; color: var(--w-text) !important; }
+#identity-box, #tracking-protection-icon-container,
+#identity-icon-box, #identity-permission-box { border-radius: 8px !important; }
+#identity-icon, #tracking-protection-icon, #star-button, #reader-mode-button-icon { fill-opacity: .85; }
+#star-button[starred] { fill: var(--w-lamp) !important; }
+/* the dropdown of results */
+.urlbarView { margin-inline: 4px !important; padding-bottom: 6px; }
+.urlbarView-row { border-radius: 9px !important; }
+.urlbarView-row[selected] .urlbarView-title,
+.urlbarView-row[selected] .urlbarView-title-separator::before { color: var(--w-lamp) !important; }
+.urlbarView-row[selected] > .urlbarView-row-inner { box-shadow: inset 3px 0 0 var(--w-lamp) !important; }
+.urlbarView-url { color: var(--w-teal) !important; }
+.urlbarView-action { color: var(--w-subtext) !important; }
+.urlbarView-row-inner { border-radius: 9px !important; }
+.search-one-offs { border-top-color: var(--w-surface1) !important; }
+.searchbar-engine-one-off-item { border-radius: 8px !important; }
+#urlbar-search-mode-indicator, #searchmode-switcher {
+  background-color: color-mix(in srgb, var(--w-lamp) 15%, var(--w-surface0)) !important;
+  border-radius: 8px !important;
+  color: var(--w-lamp) !important;
+}
+
+/* ── menus and panels: rounded glass with a soft lamp rim ── */
+panel, menupopup {
+  --panel-shadow: 0 12px 32px var(--w-crust), 0 0 18px color-mix(in srgb, var(--w-lamp) 6%, transparent) !important;
+}
+menupopup, panel {
+  --panel-border-radius: 12px !important;
+  --panel-padding: 6px !important;
+}
+menupopup > menuitem, menupopup > menu,
+menupopup menuitem, menupopup menu { border-radius: 7px !important; }
+menupopup > menuitem[_moz-menuactive], menupopup > menu[_moz-menuactive] {
+  background-color: var(--w-surface1) !important;
+  color: var(--w-text) !important;
+}
+menuseparator { border-color: var(--w-surface1) !important; opacity: .8; }
+.subviewbutton { border-radius: 7px !important; }
+.subviewbutton:not([disabled]):hover { background-color: var(--w-surface1) !important; }
+.panel-header > h1 { font-weight: 800 !important; letter-spacing: .4px; }
+#appMenu-fxa-label2, #appMenu-zoom-controls .toolbarbutton-text { font-weight: 700; }
+#appMenu-zoom-controls #appMenu-zoomReset-button2 { color: var(--w-lamp) !important; }
+tooltip {
+  appearance: none !important;
+  background-color: var(--w-surface0) !important;
+  color: var(--w-text) !important;
   border: 1px solid var(--w-surface1) !important;
+  border-radius: 8px !important;
+  padding: 4px 8px !important;
 }
-#PersonalToolbar .toolbarbutton-text, #PersonalToolbar label { color: var(--w-subtext) !important; }
+
+/* ── sidebar, vertical tabs ── */
+#sidebar-main, #sidebar-box, sidebar-main {
+  background-color: var(--w-mantle) !important;
+}
+#sidebar-splitter { border-color: var(--w-surface0) !important; background-color: var(--w-mantle) !important; }
+#tabbrowser-tabbox { outline: none !important; box-shadow: none !important; }
+
+/* ── find bar, notifications, the rest ── */
+findbar {
+  background-color: var(--w-base) !important;
+  border-top: 1px solid var(--w-surface0) !important;
+}
+.findbar-textbox {
+  background-color: var(--w-sunken) !important;
+  color: var(--w-text) !important;
+  border: 1px solid var(--w-surface1) !important;
+  border-radius: 9px !important;
+  padding-inline: 8px !important;
+}
+.findbar-textbox:focus { border-color: color-mix(in srgb, var(--w-lamp) 50%, transparent) !important; }
+.findbar-textbox[status="notfound"] { border-color: var(--w-red) !important; }
+.found-matches { color: var(--w-subtext) !important; }
 notification-message, .notificationbox-stack notification-message {
   --message-bar-background-color: var(--w-surface0) !important;
   --message-bar-text-color: var(--w-text) !important;
+  border-radius: 10px !important;
   border-color: var(--w-surface1) !important;
 }
+/* the page loading bar in a tab's place: amber dawn */
+.tab-throbber[busy]::before { fill: var(--w-lamp) !important; }
+.tab-throbber[progress]::before { fill: var(--w-lamp) !important; }
+
+/* fullscreen warning and the like */
+#fullscreen-warning, #pointerlock-warning {
+  background: var(--w-base) !important;
+  border: 1px solid color-mix(in srgb, var(--w-lamp) 25%, transparent) !important;
+  border-radius: 12px !important;
+  color: var(--w-text) !important;
+}
+
+/* the gap between toolbars and the page */
+#browser, #tabbrowser-tabpanels { background-color: var(--w-base) !important; }

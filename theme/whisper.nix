@@ -11,6 +11,7 @@ let
   short = c: "#" + lib.concatMapStrings (i: builtins.substring i 1 c) [ 1 3 5 ];
   dots = "${config.home.homeDirectory}/nixos-dotfiles";
   ffProfile = ".config/mozilla/firefox/btea7p9y.default";
+  whisperFirefox = import ./firefox { inherit pkgs lib; };
 
   # buttons, sliders, switches — the same for GTK3 and GTK4
   sharedCss = ''
@@ -123,18 +124,11 @@ in
   '' + lib.concatImapStrings (i: c: "color${toString (i - 1)} ${c}\n") t;
 
   # ── Firefox ─────────────────────────────────────────────────────
-  home.file."${ffProfile}/chrome/userChrome.css".source = ../config/firefox/chrome/userChrome.css;
-  home.file."${ffProfile}/chrome/userContent.css".source = ../config/firefox/chrome/userContent.css;
-  home.file."${ffProfile}/chrome/whisper-colors.css".text = ''
-    /* generated from theme/palette.json — edit that instead */
-    :root {
-      --w-crust: ${p.crust}; --w-mantle: ${p.mantle}; --w-base: ${p.base}; --w-sunken: ${p.sunken};
-      --w-surface0: ${p.surface0}; --w-surface1: ${p.surface1}; --w-surface2: ${p.surface2};
-      --w-overlay: ${p.overlay}; --w-subtext: ${p.subtext}; --w-text: ${p.text};
-      --w-lamp: ${p.lamp}; --w-teal: ${p.teal}; --w-blue: ${p.blue}; --w-red: ${p.red};
-    }
-  '';
-  home.file."${ffProfile}/user.js".source = ../config/firefox/user.js;
+  # theme/firefox builds the profile's chrome/ folder (stylesheets, colours, the
+  # moon, the new-tab painting) and user.js; files are linked one by one so the
+  # stylesheets find their images next to them in the store
+  home.file."${ffProfile}/chrome" = { source = "${whisperFirefox}/chrome"; recursive = true; };
+  home.file."${ffProfile}/user.js".source = "${whisperFirefox}/user.js";
 
   # ── GTK (Adwaita-dark, tinted into the night sky) ───────────────
   gtk.gtk3.extraCss = ''

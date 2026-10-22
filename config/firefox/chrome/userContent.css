@@ -1,18 +1,250 @@
 @import url("whisper-colors.css");   /* generated from theme/palette.json */
+@import url("whisper-tokens.css");   /* recolours Firefox's own pages (about:…) */
 
-/* whisper — new tab / home page background */
-@-moz-document url("about:newtab"), url("about:home"), url("about:blank") {
-  body, html {
+/* whisper — the pages Firefox draws itself. Websites keep their own look; they
+   only get the palette's scrollbars and are asked for their dark mode
+   (layout.css.prefers-color-scheme.content-override in user.js). */
+
+/* ── every page: thin night scrollbars ── */
+:root { scrollbar-color: color-mix(in srgb, var(--w-overlay) 75%, transparent) transparent; }
+
+/* ── Firefox's own pages: Nunito, rounded, lamp-lit selection ── */
+@-moz-document url-prefix("about:"), url-prefix("chrome:") {
+  :root {
+    --in-content-page-background: var(--w-base) !important;
+    --in-content-page-color: var(--w-text) !important;
+    --in-content-box-background: var(--w-surface0) !important;
+    --in-content-box-border-color: var(--w-surface1) !important;
+    --in-content-item-hover: var(--w-surface1) !important;
+    --in-content-item-selected: color-mix(in srgb, var(--w-lamp) 18%, var(--w-surface0)) !important;
+    --in-content-primary-button-background: var(--w-lamp) !important;
+    --in-content-primary-button-text-color: var(--w-crust) !important;
+    --in-content-accent-color: var(--w-lamp) !important;
+    --in-content-link-color: var(--w-teal) !important;
+    --in-content-table-background: var(--w-sunken) !important;
+    font-family: "Nunito", sans-serif;
+  }
+  ::selection { background-color: color-mix(in srgb, var(--w-lamp) 30%, transparent); color: var(--w-text); }
+  h1, h2, .main-heading, .header-name { font-weight: 800 !important; letter-spacing: .3px; }
+  input[type="checkbox"]:checked, input[type="radio"]:checked {
+    accent-color: var(--w-lamp);
+  }
+  moz-card, .card, .addon.card { border-radius: 14px !important; }
+}
+
+/* ── the new tab page: the painting itself, with tonight's moon ── */
+@-moz-document url("about:newtab"), url("about:home"), url("about:privatebrowsing") {
+  :root {
+    --newtab-background-color: var(--w-base) !important;
+    --newtab-background-color-secondary: color-mix(in srgb, var(--w-base) 72%, transparent) !important;
+    --newtab-text-primary-color: var(--w-text) !important;
+    --newtab-text-secondary-color: var(--w-subtext) !important;
+    --newtab-primary-action-background: var(--w-lamp) !important;
+    --newtab-element-hover-color: color-mix(in srgb, var(--w-surface1) 70%, transparent) !important;
+    --newtab-element-active-color: var(--w-surface2) !important;
+    --newtab-button-background: color-mix(in srgb, var(--w-base) 70%, transparent) !important;
+    --newtab-button-hover-background: color-mix(in srgb, var(--w-surface1) 80%, transparent) !important;
+    --newtab-wordmark-color: var(--w-text) !important;
+    --newtab-wallpaper: none !important;
+  }
+  /* the painting on <html>, the night's shading on <body> above it. (Keep the
+     url() out of any declaration that uses var(): Firefox drops it there.) */
+  html {
     background-color: var(--w-base) !important;
-    color: var(--w-text) !important;
+    background-image: url("whisper-wall.jpg") !important;
+    background-position: center 30% !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
   }
-  .search-handoff-button, .search-inner-wrapper input, .fake-textbox,
-  .top-site-outer .tile, .top-site-outer .top-site-icon {
-    background-color: var(--w-surface0) !important;
-    border: 1px solid var(--w-surface1) !important;
+  body {
+    min-height: 100vh;
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--w-crust) 55%, transparent),
+                                transparent 30%, transparent 62%,
+                                color-mix(in srgb, var(--w-crust) 70%, transparent)) !important;
+  }
+  /* the Firefox logo becomes the crescent; the wordmark says whisper */
+  .logo-and-wordmark .logo, .logo-and-wordmark-wrapper .logo {
+    background-image: url("whisper-moon.svg") !important;
+    background-size: contain !important;
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--w-lamp) 30%, transparent));
+  }
+  .logo-and-wordmark .wordmark {
+    background-image: none !important;
+    display: flex !important;
+    align-items: center;
+    fill: none !important;
+  }
+  .logo-and-wordmark .wordmark::after {
+    content: "whisper";
+    font: 300 46px/1 "Nunito", sans-serif;
+    letter-spacing: 6px;
+    color: var(--w-text);
+    text-shadow: 0 0 22px color-mix(in srgb, var(--w-lamp) 35%, transparent), 0 2px 8px var(--w-crust);
+  }
+  /* the search box: glass over the painting, lamp-lit when focused (its insides
+     are in a shadow DOM, styled through these variables) */
+  .search-wrapper content-search-handoff-ui {
+    --content-search-handoff-ui-background-color: color-mix(in srgb, var(--w-mantle) 70%, transparent) !important;
+    --content-search-handoff-ui-color: var(--w-text) !important;
+    --content-search-handoff-ui-fill: var(--w-lamp) !important;
+    --content-search-handoff-ui-caret-color: var(--w-lamp) !important;
+    --content-search-handoff-ui-border-radius: 16px !important;
+    --content-search-handoff-ui-unfocused-border-color: color-mix(in srgb, var(--w-lamp) 20%, transparent) !important;
+    --content-search-handoff-ui-fakefocus-border-color: color-mix(in srgb, var(--w-lamp) 55%, transparent) !important;
+    --content-search-handoff-ui-fakefocus-box-shadow-inner: color-mix(in srgb, var(--w-lamp) 14%, transparent) !important;
+    border-radius: 16px;
+    backdrop-filter: blur(14px) saturate(1.2);
+    box-shadow: 0 12px 34px color-mix(in srgb, var(--w-crust) 80%, transparent),
+                0 0 26px color-mix(in srgb, var(--w-lamp) 8%, transparent);
+  }
+  .search-wrapper .search-handoff-button,
+  .search-wrapper .search-inner-wrapper input,
+  .search-wrapper .fake-textbox,
+  content-search-handoff-ui {
+    background-color: color-mix(in srgb, var(--w-mantle) 72%, transparent) !important;
+    backdrop-filter: blur(14px) saturate(1.2);
+    border: 1px solid color-mix(in srgb, var(--w-lamp) 18%, transparent) !important;
+    border-radius: 16px !important;
+    color: var(--w-text) !important;
+    box-shadow: 0 12px 34px color-mix(in srgb, var(--w-crust) 80%, transparent),
+                0 0 24px color-mix(in srgb, var(--w-lamp) 7%, transparent) !important;
+  }
+  .search-wrapper .search-handoff-button:hover,
+  .search-wrapper.fake-focus .search-handoff-button {
+    border-color: color-mix(in srgb, var(--w-lamp) 45%, transparent) !important;
+    box-shadow: 0 12px 34px color-mix(in srgb, var(--w-crust) 80%, transparent),
+                0 0 30px color-mix(in srgb, var(--w-lamp) 16%, transparent) !important;
+  }
+  .search-wrapper .fake-textbox, .search-handoff-button .fake-caret { color: var(--w-subtext) !important; font-weight: 600; }
+  /* shortcuts: small glass tiles */
+  .top-site-outer .tile, .top-site-outer .top-site-inner > a .tile {
+    background-color: color-mix(in srgb, var(--w-mantle) 62%, transparent) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in srgb, var(--w-text) 8%, transparent) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--w-crust) 70%, transparent) !important;
+  }
+  .top-site-outer:is(:hover, :focus-within) .tile {
+    border-color: color-mix(in srgb, var(--w-lamp) 40%, transparent) !important;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--w-crust) 70%, transparent),
+                0 0 18px color-mix(in srgb, var(--w-lamp) 14%, transparent) !important;
+  }
+  .top-site-outer .title, .top-site-outer .title span {
+    color: var(--w-text) !important;
+    font-size: 13px !important;
+    font-weight: 600;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    text-shadow: 0 1px 4px var(--w-crust);
+  }
+  .top-site-outer .sponsored-label { color: var(--w-subtext) !important; }
+  .top-site-outer:is(:hover, :focus-within) .top-site-inner { background: transparent !important; }
+  .personalize-button, .customize-menu, .weather-widget, .weather {
     border-radius: 14px !important;
-    color: var(--w-text) !important;
-    box-shadow: none !important;
   }
-  .top-site-outer .title, .top-site-outer .sponsored-label { color: var(--w-subtext) !important; }
+  .customize-menu {
+    background-color: var(--w-base) !important;
+    border-inline-start: 1px solid var(--w-surface1) !important;
+  }
+}
+
+/* ── private windows: the same night, a deeper violet hush ── */
+@-moz-document url("about:privatebrowsing") {
+  .logo-and-wordmark .wordmark::after {
+    content: "whisper · private" !important;
+    white-space: nowrap;
+    font-size: 34px !important;
+    letter-spacing: 4px !important;
+  }
+  .info { border-radius: 14px !important; background-color: color-mix(in srgb, var(--w-mantle) 75%, transparent) !important; backdrop-filter: blur(12px); }
+}
+
+/* ── settings, add-ons and the other about: pages ── */
+@-moz-document url-prefix("about:preferences"), url-prefix("about:settings"), url-prefix("about:addons"),
+               url-prefix("about:downloads"), url-prefix("about:profiles"), url-prefix("about:support"),
+               url-prefix("about:logins"), url-prefix("about:config"), url-prefix("about:firefoxview"),
+               url-prefix("about:protections"), url-prefix("about:certificate") {
+  body, html { background-color: var(--w-base) !important; color: var(--w-text) !important; }
+  #categories .category[selected], .category[selected], #categories > .category:is([selected], .selected) {
+    color: var(--w-lamp) !important;
+    background-color: color-mix(in srgb, var(--w-lamp) 10%, transparent) !important;
+    border-radius: 9px !important;
+  }
+  #categories .category[selected] .category-icon, .category[selected] .category-icon {
+    fill: var(--w-lamp) !important;
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--w-lamp) 45%, transparent));
+  }
+  #categories .category, .category { border-radius: 9px !important; }
+  #categories .category:hover:not([selected]) { background-color: var(--w-surface0) !important; }
+  .sticky-container, #searchInput, search-textbox, #about-config-search {
+    border-radius: 10px !important;
+  }
+  input:is([type="text"], [type="search"], [type="url"], [type="email"], [type="password"], [type="number"]),
+  select, textarea, menulist, search-textbox {
+    background-color: var(--w-sunken) !important;
+    color: var(--w-text) !important;
+    border: 1px solid var(--w-surface1) !important;
+    border-radius: 9px !important;
+  }
+  input:focus-visible, select:focus-visible, textarea:focus-visible, search-textbox[focused] {
+    outline: 2px solid color-mix(in srgb, var(--w-lamp) 55%, transparent) !important;
+    outline-offset: 0 !important;
+  }
+  button, .button, moz-button { border-radius: 8px !important; }
+  /* about:config: a quieter table */
+  #prefs tr:nth-child(odd) { background-color: var(--w-base) !important; }
+  #prefs tr:nth-child(even) { background-color: var(--w-sunken) !important; }
+  #prefs tr.has-user-value th { color: var(--w-lamp) !important; }
+}
+
+/* ── reader view: the colours come from user.js; this is the type ── */
+@-moz-document url-prefix("about:reader") {
+  body { font-family: "Nunito", sans-serif; }
+  .reader-header .reader-title { font-weight: 800 !important; letter-spacing: .2px; }
+  .toolbar, .reader-controls { background-color: var(--w-mantle) !important; border-radius: 12px; }
+}
+
+/* ── error pages (can't connect, certificate problems …) ── */
+@-moz-document url-prefix("about:neterror"), url-prefix("about:certerror"), url-prefix("about:blocked"),
+               url-prefix("about:tabcrashed"), url-prefix("about:sessionrestore"), url-prefix("about:restartrequired") {
+  body { background: var(--w-base) !important; color: var(--w-text) !important; }
+  .title, .title-text, h1 { color: var(--w-lamp) !important; }
+  .container::before { opacity: .8; }
+}
+
+/* ── blank pages: no white flash ── */
+@-moz-document url("about:blank") {
+  html:not([style]) { background-color: var(--w-base) !important; }
+}
+
+/* ── the PDF viewer (dark theme from user.js; palette here) ── */
+@-moz-document regexp("^(file|https?|blob|resource)://.*\\.pdf(\\?.*)?(#.*)?$"), url-prefix("resource://pdf.js/") {
+  :root {
+    --body-bg-color: var(--w-base) !important;
+    --toolbar-bg-color: var(--w-mantle) !important;
+    --sidebar-toolbar-bg-color: var(--w-mantle) !important;
+    --sidebar-narrow-bg-color: var(--w-mantle) !important;
+    --toolbar-border-color: var(--w-surface0) !important;
+    --toolbar-icon-bg-color: var(--w-subtext) !important;
+    --toolbar-icon-hover-bg-color: var(--w-text) !important;
+    --field-bg-color: var(--w-sunken) !important;
+    --field-color: var(--w-text) !important;
+    --field-border-color: var(--w-surface1) !important;
+    --dropdown-btn-bg-color: var(--w-sunken) !important;
+    --doorhanger-bg-color: var(--w-base) !important;
+    --doorhanger-border-color: var(--w-surface1) !important;
+    --doorhanger-hover-bg-color: var(--w-surface1) !important;
+    --doorhanger-hover-color: var(--w-text) !important;
+    --main-color: var(--w-text) !important;
+    --button-hover-color: var(--w-surface1) !important;
+    --toggled-btn-bg-color: color-mix(in srgb, var(--w-lamp) 18%, transparent) !important;
+    --toggled-btn-color: var(--w-lamp) !important;
+    --progressBar-color: var(--w-lamp) !important;
+    --progressBar-bg-color: var(--w-surface0) !important;
+    --treeitem-selected-bg-color: color-mix(in srgb, var(--w-lamp) 18%, transparent) !important;
+    --treeitem-color: var(--w-text) !important;
+    --thumbnail-selected-color: var(--w-lamp) !important;
+  }
+  #viewerContainer .page { box-shadow: 0 6px 22px var(--w-crust) !important; border-radius: 3px; }
 }

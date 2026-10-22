@@ -23,7 +23,7 @@ Each of these can be switched off in **whisper settings** (Super + ,).
 - `config/quickshell/` — **whisper-shell**: `shell.qml`, `modules/` (wallpaper, bar, panels…), `services/` (audio, notifications…), `components/`, `assets/` (glows, sounds)
 - `config/hypr/` — Hyprland, hypridle (idle), `lock.sh` (locks with whisper-shell, hyprlock as the fallback), hyprlock, hyprpaper, `screenshot.sh`, `annotate.sh`, `picker.sh`
 - `config/kitty/` — terminal settings (colours are generated)
-- `config/firefox/` — `userChrome.css` / `userContent.css` + `user.js`, linked into the Firefox profile
+- `config/firefox/` — the Firefox stylesheets and `user.js`; `theme/firefox/` builds them with the palette, the moon and the new-tab painting into the profile
 - `config/vscode/` — starter VS Code settings; copied only if VS Code has none yet
 - `config/waybar/`, `config/mako/`, `config/rofi/`, `config/wlogout/` — the previous setup, kept as a fallback (Super + Ctrl + B)
 - `wallpapers/wall.jpg` — the wallpaper
@@ -204,6 +204,34 @@ The marketplace extensions it relies on (Material icons, Error Lens, clangd,
 x86 assembly, linker scripts, Native Debug, Nix IDE) are installed on rebuild
 if missing. Settings live in `~/.config/Code/User/settings.json` (a starter
 copy is in `config/vscode/`).
+
+## Firefox — whisper
+
+![Firefox with the whisper theme: the new tab page is the painting, with a lamp-lit crescent, "whisper", a glass search box and shortcut tiles](docs/firefox-whisper.jpg)
+
+`config/firefox/chrome/` (stylesheets) and `theme/firefox/` (builds the
+profile's `chrome/` folder and `user.js` from `theme/palette.json`).
+
+- **One colour map** — `whisper-tokens.css` maps Firefox's own design tokens
+  (including the new "Nova" design) onto the palette, so the toolbars, menus,
+  settings, add-ons, sidebar, downloads, error pages and about:config all turn
+  night-blue with lamplight as the accent. Websites keep their own look; they
+  are only asked for their dark mode and get thin night scrollbars.
+- **The window** — tabs float in the darkest band; the selected one glows from
+  above with a lamp line and gold title, a tab playing sound turns teal, a tab
+  with news gets a lamp dot. The address bar is a pill of night glass that
+  catches the lamp when focused; results, menus and panels are rounded glass.
+  The interface is in Nunito, no window buttons (Hyprland tiles it).
+- **New tab** — the painting itself, tonight's crescent and "whisper", a glass
+  search box and glass shortcut tiles; no stories, ads or weather. Private
+  windows say "whisper · private".
+- **Reading** — reader view in the palette (Nunito, teal links), the PDF viewer
+  dark with lamp highlights.
+- **user.js** — dark everywhere, smooth weighted scrolling, GPU video decoding,
+  WebRender, no about:config warning. It is reapplied at every Firefox start,
+  so change those prefs here rather than in Settings.
+
+After a rebuild, restart Firefox to see changes.
 
 ## OS and kernel development
 

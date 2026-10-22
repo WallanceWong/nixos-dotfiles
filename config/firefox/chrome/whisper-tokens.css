@@ -1,0 +1,150 @@
+/* whisper — Firefox's design tokens, mapped onto the palette.
+   Firefox builds its whole interface (toolbars, menus, settings, add-ons, the
+   new tab page …) from these variables, so one map recolours all of it.
+   Imported by userChrome.css and userContent.css; the @-moz-document keeps it
+   to Firefox's own pages, never websites. */
+
+@-moz-document url-prefix("chrome:"), url-prefix("about:"), url-prefix("resource:") {
+  :root, :host {
+    /* the grey ramps, light to dark → text … night sky. Firefox's "Nova" design
+       (on since 157) reads gray-0 as text, 70 as cards, 85 as the page */
+    --color-gray-0: var(--w-text) !important;
+    --color-gray-05: var(--w-text) !important;
+    --color-gray-10: var(--w-text) !important;
+    --color-gray-15: color-mix(in srgb, var(--w-text) 85%, var(--w-subtext)) !important;
+    --color-gray-20: color-mix(in srgb, var(--w-text) 65%, var(--w-subtext)) !important;
+    --color-gray-25: var(--w-subtext) !important;
+    --color-gray-30: var(--w-subtext) !important;
+    --color-gray-35: color-mix(in srgb, var(--w-subtext) 70%, var(--w-overlay)) !important;
+    --color-gray-40: color-mix(in srgb, var(--w-overlay) 70%, var(--w-subtext)) !important;
+    --color-gray-45: var(--w-overlay) !important;
+    --color-gray-50: color-mix(in srgb, var(--w-overlay) 60%, var(--w-surface2)) !important;
+    --color-gray-55: var(--w-surface2) !important;
+    --color-gray-60: var(--w-surface1) !important;
+    --color-gray-65: color-mix(in srgb, var(--w-surface1) 50%, var(--w-surface0)) !important;
+    --color-gray-70: var(--w-surface0) !important;
+    --color-gray-75: var(--w-sunken) !important;
+    --color-gray-80: var(--w-base) !important;
+    --color-gray-85: var(--w-base) !important;
+    --color-gray-90: var(--w-mantle) !important;
+    --color-gray-100: var(--w-crust) !important;
+    --color-violet-desaturated-0: var(--w-text) !important;
+    --color-violet-desaturated-10: color-mix(in srgb, var(--w-text) 85%, var(--w-subtext)) !important;
+    --color-violet-desaturated-20: color-mix(in srgb, var(--w-text) 50%, var(--w-subtext)) !important;
+    --color-violet-desaturated-30: var(--w-subtext) !important;
+    --color-violet-desaturated-40: var(--w-overlay) !important;
+    --color-violet-desaturated-50: var(--w-surface2) !important;
+    --color-violet-desaturated-60: var(--w-surface1) !important;
+    --color-violet-desaturated-70: var(--w-surface0) !important;
+    --color-violet-desaturated-80: var(--w-sunken) !important;
+    --color-violet-desaturated-90: var(--w-mantle) !important;
+    /* Nova's violet accent ramp → lamplight */
+    --color-violet-0: color-mix(in srgb, var(--w-lamp) 60%, white) !important;
+    --color-violet-10: color-mix(in srgb, var(--w-lamp) 80%, white) !important;
+    --color-violet-20: var(--w-lamp) !important;
+    --color-violet-30: var(--w-lamp) !important;
+    --color-violet-40: var(--w-lampDim) !important;
+    --color-violet-50: color-mix(in srgb, var(--w-lampDim) 70%, var(--w-surface1)) !important;
+    --color-violet-60: color-mix(in srgb, var(--w-lamp) 35%, var(--w-surface1)) !important;
+    --color-violet-70: color-mix(in srgb, var(--w-lamp) 22%, var(--w-surface0)) !important;
+    --color-violet-80: color-mix(in srgb, var(--w-lamp) 12%, var(--w-surface0)) !important;
+    --color-violet-90: color-mix(in srgb, var(--w-lamp) 6%, var(--w-base)) !important;
+    /* Nova's toolbar gradient: a faint glow from teal city light to lamplight */
+    --toolbox-background-color-gradient-leading: color-mix(in srgb, var(--w-teal) 16%, var(--w-mantle)) !important;
+    --toolbox-background-color-gradient-trailing: color-mix(in srgb, var(--w-lamp) 14%, var(--w-mantle)) !important;
+
+    /* the accent is the streetlamp */
+    --color-accent-primary: var(--w-lamp) !important;
+    --color-accent-primary-hover: color-mix(in srgb, var(--w-lamp) 82%, white) !important;
+    --color-accent-primary-active: var(--w-lampDim) !important;
+    --color-accent-primary-selected: var(--w-lamp) !important;
+    --color-accent-attention: var(--w-teal) !important;
+    --focus-outline-color: var(--w-lamp) !important;
+    --border-color-selected: var(--w-lamp) !important;
+    --link-color: var(--w-teal) !important;
+    --link-color-hover: color-mix(in srgb, var(--w-teal) 75%, white) !important;
+    --link-color-active: var(--w-lamp) !important;
+    --link-color-visited: var(--w-violet) !important;
+
+    /* text and surfaces */
+    --text-color: var(--w-text) !important;
+    --text-color-deemphasized: var(--w-subtext) !important;
+    --text-color-disabled: color-mix(in srgb, var(--w-subtext) 55%, transparent) !important;
+    --text-color-error: var(--w-red) !important;
+    --background-color-canvas: var(--w-base) !important;
+    --background-color-box: var(--w-surface0) !important;
+    --background-color-critical: color-mix(in srgb, var(--w-red) 18%, var(--w-base)) !important;
+    --background-color-information: color-mix(in srgb, var(--w-blue) 18%, var(--w-base)) !important;
+    --background-color-success: color-mix(in srgb, var(--w-green) 18%, var(--w-base)) !important;
+    --background-color-warning: color-mix(in srgb, var(--w-mustard) 18%, var(--w-base)) !important;
+    --border-color: var(--w-surface1) !important;
+    --border-color-card: var(--w-surface1) !important;
+    --border-color-deemphasized: var(--w-surface0) !important;
+    --border-color-interactive: var(--w-surface2) !important;
+    --border-color-interactive-hover: var(--w-overlay) !important;
+    --border-color-error: var(--w-red) !important;
+    --card-border-color: color-mix(in srgb, var(--w-lamp) 8%, transparent) !important;
+    --table-background-color: var(--w-sunken) !important;
+    --table-header-background-color: var(--w-surface0) !important;
+    --table-border-color: var(--w-surface1) !important;
+
+    --icon-color: var(--w-text) !important;
+    --icon-color-information: var(--w-blue) !important;
+    --icon-color-success: var(--w-green) !important;
+    --icon-color-warning: var(--w-mustard) !important;
+    --icon-color-critical: var(--w-red) !important;
+
+    /* buttons: quiet glass; the primary one is lamp-lit */
+    --button-background-color-hover: var(--w-surface2) !important;
+    --button-background-color-active: color-mix(in srgb, var(--w-surface2) 70%, var(--w-overlay)) !important;
+    --button-text-color: var(--w-text) !important;
+    --button-text-color-primary: var(--w-crust) !important;
+    --button-background-color-destructive: var(--w-red) !important;
+    --button-text-color-destructive: var(--w-crust) !important;
+    --button-border-radius: 8px !important;
+
+    /* toolbars and fields */
+    --toolbox-background-color: var(--w-mantle) !important;
+    --toolbox-background-color-inactive: var(--w-mantle) !important;
+    --toolbox-text-color: var(--w-text) !important;
+    --toolbox-text-color-inactive: var(--w-subtext) !important;
+    --toolbar-background-color: var(--w-base) !important;
+    --toolbar-text-color: var(--w-text) !important;
+    --toolbar-field-background-color: var(--w-sunken) !important;
+    --toolbar-field-background-color-focus: var(--w-mantle) !important;
+    --toolbar-field-border-color: transparent !important;
+    --toolbar-field-border-color-focus: color-mix(in srgb, var(--w-lamp) 55%, transparent) !important;
+    --toolbar-field-text-color: var(--w-text) !important;
+    --toolbar-field-text-color-focus: var(--w-text) !important;
+    --toolbarbutton-icon-fill: var(--w-subtext) !important;
+    --toolbarbutton-icon-fill-attention: var(--w-lamp) !important;
+    --toolbarbutton-icon-fill-attention-text: var(--w-crust) !important;
+    --toolbarbutton-background-color-hover: color-mix(in srgb, var(--w-surface1) 85%, transparent) !important;
+    --toolbarbutton-background-color-active: var(--w-surface2) !important;
+    --toolbarbutton-badge-background-color: var(--w-red) !important;
+
+    /* menus and panels: rounded glass with a faint lamp rim */
+    --panel-background-color: var(--w-base) !important;
+    --panel-text-color: var(--w-text) !important;
+    --panel-border-color: color-mix(in srgb, var(--w-lamp) 14%, var(--w-surface1)) !important;
+    --panel-separator-color: var(--w-surface1) !important;
+    --panel-border-radius: 12px !important;
+    --panel-menuitem-border-radius: 7px !important;
+    --popup-border-color: color-mix(in srgb, var(--w-lamp) 14%, var(--w-surface1)) !important;
+    --arrowpanel-background: var(--w-base) !important;
+    --arrowpanel-color: var(--w-text) !important;
+    --arrowpanel-border-color: color-mix(in srgb, var(--w-lamp) 14%, var(--w-surface1)) !important;
+    --arrowpanel-border-radius: 12px !important;
+    --arrowpanel-dimmed: color-mix(in srgb, var(--w-surface1) 70%, transparent) !important;
+    --arrowpanel-dimmed-further: var(--w-surface1) !important;
+    --menu-background-color: var(--w-base) !important;
+    --menu-color: var(--w-text) !important;
+    --menu-border-color: color-mix(in srgb, var(--w-lamp) 14%, var(--w-surface1)) !important;
+    --menuitem-hover-background-color: var(--w-surface1) !important;
+    --menuitem-disabled-hover-background-color: transparent !important;
+
+    --sidebar-background-color: var(--w-mantle) !important;
+    --sidebar-text-color: var(--w-text) !important;
+    --sidebar-border-color: var(--w-surface0) !important;
+  }
+}
