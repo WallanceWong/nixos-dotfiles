@@ -59,6 +59,9 @@ in
 
   programs.firefox.enable = true;
 
+  # run prebuilt Linux binaries that extensions download (e.g. Claude Code's in VS Code)
+  programs.nix-ld.enable = true;
+
   environment.systemPackages = with pkgs; [
      vim 
      wget
