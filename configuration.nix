@@ -69,6 +69,7 @@ in
      vim 
      wget
      foot
+     code-cursor   # Cursor, the AI code editor (VS Code based)
      kitty
      waybar
      git
@@ -137,6 +138,7 @@ in
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "claude-code"
     "vscode"
+    "cursor"
     "PictoBlox-Setup"
   ];
 
