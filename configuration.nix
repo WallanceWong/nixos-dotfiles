@@ -27,6 +27,9 @@ in
 
   networking.hostName = "nixos"; 
   networking.networkmanager.enable = true;
+  # look names up with Cloudflare/Quad9 on every network: the phone hotspot's own DNS
+  # keeps timing out ("Server Not Found" in Firefox while the internet itself works)
+  networking.networkmanager.settings."global-dns-domain-*".servers = "1.1.1.1,9.9.9.9";
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
