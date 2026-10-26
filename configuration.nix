@@ -13,6 +13,7 @@ in
       ./performance.nix
       ./printing.nix
       ./dev.nix
+      ./pentest.nix
       ./theme/vscode/module.nix
     ];
 
@@ -71,6 +72,9 @@ in
   # virtual machines (Kali etc.): virt-manager on QEMU/KVM
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
+
+  # local LLM runtime for OpenClaw (the Halcyon agent) — listens on 127.0.0.1:11434
+  services.ollama.enable = true;
 
   environment.systemPackages = with pkgs; [
      vim 
