@@ -48,7 +48,7 @@ in
 
   users.users.Wallance = {
      isNormalUser = true;
-     extraGroups = [ "wheel" "gamemode" "dialout" "uucp" "ydotool" ]; # Enable ‘sudo’ for the user.
+     extraGroups = [ "wheel" "gamemode" "dialout" "uucp" "ydotool" "libvirtd" ]; # Enable ‘sudo’ for the user.
      packages = with pkgs; [
        tree
      ];
@@ -67,6 +67,10 @@ in
 
   # fake mouse clicks on Wayland, for the auto clicker (Super+Alt+C, config/hypr/autoclick.sh)
   programs.ydotool.enable = true;
+
+  # virtual machines (Kali etc.): virt-manager on QEMU/KVM
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
 
   environment.systemPackages = with pkgs; [
      vim 
