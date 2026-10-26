@@ -75,6 +75,9 @@ in
 
   # local LLM runtime for OpenClaw (the Halcyon agent) — listens on 127.0.0.1:11434
   services.ollama.enable = true;
+  # Ollama defaults to a 4096-token window, too small for OpenClaw's system prompt;
+  # raise it so the agent's prompt + tools fit (bigger = more RAM per loaded model)
+  services.ollama.environmentVariables.OLLAMA_CONTEXT_LENGTH = "16384";
 
   environment.systemPackages = with pkgs; [
      vim 
