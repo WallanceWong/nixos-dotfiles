@@ -30,6 +30,7 @@
 
   # everyday tools, always on PATH
   users.users.Wallance.packages = with pkgs; [
+    nodejs_24
     gcc gnumake                       # quick one-off builds (project shells bring their own)
     gdb                               # all targets: x86, ARM, RISC-V; QEMU's gdbstub
     qemu                              # every architecture, with KVM on x86

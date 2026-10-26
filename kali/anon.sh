@@ -33,7 +33,7 @@ case "${1:-}" in
     ip link set "$iface" up
     sleep 2
     echo "[*] routing all traffic through Tor"
-    kalitorify --start
+    kalitorify -t
     sleep 2
     echo "[*] verifying ..."
     curl -s https://check.torproject.org/api/ip || true
@@ -41,7 +41,7 @@ case "${1:-}" in
     echo "[+] anonymous mode ON. Test in browser: https://check.torproject.org"
     ;;
   off)
-    kalitorify --stop || true
+    kalitorify -c || true
     echo "[*] restoring permanent MAC on $iface"
     ip link set "$iface" down
     macchanger -p "$iface" >/dev/null
@@ -49,7 +49,7 @@ case "${1:-}" in
     echo "[+] anonymous mode OFF (real network restored)."
     ;;
   status)
-    kalitorify --status || true
+    kalitorify -s || true
     echo -n "public IP via curl: "
     curl -s https://check.torproject.org/api/ip || echo "(no response)"
     echo
