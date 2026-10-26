@@ -43,10 +43,17 @@ case "${1:-}" in
     ;;
   off)
     kalitorify -c || true
+    # kalitorify -c on this build leaves iptables rules, IPv6 off, and a stale
+    # DHCP lease — flush and re-lease so the network actually comes back
+    iptables -F; iptables -t nat -F; iptables -t mangle -F
+    iptables -P INPUT ACCEPT; iptables -P OUTPUT ACCEPT; iptables -P FORWARD ACCEPT
+    sysctl -w net.ipv6.conf.all.disable_ipv6=0 >/dev/null
     echo "[*] restoring permanent MAC on $iface"
     ip link set "$iface" down
     macchanger -p "$iface" >/dev/null
     ip link set "$iface" up
+    systemctl restart NetworkManager
+    sleep 5
     echo "[+] anonymous mode OFF (real network restored)."
     ;;
   status)
