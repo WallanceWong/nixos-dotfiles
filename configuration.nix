@@ -48,7 +48,7 @@ in
 
   users.users.Wallance = {
      isNormalUser = true;
-     extraGroups = [ "wheel" "gamemode" "dialout" "uucp" ]; # Enable ‘sudo’ for the user.
+     extraGroups = [ "wheel" "gamemode" "dialout" "uucp" "ydotool" ]; # Enable ‘sudo’ for the user.
      packages = with pkgs; [
        tree
      ];
@@ -64,6 +64,9 @@ in
 
   # run prebuilt Linux binaries that extensions download (e.g. Claude Code's in VS Code)
   programs.nix-ld.enable = true;
+
+  # fake mouse clicks on Wayland, for the auto clicker (Super+Alt+C, config/hypr/autoclick.sh)
+  programs.ydotool.enable = true;
 
   environment.systemPackages = with pkgs; [
      vim 
