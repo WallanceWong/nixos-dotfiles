@@ -33,6 +33,7 @@ case "${1:-}" in
     ip link set "$iface" up
     sleep 2
     echo "[*] routing all traffic through Tor"
+    systemctl start tor@default   # Kali's real daemon; tor.service is only a launcher
     kalitorify -t
     sleep 2
     echo "[*] verifying ..."
