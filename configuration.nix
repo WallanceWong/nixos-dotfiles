@@ -79,6 +79,17 @@ in
   # raise it so the agent's prompt + tools fit (bigger = more RAM per loaded model)
   services.ollama.environmentVariables.OLLAMA_CONTEXT_LENGTH = "16384";
 
+  # keep the keyboard backlight off at every boot (Fn+Space still turns it on if wanted)
+  systemd.services.kbd-backlight-off = {
+    description = "Turn off the ThinkPad keyboard backlight";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "systemd-backlight@leds:tpacpi::kbd_backlight.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'echo 0 > /sys/class/leds/tpacpi::kbd_backlight/brightness'";
+    };
+  };
+
   environment.systemPackages = with pkgs; [
      vim 
      wget
