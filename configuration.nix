@@ -79,6 +79,13 @@ in
   # raise it so the agent's prompt + tools fit (bigger = more RAM per loaded model)
   services.ollama.environmentVariables.OLLAMA_CONTEXT_LENGTH = "16384";
 
+  # closing the lid turns the screen off but does NOT suspend (keeps downloads,
+  # the pentest agent, etc. running); applies on battery and AC
+  services.logind.settings.Login = {
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
+  };
+
   # keep the keyboard backlight off at every boot (Fn+Space still turns it on if wanted)
   systemd.services.kbd-backlight-off = {
     description = "Turn off the ThinkPad keyboard backlight";
