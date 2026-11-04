@@ -31,6 +31,9 @@ in
   # look names up with Cloudflare/Quad9 on every network: the phone hotspot's own DNS
   # keeps timing out ("Server Not Found" in Firefox while the internet itself works)
   networking.networkmanager.settings."global-dns-domain-*".servers = "1.1.1.1,9.9.9.9";
+  # keep the Wi-Fi card awake: iwlwifi power-saving caused lag spikes and periodic
+  # "local choice" disconnects (Roblox dropping). Off = steady latency, low jitter.
+  networking.networkmanager.wifi.powersave = false;
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
