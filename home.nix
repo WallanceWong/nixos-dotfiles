@@ -186,4 +186,11 @@
 	home.sessionVariables = {
         XDG_DATA_DIRS = "/var/lib/flatpak/exports/share:$XDG_DATA_DIRS";
 };
+
+	# modern CLI helpers
+	programs.fzf.enable = true;
+	programs.zoxide.enable = true;
+	programs.bat.enable = true;
+	programs.zellij.enable = true;
+	home.packages = with pkgs; [ ripgrep fd ];
 }

@@ -76,4 +76,15 @@
 
   # don't write a timestamp every time a file is read
   fileSystems."/".options = [ "noatime" ];
+
+  # don't hold boot for the network (measured 5.9 s): the desktop doesn't need it
+  systemd.services.NetworkManager-wait-online.enable = false;
+
+  # faster rebuilds; keep dev-shell build inputs from being garbage-collected
+  nix.settings = {
+    max-jobs = "auto";
+    cores = 0;
+    keep-outputs = true;
+    keep-derivations = true;
+  };
 }
