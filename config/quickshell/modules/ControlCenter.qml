@@ -22,6 +22,22 @@ Scope {
 
     property bool stayAwake: false
 
+    // The profile the daemon is REALLY using. Quickshell's PowerProfiles.profile flips
+    // immediately on a write, even when power-profiles-daemon refuses it (e.g. while
+    // GameMode pins every core to the performance governor), so ask the daemon.
+    property string realProfile: ""
+    Process {
+        id: profileProbe
+        command: ["powerprofilesctl", "get"]
+        stdout: StdioCollector { onStreamFinished: root.realProfile = text.trim() }
+    }
+    Timer {
+        id: profilePoll
+        interval: 1500; repeat: true; triggeredOnStart: true
+        running: root.open
+        onTriggered: if (!profileProbe.running) profileProbe.running = true
+    }
+
     // keeps the screen awake while "Stay awake" is on (needs a live surface)
     PanelWindow {
         id: inhibitHost
@@ -241,13 +257,13 @@ Scope {
                             spacing: 4
                             Repeater {
                                 model: [
-                                    { p: PowerProfile.PowerSaver, icon: "eco", name: "Saver" },
-                                    { p: PowerProfile.Balanced, icon: "balance", name: "Balanced" },
-                                    { p: PowerProfile.Performance, icon: "bolt", name: "Performance" }
+                                    { p: PowerProfile.PowerSaver, key: "power-saver", icon: "eco", name: "Saver" },
+                                    { p: PowerProfile.Balanced, key: "balanced", icon: "balance", name: "Balanced" },
+                                    { p: PowerProfile.Performance, key: "performance", icon: "bolt", name: "Performance" }
                                 ]
                                 Rectangle {
                                     required property var modelData
-                                    readonly property bool on: PowerProfiles.profile === modelData.p
+                                    readonly property bool on: root.realProfile === "" ? PowerProfiles.profile === modelData.p : root.realProfile === modelData.key
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     radius: height / 2
@@ -259,7 +275,8 @@ Scope {
                                         Icon { icon: modelData.icon; size: 17; fill: on ? 1 : 0; color: on ? Theme.lamp : Theme.subtext }
                                         Label { text: modelData.name; font.pixelSize: 12; color: on ? Theme.lamp : Theme.subtext }
                                     }
-                                    MouseArea { id: ppMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: PowerProfiles.profile = modelData.p }
+                                    Timer { id: recheck; interval: 500; onTriggered: if (!profileProbe.running) profileProbe.running = true }
+                                    MouseArea { id: ppMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { PowerProfiles.profile = modelData.p; recheck.restart(); } }
                                 }
                             }
                         }
