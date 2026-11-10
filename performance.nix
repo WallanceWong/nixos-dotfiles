@@ -87,4 +87,9 @@
     keep-outputs = true;
     keep-derivations = true;
   };
+
+  # GameMode's default pins every core to the "performance" governor, which makes the
+  # kernel refuse power-profile changes while a game runs. Keep the normal governor so
+  # the control-centre Saver/Balanced/Performance choice works during games too.
+  programs.gamemode.settings.general.desiredgov = "powersave";
 }
