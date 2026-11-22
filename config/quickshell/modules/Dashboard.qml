@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import Quickshell.Widgets
+import Quickshell.Io
 import Quickshell.Services.Mpris
 import qs.services
 import qs.components
@@ -47,7 +48,7 @@ PanelWindow {
     Item {
         id: sheet
         width: parent.width
-        implicitHeight: row.implicitHeight + 36
+        implicitHeight: row.implicitHeight + ops.implicitHeight + 50
         height: implicitHeight
         opacity: panel.open ? 1 : 0
         transform: Translate { y: panel.open ? 0 : -24 }
@@ -314,6 +315,97 @@ PanelWindow {
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // ───────────── NERV operations: the machine's own state ─────────────
+        property var opsInfo: ({})
+        Process {
+            id: opsProbe
+            running: panel.open
+            command: ["sh", "-c",
+                "g=$(readlink /nix/var/nix/profiles/system); echo \"gen=${g#system-}\" | sed 's/-link$//'; "
+                + "echo \"genAge=$(( ($(date +%s) - $(stat -c %Y /nix/var/nix/profiles/system)) / 3600 ))\"; "
+                + "cd \"$0\" && echo \"lock=$(git log -1 --format=%cr -- flake.lock)\" && echo \"ahead=$(git rev-list --count @{u}..HEAD 2>/dev/null || echo ?)\" && echo \"dirty=$(git status --porcelain | grep -vc '^??')\"; "
+                + "df -h / | awk 'NR==2{print \"disk=\"$3\" / \"$2\" · \"$5}'; "
+                + "s=$(ls -t \"$HOME/restic-thinkpad/snapshots\" 2>/dev/null | head -1); [ -n \"$s\" ] && echo \"backup=$(( ($(date +%s) - $(stat -c %Y \"$HOME/restic-thinkpad/snapshots/$s\")) / 86400 ))\" || echo backup=none; "
+                + "echo \"hypr=$(hyprctl version -j 2>/dev/null | grep -o '\"tag\": *\"[^\"]*' | cut -d'\"' -f4)\"; "
+                + "echo \"up=$(cut -d. -f1 /proc/uptime)\"",
+                Theme.dots]
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    const o = {};
+                    for (const l of text.split("\n")) { const i = l.indexOf("="); if (i > 0) o[l.slice(0, i)] = l.slice(i + 1); }
+                    sheet.opsInfo = o;
+                }
+            }
+        }
+
+        Section {
+            id: ops
+            anchors { left: parent.left; right: parent.right; top: row.bottom; topMargin: 14; leftMargin: 18; rightMargin: 18 }
+            title: Theme.magi ? "NERV OPERATIONS" : "MAINTENANCE"
+            code: "GEN " + (sheet.opsInfo.gen ?? "…")
+            Row {
+                width: parent.width
+                spacing: 18
+                // key / value readouts
+                Grid {
+                    id: kv
+                    width: parent.width * 0.48
+                    columns: 2
+                    rowSpacing: 5
+                    columnSpacing: 12
+                    readonly property var rows: {
+                        const o = sheet.opsInfo, h = parseInt(o.genAge ?? "0"), d = o.backup === "none" ? -1 : parseInt(o.backup ?? "0"), up = parseInt(o.up ?? "0");
+                        return [
+                            ["GENERATION", (o.gen ?? "…") + (isNaN(h) ? "" : " · " + (h < 48 ? h + " H AGO" : Math.floor(h / 24) + " D AGO")), "ok"],
+                            ["UPDATES", o.lock ? "FLAKE " + o.lock.toUpperCase() : "…", "ok"],
+                            ["REPO", (o.ahead === "0" ? "IN SYNC" : (o.ahead ?? "?") + " UNPUSHED") + (o.dirty && o.dirty !== "0" ? " · " + o.dirty + " CHANGED" : ""), o.ahead === "0" ? "ok" : "warn"],
+                            ["DISK", o.disk ?? "…", "ok"],
+                            ["BACKUP", d < 0 ? "NONE FOUND" : d + " DAYS AGO", d < 0 || d > 14 ? "warn" : "ok"],
+                            ["HYPRLAND", (o.hypr ?? "…").toUpperCase() + " · LUA", "ok"],
+                            ["ACTIVE", Math.floor(up / 3600) + " H " + Math.floor(up % 3600 / 60) + " M", "ok"]
+                        ];
+                    }
+                    Repeater {
+                        model: kv.rows.length * 2
+                        Text {
+                            required property int index
+                            readonly property var r: kv.rows[Math.floor(index / 2)]
+                            text: index % 2 === 0 ? r[0] : r[1]
+                            color: index % 2 === 0 ? Theme.subtext : (r[2] === "warn" ? Theme.caution : Theme.text)
+                            font.family: index % 2 === 0 ? Theme.hud : Theme.mono
+                            font.pixelSize: index % 2 === 0 ? 12 : 11
+                            font.weight: index % 2 === 0 ? Font.Bold : Font.Normal
+                            font.letterSpacing: index % 2 === 0 ? 1.5 : 0
+                        }
+                    }
+                }
+                Rectangle { width: 1; height: kv.height; color: Theme.hairline }
+                // the latest MAGI log entries
+                Column {
+                    width: parent.width * 0.48
+                    spacing: 5
+                    Caps { text: "MAGI LOG"; color: Theme.accent; font.pixelSize: 11; font.weight: Font.Bold }
+                    Repeater {
+                        model: EventLog.entries.slice(0, 6)
+                        Row {
+                            required property var modelData
+                            spacing: 8
+                            Text { text: EventLog.stamp(modelData); color: Theme.overlay; font.family: Theme.mono; font.pixelSize: 11 }
+                            Text {
+                                width: kv.width - 50
+                                elide: Text.ElideRight
+                                text: modelData.text
+                                color: modelData.level === "alert" ? Theme.alert : modelData.level === "warn" ? Theme.caution : modelData.level === "ok" ? Theme.signal : Theme.text
+                                font.family: Theme.hud
+                                font.pixelSize: 12
+                                font.letterSpacing: 0.8
                             }
                         }
                     }
