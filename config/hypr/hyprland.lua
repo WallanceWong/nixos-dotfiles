@@ -120,7 +120,7 @@ hl.workspace_rule({ workspace = "special:term", on_created_empty = "kitty --clas
 hl.window_rule({ match = { class = "^(scratch)$" }, float = true, size = { "(monitor_w*0.66)", "(monitor_h*0.6)" }, center = true, suppress_event = "maximize fullscreen" })
 
 -- frosted glass behind every nerv-shell surface (not the wallpaper itself)
-hl.layer_rule({ match = { namespace = "^(eva-(bar|control|dashboard|launcher|notifications|osd|overview|power|polkit|cheatsheet|settings))$" }, blur = true, ignore_alpha = 0.2 })
+hl.layer_rule({ match = { namespace = "^(eva-(bar|control|dashboard|launcher|notifications|osd|overview|power|polkit|cheatsheet|settings|magi))$" }, blur = true, ignore_alpha = 0.2 })
 -- rescue desktop (Super+Ctrl+B)
 hl.layer_rule({ match = { namespace = "^(waybar|rofi|notifications|logout_dialog)$" }, blur = true, ignore_alpha = 0.2 })
 
@@ -162,6 +162,7 @@ key("SUPER + G", "Game mode", global("quickshell:gamemode"))
 key("SUPER + SLASH", "Keyboard shortcuts", global("quickshell:cheatsheet"))
 key("SUPER + COMMA", "Settings", global("quickshell:settings"))
 key("SUPER + SHIFT + U", "Switch setup (UNIT-01 / NERV HQ)", global("quickshell:setup"))
+key("SUPER + A", "Ask the MAGI", global("quickshell:magi"))
 
 -- recording, drawing on screenshots, colour picker
 key("SUPER + SHIFT + R", "Record a region", global("quickshell:record"))

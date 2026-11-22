@@ -21,6 +21,7 @@ ShellRoot {
     Lock {}
     Cheatsheet {}
     SettingsPanel {}
+    MagiAsk {}
     Corners {}
     Shortcuts {}
 }
