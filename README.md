@@ -87,6 +87,34 @@ open the control centre. The power plate says **EXT** on the charger and
 turns red (and in NERV HQ the whole bar raises the alarm). A small lit square
 on the status plate means unread messages.
 
+## Extras
+
+- **Ask the MAGI** — **Super + A**, or type `?` in the launcher. Your local
+  model (Ollama, `huihui_ai/qwen2.5-abliterate:7b`; nothing leaves the laptop)
+  answers as MELCHIOR-1 (the scientist), BALTHASAR-2 (the mother) and CASPER-3
+  (the woman): three reasons, three votes, the majority decides. About 15–20 s.
+- **MAGI log** — real events (power, Wi-Fi, Bluetooth, USB devices, messages,
+  locks, setup switches, game mode, rebuilds) scroll along the NERV HQ
+  wallpaper and appear in the dashboard.
+- **NERV operations** — the dashboard's bottom row: system generation, how old
+  the flake inputs are, unpushed commits, disk, last backup, Hyprland version.
+- **Screen filter** — CRT scanlines and edge fringing in NERV HQ, fine film grain
+  in UNIT-01 (a Hyprland screen shader, `~/.config/eva/current/screen.frag`); off
+  for games, fullscreen video and the lock; switch in Settings.
+- **ThinkPad lights** — the red dot on the lid logo beats slowly on battery and
+  blinks fast on alerts; the mic-mute light stays on while recording
+  (`eva-led`, a root helper with fixed modes; switch in Settings).
+- **Cursors and icons** — angular HUD cursors (`theme/cursors`: Eva-Unit01 /
+  Eva-NERV) and folder colours (`theme/icons`: violet / deep orange over
+  Papirus-Dark) follow the setup.
+- **Sounds** — the real Pattern Blue klaxon and the AT field slamming shut
+  (NERV HQ), Misato's 「おかえりなさい」 on unlock (UNIT-01), the umbilical cable
+  disconnecting when you unplug the charger (both).
+- **`eva`** — `eva` switches setup, `eva status`, `eva lock`, `eva sheet` (every
+  panel in both setups on one image, from a hidden test desktop),
+  `eva test …` (`tools/eva-test`: a nested Hyprland for trying changes without
+  touching the real session).
+
 ## Typing Chinese
 
 fcitx5 with pinyin starts at login. Press **Ctrl + Space** to switch between
@@ -286,6 +314,14 @@ Nix IDE; C files use kernel style (tabs, 8 wide, rulers at 80/100).
 - Power profiles: `powerprofilesctl set power-saver|balanced|performance`
 - Firmware updates: `fwupdmgr refresh && fwupdmgr get-updates`, then `fwupdmgr update`
 - Old generations older than 14 days are garbage-collected weekly; the boot menu keeps 10.
+
+## Hyprland config (Lua)
+
+Hyprland 0.57 dropped the old `.conf` format; `config/hypr/hyprland.lua` is the
+config (API: `<hyprland>/share/hypr/stubs/hl.meta.lua`). Options change at runtime
+with `hyprctl eval 'hl.config({ … })'` (`hyprctl keyword` is gone), dispatchers are
+Lua (`hyprctl dispatch 'hl.dsp.focus({ workspace = 3 })'`). After a rebuild run
+`hyprctl reload` (Hyprland doesn't notice the new config link by itself).
 
 ## Applying changes
 
