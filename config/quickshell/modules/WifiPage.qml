@@ -41,6 +41,7 @@ ColumnLayout {
                 color: row.n.connected ? Qt.alpha(Theme.accent, 0.13) : netMouse.containsMouse ? Theme.surface1 : Theme.surface0
                 border.width: 1
                 border.color: row.n.connected ? Qt.alpha(Theme.accent, 0.35) : Theme.hairline
+                Rectangle { visible: row.n.connected; width: 3; height: parent.height; color: Theme.accent }
                 RowLayout {
                     anchors.fill: parent
                     anchors.leftMargin: 12
@@ -54,7 +55,7 @@ ColumnLayout {
                     Label { Layout.fillWidth: true; text: row.n.name; color: row.n.connected ? Theme.accent : Theme.text }
                     Icon { visible: row.n.security !== WifiSecurityType.Open; icon: "lock"; size: 15; color: Theme.overlay }
                     Label {
-                        text: row.n.stateChanging ? "…" : row.n.connected ? "connected" : row.n.known ? "saved" : ""
+                        text: row.n.stateChanging ? "…" : row.n.connected ? "LINKED" : row.n.known ? "SAVED" : ""
                         font.pixelSize: 11
                         color: Theme.subtext
                     }

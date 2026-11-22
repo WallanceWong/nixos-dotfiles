@@ -20,7 +20,7 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        Label { Layout.fillWidth: true; text: root.adapter?.enabled ? (root.adapter.discovering ? "looking for devices…" : "known devices") : "Bluetooth is off"; color: Theme.subtext; font.pixelSize: 12 }
+        Label { Layout.fillWidth: true; text: root.adapter?.enabled ? (root.adapter.discovering ? "SCANNING…" : "KNOWN DEVICES") : "BLUETOOTH OFF"; color: Theme.subtext; font.pixelSize: 12 }
         IconButton {
             visible: !!root.adapter?.enabled
             icon: root.adapter?.discovering ? "stop" : "radar"
@@ -41,6 +41,7 @@ ColumnLayout {
             color: d.connected ? Qt.alpha(Theme.accent, 0.13) : devMouse.containsMouse ? Theme.surface1 : Theme.surface0
             border.width: 1
             border.color: d.connected ? Qt.alpha(Theme.accent, 0.35) : Theme.hairline
+                Rectangle { visible: d.connected; width: 3; height: parent.height; color: Theme.accent }
             RowLayout {
                 anchors.fill: parent
                 anchors.leftMargin: 12
@@ -59,8 +60,8 @@ ColumnLayout {
                     Label { Layout.fillWidth: true; text: dev.d.name; color: dev.d.connected ? Theme.accent : Theme.text }
                     Label {
                         text: dev.d.state === BluetoothDeviceState.Connecting ? "connecting…" : dev.d.pairing ? "pairing…"
-                            : dev.d.connected ? ("connected" + (dev.d.batteryAvailable ? " · " + Math.round(dev.d.battery * 100) + "%" : ""))
-                            : dev.d.paired ? "paired" : "tap to pair"
+                            : dev.d.connected ? ("LINKED" + (dev.d.batteryAvailable ? " · " + Math.round(dev.d.battery * 100) + "%" : ""))
+                            : dev.d.paired ? "PAIRED" : "TAP TO PAIR"
                         font.pixelSize: 11
                         color: Theme.subtext
                     }

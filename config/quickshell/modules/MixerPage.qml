@@ -13,7 +13,7 @@ ColumnLayout {
 
     Label {
         visible: Audio.streams.length === 0
-        text: "no apps are playing sound"
+        text: "NO AUDIO STREAMS"
         color: Theme.overlay
     }
 
