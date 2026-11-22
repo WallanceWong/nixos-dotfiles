@@ -82,7 +82,7 @@ let
         animations = { enabled = true },
     })
     -- the setup's cursor (theme/cursors), for Hyprland and for GTK apps
-    hl.exec_cmd("hyprctl setcursor ${cursorName p} 24; ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface cursor-theme ${cursorName p}; ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface icon-theme ${iconName p}")
+    hl.exec_cmd("hyprctl setcursor ${cursorName p} 24; ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/cursor-theme \"'${cursorName p}'\"; ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/icon-theme \"'${iconName p}'\"")
   '' + lib.concatMapStrings (c: ''
     hl.curve("${at c 0}", { type = "bezier", points = { { ${n (at c 1)}, ${n (at c 2)} }, { ${n (at c 3)}, ${n (at c 4)} } } })
   '') curves + lib.concatMapStrings (a: ''
@@ -482,7 +482,7 @@ let
   # whatever can reload live (Firefox, Qt apps and btop pick it up on restart)
   evaSwitch = pkgs.writeShellApplication {
     name = "eva-switch";
-    runtimeInputs = with pkgs; [ coreutils gnused procps glib ];
+    runtimeInputs = with pkgs; [ coreutils gnused procps dconf ];
     text = ''
       cfg="''${XDG_CONFIG_HOME:-$HOME/.config}"
       state="''${XDG_STATE_HOME:-$HOME/.local/state}/eva"
@@ -512,10 +512,12 @@ let
       # Hyprland re-runs the setup's hypr.lua (borders, motion) — no full reload
       command -v hyprctl >/dev/null && hyprctl eval 'EvaLoadSetup()' >/dev/null 2>&1 || true
       pkill -USR1 -x .kitty-wrapped 2>/dev/null || pkill -USR1 -x kitty 2>/dev/null || true   # kitty re-reads its config
-      # GTK 3/4 apps re-read gtk.css when the theme name changes
-      t=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null || echo "'adw-gtk3-dark'")
-      gsettings set org.gnome.desktop.interface gtk-theme "Adwaita" 2>/dev/null || true
-      gsettings set org.gnome.desktop.interface gtk-theme "$t" 2>/dev/null || true
+      # GTK 3/4 apps re-read gtk.css when the theme name changes (dconf: no
+      # schemas needed)
+      t=$(dconf read /org/gnome/desktop/interface/gtk-theme 2>/dev/null); t=''${t:-"'adw-gtk3-dark'"}
+      dconf write /org/gnome/desktop/interface/gtk-theme "'Adwaita'" 2>/dev/null || true
+      sleep 0.2
+      dconf write /org/gnome/desktop/interface/gtk-theme "$t" 2>/dev/null || true
       command -v fcitx5-remote >/dev/null && fcitx5-remote -r 2>/dev/null || true
       echo "eva: $id"
     '';
