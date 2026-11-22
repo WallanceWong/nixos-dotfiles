@@ -50,9 +50,13 @@ let
     }
     decoration {
         rounding = 0
-        shadow { color = $shadow }
+        shadow {
+            color = $shadow
+        }
     }
-    misc { background_color = $crust }
+    misc {
+        background_color = $crust
+    }
     animations {
         enabled = true
   '' + (if p.id == "magi" then ''

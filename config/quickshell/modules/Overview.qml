@@ -93,12 +93,23 @@ PanelWindow {
                             border.width: wsCol.current || panel.selected === wsCol.index || drop.containsDrag ? 2 : 1
                             border.color: drop.containsDrag ? Theme.armour : wsCol.current ? Theme.accent : panel.selected === wsCol.index ? Qt.alpha(Theme.accent, 0.6) : Theme.hairline
 
+                            // the setup's wallpaper in miniature: the painting, or the command grid
                             Image {
                                 anchors.fill: parent
-                                source: "file://" + Theme.dots + "/wallpapers/wall.jpg"
+                                visible: !Theme.magi
+                                source: visible ? "file://" + Theme.dots + "/wallpapers/unit01/wall.jpg" : ""
                                 sourceSize.width: 480
                                 fillMode: Image.PreserveAspectCrop
                                 opacity: 0.85
+                            }
+                            Grid {
+                                anchors.fill: parent
+                                visible: Theme.magi
+                                columns: 12
+                                Repeater {
+                                    model: 96
+                                    Rectangle { width: card.width / 12; height: card.height / 8; color: "transparent"; border.width: 1; border.color: Qt.alpha(Theme.accent, 0.08) }
+                                }
                             }
                             MouseArea {
                                 anchors.fill: parent
