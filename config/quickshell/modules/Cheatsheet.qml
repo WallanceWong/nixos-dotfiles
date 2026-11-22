@@ -14,7 +14,7 @@ PanelWindow {
     readonly property bool open: Panels.open === "cheatsheet"
     screen: Panels.screen
     visible: open || veil.opacity > 0
-    WlrLayershell.namespace: "whisper-cheatsheet"
+    WlrLayershell.namespace: "eva-cheatsheet"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: open ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
@@ -53,7 +53,7 @@ PanelWindow {
     function category(b) {
         const a = b.arg, d = b.dispatcher;
         if (b.key.startsWith("XF86")) return "Media";
-        if (/restart whisper-shell|hyprpaper/.test(a)) return "Rescue";
+        if (/restart nerv-shell|hyprpaper/.test(a)) return "Rescue";
         if (/screenshot|annotate|picker|quickshell:record/.test(a)) return "Capture";
         if (["workspace", "movetoworkspace", "togglespecialworkspace"].includes(d)) return "Workspaces";
         if (["killactive", "togglefloating", "pseudo", "layoutmsg", "fullscreen", "movefocus", "movewindow"].includes(d)) return "Windows";
@@ -118,20 +118,20 @@ PanelWindow {
         property string text
         implicitWidth: Math.max(26, chipText.implicitWidth + 14)
         implicitHeight: 24
-        radius: 7
+        radius: 0
         color: Theme.surface1
         border.width: 1
-        border.color: Qt.alpha(Theme.lamp, 0.14)
-        Rectangle { anchors { left: parent.left; right: parent.right; bottom: parent.bottom } height: 2; radius: 7; color: Qt.alpha(Theme.crust, 0.5) }
+        border.color: Qt.alpha(Theme.accent, 0.14)
+        Rectangle { anchors { left: parent.left; right: parent.right; bottom: parent.bottom } height: 2; radius: 0; color: Qt.alpha(Theme.crust, 0.5) }
         Text {
             id: chipText
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -1
             text: parent.text
-            color: Theme.lamp
-            font.family: Theme.font
-            font.pixelSize: 12
-            font.weight: Font.ExtraBold
+            color: Theme.accent
+            font.family: Theme.mono
+            font.pixelSize: 11
+            font.weight: Font.Bold
         }
     }
 
@@ -146,8 +146,8 @@ PanelWindow {
         RowLayout {
             spacing: 8
             Layout.bottomMargin: 2
-            Icon { icon: group.icon; size: 18; color: Theme.teal; fill: 1 }
-            Label { text: group.title; color: Theme.teal; font.pixelSize: 13; font.weight: Font.ExtraBold; font.letterSpacing: 0.6 }
+            Icon { icon: group.icon; size: 18; color: Theme.armour; fill: 1 }
+            Caps { text: group.title; color: Theme.armour; font.pixelSize: 13; font.weight: Font.Bold; font.letterSpacing: 2.5 }
         }
         Repeater {
             model: group.rows
@@ -180,15 +180,19 @@ PanelWindow {
         Item { Layout.preferredHeight: 10 }
     }
 
-    Rectangle {
+    Item {
         id: card
         anchors.centerIn: parent
         width: Math.min(parent.width - 80, 1180)
         height: Math.min(parent.height - 80, content.implicitHeight + 56)
-        radius: Theme.radius + 6
-        color: Theme.glassStrong
-        border.width: 1
-        border.color: Theme.hairline
+        HudFrame {
+            anchors.fill: parent
+            fill: Theme.glassStrong
+            stroke: Qt.alpha(Theme.accent, 0.5)
+            cut: 24
+            ticks: true
+        }
+        Rectangle { x: 36; y: 0; width: 160; height: 3; color: Theme.accent }
         opacity: veil.opacity
         scale: 0.96 + 0.04 * veil.opacity
         clip: true
@@ -202,21 +206,20 @@ PanelWindow {
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 12
-                Icon { icon: "keyboard"; size: 26; color: Theme.lamp; fill: 1 }
-                Label { text: "keys"; font.pixelSize: 22; font.weight: Font.ExtraBold; color: Theme.lamp }
-                Label { text: "the ones worth remembering"; color: Theme.subtext; font.pixelSize: 13 }
+                Text { text: "操縦"; font.family: Theme.title; font.weight: Font.Black; font.pixelSize: 30; color: Theme.text }
+                Caps { text: "CONTROL REFERENCE"; font.pixelSize: 16; font.weight: Font.Bold; font.letterSpacing: 4; color: Theme.accent }
                 Item { Layout.fillWidth: true }
                 Rectangle {
                     implicitWidth: 240
                     implicitHeight: 34
-                    radius: 17
+                    radius: 0
                     color: Theme.surface0
                     border.width: 1
-                    border.color: panel.filter ? Qt.alpha(Theme.lamp, 0.4) : Theme.hairline
+                    border.color: panel.filter ? Qt.alpha(Theme.accent, 0.4) : Theme.hairline
                     Icon { anchors { left: parent.left; leftMargin: 11; verticalCenter: parent.verticalCenter } icon: "search"; size: 17; color: Theme.subtext }
                     Label {
                         anchors { left: parent.left; leftMargin: 36; right: parent.right; rightMargin: 12; verticalCenter: parent.verticalCenter }
-                        text: panel.filter || "type to filter"
+                        text: panel.filter || "TYPE TO FILTER"
                         color: panel.filter ? Theme.text : Theme.overlay
                     }
                 }

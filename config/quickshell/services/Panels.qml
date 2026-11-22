@@ -7,8 +7,8 @@ import Quickshell.Hyprland
 Singleton {
     id: root
 
-    // overlays open on the focused monitor (WHISPER_SCREEN pins them, for testing)
-    readonly property var screen: Quickshell.screens.find(s => s.name === (Quickshell.env("WHISPER_SCREEN") || Hyprland.focusedMonitor?.name)) ?? Quickshell.screens[0]
+    // overlays open on the focused monitor (EVA_SCREEN pins them, for testing)
+    readonly property var screen: Quickshell.screens.find(s => s.name === (Quickshell.env("EVA_SCREEN") || Hyprland.focusedMonitor?.name)) ?? Quickshell.screens[0]
 
     property string open: ""          // "", "launcher", "control", "dashboard", "overview", "power", "cheatsheet", "settings"
     property string launcherMode: "apps"   // apps | clipboard | emoji | windows

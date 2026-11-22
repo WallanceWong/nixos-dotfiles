@@ -44,7 +44,7 @@ Singleton {
     Process {
         id: rec
         onExited: (code, status) => {
-            Quickshell.execDetached(["notify-send", "-a", "whisper", "-i", "media-record",
+            Quickshell.execDetached(["notify-send", "-a", "NERV", "-i", "media-record",
                                      code === 0 ? "Recording saved" : "Recording stopped",
                                      root.lastFile.replace(Quickshell.env("HOME"), "~")]);
         }

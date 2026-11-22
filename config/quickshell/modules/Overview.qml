@@ -15,7 +15,7 @@ PanelWindow {
     readonly property bool open: Panels.open === "overview"
     screen: Panels.screen
     visible: open || veil.opacity > 0
-    WlrLayershell.namespace: "whisper-overview"
+    WlrLayershell.namespace: "eva-overview"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: open ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
@@ -82,7 +82,7 @@ PanelWindow {
                         id: drop
                         width: panel.cardW
                         height: panel.cardH
-                        keys: ["whisper-window"]
+                        keys: ["eva-window"]
                         onDropped: d => Hyprland.dispatch("movetoworkspacesilent " + wsCol.wsId + ",address:" + d.source.address)
 
                         ClippingRectangle {
@@ -91,7 +91,7 @@ PanelWindow {
                             radius: Theme.radius
                             color: Theme.crust
                             border.width: wsCol.current || panel.selected === wsCol.index || drop.containsDrag ? 2 : 1
-                            border.color: drop.containsDrag ? Theme.teal : wsCol.current ? Theme.lamp : panel.selected === wsCol.index ? Qt.alpha(Theme.lamp, 0.6) : Theme.hairline
+                            border.color: drop.containsDrag ? Theme.armour : wsCol.current ? Theme.accent : panel.selected === wsCol.index ? Qt.alpha(Theme.accent, 0.6) : Theme.hairline
 
                             Image {
                                 anchors.fill: parent
@@ -126,16 +126,16 @@ PanelWindow {
                                     z: (ipc?.floating ?? false) ? 2 : 1
 
                                     Drag.active: dragArea.drag.active
-                                    Drag.keys: ["whisper-window"]
+                                    Drag.keys: ["eva-window"]
                                     Drag.hotSpot.x: width / 2
                                     Drag.hotSpot.y: height / 2
 
                                     ClippingRectangle {
                                         anchors.fill: parent
-                                        radius: 6
+                                        radius: 0
                                         color: Theme.surface0
                                         border.width: 1
-                                        border.color: dragArea.containsMouse ? Theme.lamp : Qt.alpha(Theme.lamp, 0.25)
+                                        border.color: dragArea.containsMouse ? Theme.accent : Qt.alpha(Theme.accent, 0.25)
                                         ScreencopyView {
                                             anchors.fill: parent
                                             captureSource: panel.open ? win.modelData.wayland : null
@@ -166,8 +166,8 @@ PanelWindow {
                     Row {
                         anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 6
-                        Icon { icon: "star"; size: 16; fill: wsCol.current ? 1 : 0; color: wsCol.current ? Theme.lamp : Theme.subtext }
-                        Label { text: String(wsCol.wsId); color: wsCol.current ? Theme.lamp : Theme.subtext; font.weight: Font.ExtraBold }
+                        Icon { icon: "star"; size: 16; fill: wsCol.current ? 1 : 0; color: wsCol.current ? Theme.accent : Theme.subtext }
+                        Label { text: String(wsCol.wsId); color: wsCol.current ? Theme.accent : Theme.subtext; font.weight: Font.ExtraBold }
                     }
                 }
             }

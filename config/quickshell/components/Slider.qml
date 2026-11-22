@@ -1,74 +1,87 @@
 import QtQuick
 import qs.services
 
-// Rounded slider: icon on the left (click it to mute), lamp-lit fill.
+// Sync-ratio style slider: an icon block on the left (click to mute), a
+// segmented bar that lights up in the accent, a readout on the right.
 Item {
     id: root
 
     property real value: 0            // 0..1, bound from outside
     property string icon: ""
-    property color accent: Theme.lamp
+    property color accent: Theme.accent
     property bool dimmed: false
     signal moved(real value)
     signal iconClicked()
 
-    implicitHeight: 42
+    implicitHeight: 40
     implicitWidth: 300
 
-    Rectangle {
+    readonly property real shown: drag.pressed ? drag.live : value
+    readonly property int segments: 32
+
+    HudFrame {
         id: track
         anchors.fill: parent
-        radius: height / 2
-        color: Theme.surface0
-        border.width: 1
-        border.color: Theme.hairline
+        cut: 9
+        fill: Qt.alpha(Theme.surface0, 0.9)
+        stroke: Theme.hairline
+    }
 
-        Rectangle {
-            id: fillBar
-            anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
-            width: Math.max(height, parent.width * (drag.pressed ? drag.live : root.value))
-            radius: height / 2
-            color: root.dimmed ? Theme.surface2 : Qt.alpha(root.accent, 0.85)
-            Behavior on width { enabled: !drag.pressed; NumberAnimation { duration: Theme.normal; easing.type: Theme.easing } }
-            Behavior on color { ColorAnimation { duration: Theme.normal } }
+    // icon block
+    Rectangle {
+        id: iconBlock
+        anchors { left: parent.left; top: parent.top; bottom: parent.bottom; margins: 4; leftMargin: 4 }
+        width: 34
+        color: root.dimmed ? Theme.surface2 : root.accent
+        Icon {
+            anchors.centerIn: parent
+            icon: root.icon
+            size: 18
+            fill: 1
+            color: root.dimmed ? Theme.subtext : Theme.crust
         }
+        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.iconClicked() }
+    }
 
-        Text {
-            anchors { right: parent.right; rightMargin: 16; verticalCenter: parent.verticalCenter }
-            text: Math.round((drag.pressed ? drag.live : root.value) * 100) + "%"
-            color: Theme.subtext
-            font.family: Theme.font
-            font.pixelSize: 12
-            font.weight: Font.Bold
+    // segments
+    Row {
+        id: bar
+        anchors { left: iconBlock.right; leftMargin: 8; right: readout.left; rightMargin: 10; verticalCenter: parent.verticalCenter }
+        height: 16
+        spacing: 2
+        Repeater {
+            model: root.segments
+            Rectangle {
+                required property int index
+                readonly property bool lit: (index + 0.5) / root.segments <= root.shown
+                width: (bar.width - (root.segments - 1) * bar.spacing) / root.segments
+                height: bar.height
+                color: lit ? (root.dimmed ? Theme.overlay : root.accent) : Qt.alpha(Theme.overlay, 0.28)
+                Behavior on color { ColorAnimation { duration: Theme.fast } }
+            }
         }
+    }
+
+    Text {
+        id: readout
+        anchors { right: parent.right; rightMargin: 12; verticalCenter: parent.verticalCenter }
+        width: 38
+        horizontalAlignment: Text.AlignRight
+        text: Math.round(root.shown * 100) + "%"
+        color: root.dimmed ? Theme.subtext : root.accent
+        font.family: Theme.mono
+        font.pixelSize: 12
+        font.weight: Font.Bold
     }
 
     MouseArea {
         id: drag
         property real live: 0
-        anchors.fill: parent
-        anchors.leftMargin: 44
+        anchors { fill: bar; topMargin: -10; bottomMargin: -10 }
         cursorShape: Qt.PointingHandCursor
-        function at(x) { return Math.max(0, Math.min(1, (x + 44) / track.width)); }
+        function at(x) { return Math.max(0, Math.min(1, x / bar.width)); }
         onPressed: e => { live = at(e.x); root.moved(live); }
         onPositionChanged: e => { if (pressed) { live = at(e.x); root.moved(live); } }
         onWheel: e => root.moved(Math.max(0, Math.min(1, root.value + (e.angleDelta.y > 0 ? 0.05 : -0.05))))
-    }
-
-    Item {
-        anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
-        width: 44
-        Icon {
-            anchors.centerIn: parent
-            icon: root.icon
-            size: 19
-            fill: 1
-            color: root.dimmed ? Theme.subtext : Theme.base
-        }
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: root.iconClicked()
-        }
     }
 }

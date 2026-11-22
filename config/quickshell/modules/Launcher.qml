@@ -18,7 +18,7 @@ PanelWindow {
     readonly property string mode: Panels.launcherMode
     screen: Panels.screen
     visible: open || box.opacity > 0
-    WlrLayershell.namespace: "whisper-launcher"
+    WlrLayershell.namespace: "eva-launcher"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: open ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
@@ -134,39 +134,57 @@ PanelWindow {
         r.run();
     }
 
-    Rectangle {
+    Item {
         id: box
         anchors.fill: parent
-        radius: Theme.radius + 8
-        color: Theme.glassStrong
-        border.width: 1
-        border.color: Qt.alpha(Theme.lamp, 0.35)
         opacity: panel.open ? 1 : 0
         scale: panel.open ? 1 : 0.96
         Behavior on opacity { NumberAnimation { duration: Theme.normal; easing.type: Theme.easing } }
         Behavior on scale { NumberAnimation { duration: Theme.normal; easing.type: Theme.easing } }
 
+        HudFrame {
+            anchors.fill: parent
+            fill: Theme.glassStrong
+            stroke: Qt.alpha(Theme.accent, 0.5)
+            cut: 20
+            ticks: true
+        }
+        Rectangle { x: 30; y: 0; width: 120; height: 3; color: Theme.accent }
+        Caps {
+            anchors { right: parent.right; rightMargin: 24; top: parent.top; topMargin: 6 }
+            text: (Theme.magi ? "MAGI · COMMAND INPUT · " : "ENTRY PLUG · ") + panel.mode.toUpperCase()
+            color: Theme.overlay
+            font.pixelSize: 10
+        }
+
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: 16
+            anchors.topMargin: 24
             spacing: 12
 
             // search field
-            Rectangle {
+            Item {
                 Layout.fillWidth: true
                 implicitHeight: 52
-                radius: 26
-                color: Theme.surface0
-                border.width: 1
-                border.color: search.activeFocus ? Qt.alpha(Theme.lamp, 0.5) : Theme.hairline
+                HudFrame {
+                    anchors.fill: parent
+                    cut: 12
+                    fill: Qt.alpha(Theme.crust, 0.55)
+                    stroke: search.activeFocus ? Qt.alpha(Theme.accent, 0.8) : Theme.hairline
+                }
                 RowLayout {
                     anchors.fill: parent
                     anchors.leftMargin: 18
                     anchors.rightMargin: 10
                     spacing: 12
-                    Icon {
-                        icon: panel.mode === "clipboard" ? "content_paste" : panel.mode === "emoji" ? "mood" : panel.mode === "windows" ? "select_window" : "bedtime"
-                        size: 22; fill: 1; color: Theme.lamp; rotation: panel.mode === "apps" ? -20 : 0
+                    Text {
+                        text: ">"
+                        color: Theme.accent
+                        font.family: Theme.mono
+                        font.pixelSize: 22
+                        font.weight: Font.Bold
+                        SequentialAnimation on opacity { running: panel.open; loops: Animation.Infinite; NumberAnimation { to: 0.3; duration: 600 } NumberAnimation { to: 1; duration: 600 } }
                     }
                     TextField {
                         id: search
@@ -174,10 +192,11 @@ PanelWindow {
                         background: null
                         color: Theme.text
                         placeholderTextColor: Theme.overlay
-                        placeholderText: panel.mode === "clipboard" ? "search the clipboard…" : panel.mode === "emoji" ? "find an emoji (copies it)…" : panel.mode === "windows" ? "switch to a window…" : "where to tonight?   (= for maths)"
-                        font.family: Theme.font
-                        font.pixelSize: 17
+                        placeholderText: panel.mode === "clipboard" ? "SEARCH CLIPBOARD" : panel.mode === "emoji" ? "FIND AN EMOJI (COPIES IT)" : panel.mode === "windows" ? "SWITCH TO A WINDOW" : (Theme.magi ? "ENTER COMMAND   ( = FOR MATHS )" : "LAUNCH   ( = FOR MATHS )")
+                        font.family: Theme.hud
+                        font.pixelSize: 19
                         font.weight: Font.DemiBold
+                        font.letterSpacing: 1.2
                         selectByMouse: true
                         onTextChanged: list.currentIndex = 0
                         Keys.onEscapePressed: Panels.close()
@@ -223,7 +242,10 @@ PanelWindow {
                 model: panel.results
                 highlightMoveDuration: Theme.fast
                 boundsBehavior: Flickable.StopAtBounds
-                highlight: Rectangle { radius: Theme.radiusSmall + 2; color: Theme.surface1; border.width: 1; border.color: Qt.alpha(Theme.lamp, 0.25) }
+                highlight: Item {
+                    Rectangle { anchors.fill: parent; color: Qt.alpha(Theme.accent, 0.12); border.width: 1; border.color: Qt.alpha(Theme.accent, 0.45) }
+                    Rectangle { width: 4; height: parent.height; color: Theme.accent }
+                }
 
                 delegate: Item {
                     id: item
@@ -247,14 +269,23 @@ PanelWindow {
                                 source: visible ? Theme.icon(item.modelData.icon ?? "", "application-x-executable") : ""
                                 asynchronous: true
                             }
-                            Icon { anchors.centerIn: parent; visible: !!item.modelData.glyph; icon: item.modelData.icon ?? ""; size: 22; color: Theme.teal }
+                            Icon { anchors.centerIn: parent; visible: !!item.modelData.glyph; icon: item.modelData.icon ?? ""; size: 22; color: Theme.armour }
                             Text { anchors.centerIn: parent; visible: !!item.modelData.emoji; text: item.modelData.emoji ?? ""; font.pixelSize: 24 }
                         }
                         ColumnLayout {
                             Layout.fillWidth: true
                             spacing: 0
-                            Label { Layout.fillWidth: true; text: item.modelData.name; font.pixelSize: 14; color: item.current ? Theme.lamp : Theme.text; maximumLineCount: 1 }
-                            Label { Layout.fillWidth: true; visible: text.length > 0; text: item.modelData.desc ?? ""; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.subtext }
+                            Label { Layout.fillWidth: true; text: item.modelData.name; font.pixelSize: 16; font.weight: item.current ? Font.Bold : Font.Medium; color: item.current ? Theme.accent : Theme.text; maximumLineCount: 1 }
+                            Label { Layout.fillWidth: true; visible: text.length > 0; text: item.modelData.desc ?? ""; font.pixelSize: 12; color: Theme.subtext }
+                        }
+                        Text {
+                            visible: item.current
+                            text: "ENTER ⏎"
+                            color: Theme.accent
+                            font.family: Theme.hud
+                            font.pixelSize: 11
+                            font.weight: Font.Bold
+                            font.letterSpacing: 2
                         }
                     }
                     MouseArea {
@@ -270,15 +301,15 @@ PanelWindow {
                     anchors.centerIn: parent
                     visible: list.count === 0
                     spacing: 6
-                    Icon { anchors.horizontalCenter: parent.horizontalCenter; icon: "nights_stay"; size: 36; color: Theme.overlay }
-                    Label { anchors.horizontalCenter: parent.horizontalCenter; text: panel.mode === "clipboard" ? "the clipboard is empty" : "nothing out here"; color: Theme.overlay }
+                    Hexagon { anchors.horizontalCenter: parent.horizontalCenter; implicitWidth: 44; stroke: Theme.overlay }
+                    Caps { anchors.horizontalCenter: parent.horizontalCenter; text: panel.mode === "clipboard" ? "CLIPBOARD EMPTY" : "NO MATCH"; color: Theme.overlay; font.pixelSize: 13 }
                 }
             }
 
-            Label {
+            Caps {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
-                text: "↑↓ choose   ·   Enter open   ·   Tab switch mode   ·   Esc close"
+                text: "↑↓ SELECT   ·   ENTER OPEN   ·   TAB MODE   ·   ESC CLOSE"
                 font.pixelSize: 11
                 color: Theme.overlay
             }

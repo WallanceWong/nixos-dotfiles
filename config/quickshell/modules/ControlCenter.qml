@@ -42,7 +42,7 @@ Scope {
     PanelWindow {
         id: inhibitHost
         screen: Quickshell.screens[0]
-        WlrLayershell.namespace: "whisper-inhibit"
+        WlrLayershell.namespace: "eva-inhibit"
         WlrLayershell.layer: WlrLayer.Bottom
         exclusionMode: ExclusionMode.Ignore
         anchors { top: true; left: true }
@@ -57,7 +57,7 @@ Scope {
         id: panel
         screen: Panels.screen
         visible: root.open || sheet.opacity > 0
-        WlrLayershell.namespace: "whisper-control"
+        WlrLayershell.namespace: "eva-control"
         WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.keyboardFocus: root.open ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
         exclusionMode: ExclusionMode.Ignore
@@ -73,16 +73,21 @@ Scope {
             onCleared: Panels.close()
         }
 
-        Rectangle {
+        Item {
             id: sheet
             width: parent.width
             implicitHeight: body.implicitHeight + 32
             height: parent.height
-            radius: Theme.radius + 6
-            color: Theme.glassStrong
-            border.width: 1
-            border.color: Qt.alpha(Theme.lamp, 0.22)
             clip: true
+
+            HudFrame {
+                anchors.fill: parent
+                fill: Theme.glassStrong
+                stroke: Qt.alpha(Theme.accent, 0.45)
+                cut: 18
+                ticks: true
+            }
+            Rectangle { x: 26; y: 0; width: 90; height: 3; color: Theme.accent }
 
             opacity: root.open ? 1 : 0
             transform: Translate { y: root.open ? 0 : -24 }
@@ -108,35 +113,71 @@ Scope {
                         Layout.fillWidth: true
                         visible: root.page === "main"
                         spacing: 12
-                        Rectangle {
-                            Layout.preferredWidth: 46
-                            Layout.preferredHeight: 46
-                            radius: 23
-                            gradient: Gradient {
-                                GradientStop { position: 0; color: Theme.lamp }
-                                GradientStop { position: 1; color: Theme.teal }
-                            }
-                            Icon { anchors.centerIn: parent; icon: "bedtime"; size: 24; fill: 1; color: Theme.base; rotation: -20 }
+                        Hexagon {
+                            Layout.preferredWidth: 50
+                            Layout.preferredHeight: 44
+                            fill: Theme.accent
+                            stroke: Theme.accent
+                            Text { anchors.centerIn: parent; text: Theme.magi ? "N" : "01"; color: Theme.crust; font.family: Theme.title; font.weight: Font.Black; font.pixelSize: 20 }
                         }
                         ColumnLayout {
                             Layout.fillWidth: true
                             spacing: 0
-                            Label { text: Quickshell.env("USER"); font.pixelSize: 16; font.weight: Font.ExtraBold; color: Theme.lamp }
-                            Label { id: uptimeLabel; text: ""; font.pixelSize: 12; color: Theme.subtext }
+                            Caps { text: (Theme.magi ? "OPERATOR · " : "PILOT · ") + (Quickshell.env("USER") ?? ""); font.pixelSize: 16; font.weight: Font.Bold; color: Theme.text; font.letterSpacing: 2 }
+                            Caps { id: uptimeLabel; text: ""; font.pixelSize: 11; color: Theme.subtext }
                             FileView {
                                 id: uptimeFile
                                 path: "/proc/uptime"
                                 onLoaded: {
                                     const s = Math.floor(parseFloat(text().split(" ")[0]));
                                     const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60);
-                                    uptimeLabel.text = "up " + (h ? h + "h " : "") + m + "m";
+                                    uptimeLabel.text = (Theme.magi ? "MAGI UPTIME " : "ACTIVE FOR ") + (h ? h + "H " : "") + m + "M";
                                 }
                             }
                             Connections { target: root; function onOpenChanged() { if (root.open) uptimeFile.reload(); } }
                         }
                         IconButton { icon: "screenshot_region"; tooltip: "Screenshot"; onClicked: { Panels.close(); Quickshell.execDetached(["sh", "-c", "sleep 0.4; " + Theme.dots + "/config/hypr/screenshot.sh region"]); } }
                         IconButton { icon: "lock"; onClicked: Locker.lock() }
-                        IconButton { icon: "power_settings_new"; iconColor: Theme.red; onClicked: Panels.show("power") }
+                        IconButton { icon: "power_settings_new"; iconColor: Theme.alert; onClicked: Panels.show("power") }
+                    }
+
+                    // ───────────── setup: UNIT-01 / NERV HQ ─────────────
+                    RowLayout {
+                        Layout.fillWidth: true
+                        visible: root.page === "main"
+                        spacing: 6
+                        Repeater {
+                            model: Setups.all
+                            Item {
+                                id: setupBtn
+                                required property var modelData
+                                readonly property bool on: Theme.setup === modelData.id
+                                Layout.fillWidth: true
+                                implicitHeight: 52
+                                HudFrame {
+                                    anchors.fill: parent
+                                    cut: 10
+                                    fill: setupBtn.on ? Qt.alpha(setupBtn.modelData.tone, 0.18) : setupMouse.containsMouse ? Theme.surface1 : Qt.alpha(Theme.surface0, 0.9)
+                                    stroke: setupBtn.on ? setupBtn.modelData.tone : Theme.hairline
+                                    ticks: setupBtn.on
+                                    tickColor: setupBtn.modelData.tone
+                                }
+                                Column {
+                                    anchors { left: parent.left; leftMargin: 14; verticalCenter: parent.verticalCenter }
+                                    spacing: 1
+                                    Caps { text: setupBtn.modelData.name; color: setupBtn.on ? setupBtn.modelData.tone : Theme.text; font.pixelSize: 15; font.weight: Font.Bold; font.letterSpacing: 2.5 }
+                                    Caps { text: setupBtn.modelData.subtitle; color: Theme.subtext; font.pixelSize: 10 }
+                                }
+                                Rectangle {
+                                    anchors { right: parent.right; rightMargin: 12; verticalCenter: parent.verticalCenter }
+                                    width: 8; height: 8
+                                    color: setupBtn.on ? setupBtn.modelData.tone : "transparent"
+                                    border.color: setupBtn.on ? setupBtn.modelData.tone : Theme.overlay
+                                    border.width: 1.5
+                                }
+                                MouseArea { id: setupMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: Setups.set(setupBtn.modelData.id) }
+                            }
+                        }
                     }
 
                     // ───────────── sliders ─────────────
@@ -149,7 +190,7 @@ Scope {
                             icon: Audio.icon
                             value: Audio.volume
                             dimmed: Audio.muted
-                            accent: Theme.teal
+                            accent: Theme.armour
                             onMoved: v => Audio.setVolume(v)
                             onIconClicked: Audio.toggleMute()
                         }
@@ -162,7 +203,7 @@ Scope {
                         icon: Audio.micMuted ? "mic_off" : "mic"
                         value: Audio.micVolume
                         dimmed: Audio.micMuted
-                        accent: Theme.blue
+                        accent: Theme.info
                         onMoved: v => Audio.setMic(v)
                         onIconClicked: Audio.toggleMic()
                     }
@@ -172,7 +213,7 @@ Scope {
                         visible: root.page === "main"
                         icon: "brightness_6"
                         value: Brightness.value
-                        accent: Theme.lamp
+                        accent: Theme.accent
                         onMoved: v => Brightness.set(v)
                     }
 
@@ -236,21 +277,18 @@ Scope {
                             Layout.fillWidth: true
                             icon: Settings.sounds ? "music_note" : "music_off"
                             title: "Sounds"
-                            subtitle: Settings.sounds ? "soft chimes" : "silent"
+                            subtitle: Settings.sounds ? (Theme.drama ? "command room" : "quiet clicks") : "silent"
                             active: Settings.sounds
                             onToggled: Settings.sounds = !Settings.sounds
                         }
                     }
 
                     // power profile
-                    Rectangle {
+                    Item {
                         Layout.fillWidth: true
                         visible: root.page === "main"
                         implicitHeight: 44
-                        radius: 22
-                        color: Theme.surface0
-                        border.width: 1
-                        border.color: Theme.hairline
+                        HudFrame { anchors.fill: parent; cut: 9; fill: Qt.alpha(Theme.surface0, 0.9); stroke: Theme.hairline }
                         RowLayout {
                             anchors.fill: parent
                             anchors.margins: 4
@@ -266,14 +304,15 @@ Scope {
                                     readonly property bool on: root.realProfile === "" ? PowerProfiles.profile === modelData.p : root.realProfile === modelData.key
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
-                                    radius: height / 2
-                                    color: on ? Qt.alpha(Theme.lamp, 0.18) : ppMouse.containsMouse ? Theme.surface1 : "transparent"
+                                    color: on ? Qt.alpha(Theme.accent, 0.18) : ppMouse.containsMouse ? Theme.surface1 : "transparent"
+                                    border.width: on ? 1 : 0
+                                    border.color: Qt.alpha(Theme.accent, 0.6)
                                     Behavior on color { ColorAnimation { duration: Theme.normal } }
                                     Row {
                                         anchors.centerIn: parent
                                         spacing: 6
-                                        Icon { icon: modelData.icon; size: 17; fill: on ? 1 : 0; color: on ? Theme.lamp : Theme.subtext }
-                                        Label { text: modelData.name; font.pixelSize: 12; color: on ? Theme.lamp : Theme.subtext }
+                                        Icon { icon: modelData.icon; size: 17; fill: on ? 1 : 0; color: on ? Theme.accent : Theme.subtext }
+                                        Caps { text: modelData.name; font.pixelSize: 12; font.weight: Font.Bold; color: on ? Theme.accent : Theme.subtext }
                                     }
                                     Timer { id: recheck; interval: 500; onTriggered: if (!profileProbe.running) profileProbe.running = true }
                                     MouseArea { id: ppMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { PowerProfiles.profile = modelData.p; recheck.restart(); } }
@@ -295,20 +334,16 @@ Scope {
                                 { icon: "colorize", name: "Picker", run: () => { Panels.close(); Quickshell.execDetached(["sh", "-c", "sleep 0.4; " + Theme.dots + "/config/hypr/picker.sh"]); } },
                                 { icon: "content_paste", name: "Clipboard", run: () => Panels.launcher("clipboard") }
                             ]
-                            Rectangle {
+                            Item {
                                 required property var modelData
                                 Layout.fillWidth: true
                                 implicitHeight: 58
-                                radius: Theme.radiusSmall + 4
-                                color: qaMouse.containsMouse ? Theme.surface1 : Theme.surface0
-                                border.width: 1
-                                border.color: Theme.hairline
-                                Behavior on color { ColorAnimation { duration: Theme.fast } }
+                                HudFrame { anchors.fill: parent; cut: 8; fill: qaMouse.containsMouse ? Theme.surface1 : Qt.alpha(Theme.surface0, 0.9); stroke: qaMouse.containsMouse ? Qt.alpha(Theme.accent, 0.5) : Theme.hairline }
                                 Column {
                                     anchors.centerIn: parent
                                     spacing: 3
-                                    Icon { anchors.horizontalCenter: parent.horizontalCenter; icon: modelData.icon; size: 20; color: modelData.name === "Stop" ? Theme.red : Theme.lamp }
-                                    Label { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.name; font.pixelSize: 11; color: Theme.subtext }
+                                    Icon { anchors.horizontalCenter: parent.horizontalCenter; icon: modelData.icon; size: 20; color: modelData.name === "Stop" ? Theme.alert : Theme.accent }
+                                    Caps { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.name; font.pixelSize: 11; color: Theme.subtext }
                                 }
                                 MouseArea { id: qaMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: modelData.run() }
                             }
@@ -320,11 +355,11 @@ Scope {
                         Layout.fillWidth: true
                         Layout.topMargin: 4
                         visible: root.page === "main"
-                        Label { Layout.fillWidth: true; text: "Notifications"; font.pixelSize: 14; font.weight: Font.ExtraBold; color: Theme.lamp }
-                        Label {
+                        Caps { Layout.fillWidth: true; text: Theme.magi ? "TRANSMISSIONS" : "MESSAGES"; font.pixelSize: 14; font.weight: Font.Bold; font.letterSpacing: 3; color: Theme.accent }
+                        Caps {
                             visible: Notifs.history.count > 0
-                            text: "clear"
-                            color: clearMouse.containsMouse ? Theme.lamp : Theme.subtext
+                            text: "CLEAR"
+                            color: clearMouse.containsMouse ? Theme.accent : Theme.subtext
                             font.pixelSize: 12
                             MouseArea { id: clearMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: Notifs.clearHistory() }
                         }
@@ -336,8 +371,8 @@ Scope {
                         topPadding: 10
                         bottomPadding: 10
                         spacing: 6
-                        Icon { anchors.horizontalCenter: parent.horizontalCenter; icon: "nights_stay"; size: 34; color: Theme.overlay }
-                        Label { anchors.horizontalCenter: parent.horizontalCenter; text: "nothing new tonight"; color: Theme.overlay; font.pixelSize: 12 }
+                        Hexagon { anchors.horizontalCenter: parent.horizontalCenter; implicitWidth: 40; stroke: Theme.overlay }
+                        Caps { anchors.horizontalCenter: parent.horizontalCenter; text: Theme.magi ? "NO PATTERN DETECTED" : "NOTHING NEW"; color: Theme.overlay; font.pixelSize: 12 }
                     }
                     Repeater {
                         model: root.page === "main" ? Notifs.history : 0
@@ -347,10 +382,10 @@ Scope {
                             Layout.fillWidth: true
                             visible: index < 12
                             implicitHeight: histRow.implicitHeight + 20
-                            radius: Theme.radiusSmall + 2
-                            color: Theme.surface0
+                            color: Qt.alpha(Theme.surface0, 0.85)
                             border.width: 1
                             border.color: Theme.hairline
+                            Rectangle { width: 3; height: parent.height; color: Theme.accent }
                             RowLayout {
                                 id: histRow
                                 anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter; margins: 10 }
@@ -382,12 +417,13 @@ Scope {
                         Layout.fillWidth: true
                         visible: root.page !== "main"
                         IconButton { icon: "arrow_back"; onClicked: root.page = "main" }
-                        Label {
+                        Caps {
                             Layout.fillWidth: true
-                            text: root.page === "wifi" ? "Wi-Fi" : root.page === "bluetooth" ? "Bluetooth" : "App volume"
+                            text: root.page === "wifi" ? "WI-FI" : root.page === "bluetooth" ? "BLUETOOTH" : "APP VOLUME"
                             font.pixelSize: 16
-                            font.weight: Font.ExtraBold
-                            color: Theme.lamp
+                            font.weight: Font.Bold
+                            font.letterSpacing: 3
+                            color: Theme.accent
                         }
                     }
 

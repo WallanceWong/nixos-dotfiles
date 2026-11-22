@@ -37,10 +37,10 @@ ColumnLayout {
             Rectangle {
                 Layout.fillWidth: true
                 implicitHeight: 46
-                radius: Theme.radiusSmall + 2
-                color: row.n.connected ? Qt.alpha(Theme.lamp, 0.13) : netMouse.containsMouse ? Theme.surface1 : Theme.surface0
+                radius: 0
+                color: row.n.connected ? Qt.alpha(Theme.accent, 0.13) : netMouse.containsMouse ? Theme.surface1 : Theme.surface0
                 border.width: 1
-                border.color: row.n.connected ? Qt.alpha(Theme.lamp, 0.35) : Theme.hairline
+                border.color: row.n.connected ? Qt.alpha(Theme.accent, 0.35) : Theme.hairline
                 RowLayout {
                     anchors.fill: parent
                     anchors.leftMargin: 12
@@ -49,9 +49,9 @@ ColumnLayout {
                     Icon {
                         icon: row.n.signalStrength > 0.75 ? "signal_wifi_4_bar" : row.n.signalStrength > 0.5 ? "network_wifi_3_bar" : row.n.signalStrength > 0.25 ? "network_wifi_2_bar" : "network_wifi_1_bar"
                         size: 19; fill: 1
-                        color: row.n.connected ? Theme.lamp : Theme.blue
+                        color: row.n.connected ? Theme.accent : Theme.info
                     }
-                    Label { Layout.fillWidth: true; text: row.n.name; color: row.n.connected ? Theme.lamp : Theme.text }
+                    Label { Layout.fillWidth: true; text: row.n.name; color: row.n.connected ? Theme.accent : Theme.text }
                     Icon { visible: row.n.security !== WifiSecurityType.Open; icon: "lock"; size: 15; color: Theme.overlay }
                     Label {
                         text: row.n.stateChanging ? "…" : row.n.connected ? "connected" : row.n.known ? "saved" : ""
@@ -86,7 +86,7 @@ ColumnLayout {
                     placeholderTextColor: Theme.overlay
                     font.family: Theme.font
                     font.pixelSize: 13
-                    background: Rectangle { radius: 12; color: Theme.mantle; border.width: 1; border.color: pw.activeFocus ? Theme.lamp : Theme.surface1 }
+                    background: Rectangle { radius: 0; color: Theme.mantle; border.width: 1; border.color: pw.activeFocus ? Theme.accent : Theme.surface1 }
                     onVisibleChanged: if (visible) { text = ""; forceActiveFocus(); }
                     onAccepted: { row.n.connectWithPsk(text); root.asking = null; }
                 }

@@ -33,7 +33,7 @@ Singleton {
     }
 
     // Apps start in their own systemd scope (like apps started from a key bind),
-    // not inside whisper-shell's service — restarting or crashing the shell
+    // not inside nerv-shell's service — restarting or crashing the shell
     // would otherwise take every app opened from the launcher down with it.
     function launch(cmd, cwd) {
         const inDir = cwd ? ["sh", "-c", "cd \"$0\" && exec \"$@\"", cwd] : [];

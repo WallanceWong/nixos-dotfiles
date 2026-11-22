@@ -1,0 +1,150 @@
+/* eva — Firefox's design tokens, mapped onto the active setup.
+   Firefox builds its whole interface (toolbars, menus, settings, add-ons, the
+   new tab page …) from these variables, so one map recolours all of it.
+   Imported by userChrome.css and userContent.css; the @-moz-document keeps it
+   to Firefox's own pages, never websites. */
+
+@-moz-document url-prefix("chrome:"), url-prefix("about:"), url-prefix("resource:") {
+  :root, :host {
+    /* the grey ramps, light to dark → text … night sky. Firefox's "Nova" design
+       (on since 157) reads gray-0 as text, 70 as cards, 85 as the page */
+    --color-gray-0: var(--eva-text) !important;
+    --color-gray-05: var(--eva-text) !important;
+    --color-gray-10: var(--eva-text) !important;
+    --color-gray-15: color-mix(in srgb, var(--eva-text) 85%, var(--eva-subtext)) !important;
+    --color-gray-20: color-mix(in srgb, var(--eva-text) 65%, var(--eva-subtext)) !important;
+    --color-gray-25: var(--eva-subtext) !important;
+    --color-gray-30: var(--eva-subtext) !important;
+    --color-gray-35: color-mix(in srgb, var(--eva-subtext) 70%, var(--eva-overlay)) !important;
+    --color-gray-40: color-mix(in srgb, var(--eva-overlay) 70%, var(--eva-subtext)) !important;
+    --color-gray-45: var(--eva-overlay) !important;
+    --color-gray-50: color-mix(in srgb, var(--eva-overlay) 60%, var(--eva-surface2)) !important;
+    --color-gray-55: var(--eva-surface2) !important;
+    --color-gray-60: var(--eva-surface1) !important;
+    --color-gray-65: color-mix(in srgb, var(--eva-surface1) 50%, var(--eva-surface0)) !important;
+    --color-gray-70: var(--eva-surface0) !important;
+    --color-gray-75: var(--eva-sunken) !important;
+    --color-gray-80: var(--eva-base) !important;
+    --color-gray-85: var(--eva-base) !important;
+    --color-gray-90: var(--eva-mantle) !important;
+    --color-gray-100: var(--eva-crust) !important;
+    --color-violet-desaturated-0: var(--eva-text) !important;
+    --color-violet-desaturated-10: color-mix(in srgb, var(--eva-text) 85%, var(--eva-subtext)) !important;
+    --color-violet-desaturated-20: color-mix(in srgb, var(--eva-text) 50%, var(--eva-subtext)) !important;
+    --color-violet-desaturated-30: var(--eva-subtext) !important;
+    --color-violet-desaturated-40: var(--eva-overlay) !important;
+    --color-violet-desaturated-50: var(--eva-surface2) !important;
+    --color-violet-desaturated-60: var(--eva-surface1) !important;
+    --color-violet-desaturated-70: var(--eva-surface0) !important;
+    --color-violet-desaturated-80: var(--eva-sunken) !important;
+    --color-violet-desaturated-90: var(--eva-mantle) !important;
+    /* Nova's violet accent ramp → lamplight */
+    --color-violet-0: color-mix(in srgb, var(--eva-accent) 60%, white) !important;
+    --color-violet-10: color-mix(in srgb, var(--eva-accent) 80%, white) !important;
+    --color-violet-20: var(--eva-accent) !important;
+    --color-violet-30: var(--eva-accent) !important;
+    --color-violet-40: var(--eva-accentDim) !important;
+    --color-violet-50: color-mix(in srgb, var(--eva-accentDim) 70%, var(--eva-surface1)) !important;
+    --color-violet-60: color-mix(in srgb, var(--eva-accent) 35%, var(--eva-surface1)) !important;
+    --color-violet-70: color-mix(in srgb, var(--eva-accent) 22%, var(--eva-surface0)) !important;
+    --color-violet-80: color-mix(in srgb, var(--eva-accent) 12%, var(--eva-surface0)) !important;
+    --color-violet-90: color-mix(in srgb, var(--eva-accent) 6%, var(--eva-base)) !important;
+    /* Nova's toolbar gradient: a faint glow from teal city light to lamplight */
+    --toolbox-background-color-gradient-leading: color-mix(in srgb, var(--eva-armour) 16%, var(--eva-mantle)) !important;
+    --toolbox-background-color-gradient-trailing: color-mix(in srgb, var(--eva-accent) 14%, var(--eva-mantle)) !important;
+
+    /* the accent is the streetlamp */
+    --color-accent-primary: var(--eva-accent) !important;
+    --color-accent-primary-hover: color-mix(in srgb, var(--eva-accent) 82%, white) !important;
+    --color-accent-primary-active: var(--eva-accentDim) !important;
+    --color-accent-primary-selected: var(--eva-accent) !important;
+    --color-accent-attention: var(--eva-armour) !important;
+    --focus-outline-color: var(--eva-accent) !important;
+    --border-color-selected: var(--eva-accent) !important;
+    --link-color: var(--eva-armour) !important;
+    --link-color-hover: color-mix(in srgb, var(--eva-armour) 75%, white) !important;
+    --link-color-active: var(--eva-accent) !important;
+    --link-color-visited: var(--eva-armour) !important;
+
+    /* text and surfaces */
+    --text-color: var(--eva-text) !important;
+    --text-color-deemphasized: var(--eva-subtext) !important;
+    --text-color-disabled: color-mix(in srgb, var(--eva-subtext) 55%, transparent) !important;
+    --text-color-error: var(--eva-alert) !important;
+    --background-color-canvas: var(--eva-base) !important;
+    --background-color-box: var(--eva-surface0) !important;
+    --background-color-critical: color-mix(in srgb, var(--eva-alert) 18%, var(--eva-base)) !important;
+    --background-color-information: color-mix(in srgb, var(--eva-info) 18%, var(--eva-base)) !important;
+    --background-color-success: color-mix(in srgb, var(--eva-signal) 18%, var(--eva-base)) !important;
+    --background-color-warning: color-mix(in srgb, var(--eva-caution) 18%, var(--eva-base)) !important;
+    --border-color: var(--eva-surface1) !important;
+    --border-color-card: var(--eva-surface1) !important;
+    --border-color-deemphasized: var(--eva-surface0) !important;
+    --border-color-interactive: var(--eva-surface2) !important;
+    --border-color-interactive-hover: var(--eva-overlay) !important;
+    --border-color-error: var(--eva-alert) !important;
+    --card-border-color: color-mix(in srgb, var(--eva-accent) 8%, transparent) !important;
+    --table-background-color: var(--eva-sunken) !important;
+    --table-header-background-color: var(--eva-surface0) !important;
+    --table-border-color: var(--eva-surface1) !important;
+
+    --icon-color: var(--eva-text) !important;
+    --icon-color-information: var(--eva-info) !important;
+    --icon-color-success: var(--eva-signal) !important;
+    --icon-color-warning: var(--eva-caution) !important;
+    --icon-color-critical: var(--eva-alert) !important;
+
+    /* buttons: quiet glass; the primary one is lamp-lit */
+    --button-background-color-hover: var(--eva-surface2) !important;
+    --button-background-color-active: color-mix(in srgb, var(--eva-surface2) 70%, var(--eva-overlay)) !important;
+    --button-text-color: var(--eva-text) !important;
+    --button-text-color-primary: var(--eva-crust) !important;
+    --button-background-color-destructive: var(--eva-alert) !important;
+    --button-text-color-destructive: var(--eva-crust) !important;
+    --button-border-radius: 2px !important;
+
+    /* toolbars and fields */
+    --toolbox-background-color: var(--eva-mantle) !important;
+    --toolbox-background-color-inactive: var(--eva-mantle) !important;
+    --toolbox-text-color: var(--eva-text) !important;
+    --toolbox-text-color-inactive: var(--eva-subtext) !important;
+    --toolbar-background-color: var(--eva-base) !important;
+    --toolbar-text-color: var(--eva-text) !important;
+    --toolbar-field-background-color: var(--eva-sunken) !important;
+    --toolbar-field-background-color-focus: var(--eva-mantle) !important;
+    --toolbar-field-border-color: transparent !important;
+    --toolbar-field-border-color-focus: color-mix(in srgb, var(--eva-accent) 55%, transparent) !important;
+    --toolbar-field-text-color: var(--eva-text) !important;
+    --toolbar-field-text-color-focus: var(--eva-text) !important;
+    --toolbarbutton-icon-fill: var(--eva-subtext) !important;
+    --toolbarbutton-icon-fill-attention: var(--eva-accent) !important;
+    --toolbarbutton-icon-fill-attention-text: var(--eva-crust) !important;
+    --toolbarbutton-background-color-hover: color-mix(in srgb, var(--eva-surface1) 85%, transparent) !important;
+    --toolbarbutton-background-color-active: var(--eva-surface2) !important;
+    --toolbarbutton-badge-background-color: var(--eva-alert) !important;
+
+    /* menus and panels: rounded glass with a faint lamp rim */
+    --panel-background-color: var(--eva-base) !important;
+    --panel-text-color: var(--eva-text) !important;
+    --panel-border-color: color-mix(in srgb, var(--eva-accent) 14%, var(--eva-surface1)) !important;
+    --panel-separator-color: var(--eva-surface1) !important;
+    --panel-border-radius: 2px !important;
+    --panel-menuitem-border-radius: 2px !important;
+    --popup-border-color: color-mix(in srgb, var(--eva-accent) 14%, var(--eva-surface1)) !important;
+    --arrowpanel-background: var(--eva-base) !important;
+    --arrowpanel-color: var(--eva-text) !important;
+    --arrowpanel-border-color: color-mix(in srgb, var(--eva-accent) 14%, var(--eva-surface1)) !important;
+    --arrowpanel-border-radius: 2px !important;
+    --arrowpanel-dimmed: color-mix(in srgb, var(--eva-surface1) 70%, transparent) !important;
+    --arrowpanel-dimmed-further: var(--eva-surface1) !important;
+    --menu-background-color: var(--eva-base) !important;
+    --menu-color: var(--eva-text) !important;
+    --menu-border-color: color-mix(in srgb, var(--eva-accent) 14%, var(--eva-surface1)) !important;
+    --menuitem-hover-background-color: var(--eva-surface1) !important;
+    --menuitem-disabled-hover-background-color: transparent !important;
+
+    --sidebar-background-color: var(--eva-mantle) !important;
+    --sidebar-text-color: var(--eva-text) !important;
+    --sidebar-border-color: var(--eva-surface0) !important;
+  }
+}

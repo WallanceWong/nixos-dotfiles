@@ -1,9 +1,9 @@
 {
-  "name": "whisper",
-  "displayName": "Whisper",
-  "description": "The whisper rice for VS Code: a night sky over the city, lit by a streetlamp. Colours come from theme/palette.json.",
-  "version": "1.0.0",
-  "publisher": "whisper",
+  "name": "eva",
+  "displayName": "Eva",
+  "description": "The eva rice for VS Code: one colour theme per setup (Unit-01 / NERV HQ) and a title-card date in the status bar. Colours come from theme/setups/*.json.",
+  "version": "2.0.0",
+  "publisher": "eva",
   "license": "MIT",
   "engines": {
     "vscode": "^1.80.0"
@@ -19,32 +19,27 @@
   "contributes": {
     "themes": [
       {
-        "label": "Whisper",
+        "label": "Eva Unit-01",
         "uiTheme": "vs-dark",
-        "path": "./themes/whisper-color-theme.json"
+        "path": "./themes/eva-unit01-color-theme.json"
+      },
+      {
+        "label": "Eva NERV HQ",
+        "uiTheme": "vs-dark",
+        "path": "./themes/eva-magi-color-theme.json"
       }
     ],
     "commands": [
       {
-        "command": "whisper.night",
-        "title": "Whisper: Night (focus) mode"
+        "command": "eva.focus",
+        "title": "Eva: Entry plug (focus) mode"
       },
       {
-        "command": "whisper.moon",
-        "title": "Whisper: Tonight's moon"
+        "command": "eva.date",
+        "title": "Eva: Today"
       }
     ],
-    "colors": [
-      {
-        "id": "whisper.moon",
-        "description": "The moon in the status bar",
-        "defaults": {
-          "dark": "#f0e3a8",
-          "light": "#8a7a30",
-          "highContrast": "#f0e3a8"
-        }
-      }
-    ],
+    "colors": [],
     "snippets": [
       {
         "language": "c",
@@ -65,7 +60,7 @@
     ],
     "keybindings": [
       {
-        "command": "whisper.night",
+        "command": "eva.focus",
         "key": "ctrl+k ctrl+n"
       }
     ]
@@ -78,7 +73,7 @@
   },
   "icon": "icon.png",
   "galleryBanner": {
-    "color": "#071a28",
+    "color": "#0f1331",
     "theme": "dark"
   }
 }

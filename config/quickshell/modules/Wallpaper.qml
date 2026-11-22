@@ -5,11 +5,12 @@ import Quickshell.Hyprland
 import qs.services
 import qs.components
 
-// The wallpaper: the living night (components/Scene.qml). The sky drifts
-// sideways as you move between workspaces, slower than the foreground — depth.
+// The wallpaper, per setup: the living painting (UNIT-01) or the MAGI command
+// display (NERV HQ). The picture drifts sideways as you move between
+// workspaces — depth.
 Variants {
-    // WHISPER_ONLY limits the shell to one screen (used for testing)
-    model: Quickshell.screens.filter(s => !Quickshell.env("WHISPER_ONLY") || s.name === Quickshell.env("WHISPER_ONLY"))
+    // EVA_ONLY limits the shell to one screen (used for testing)
+    model: Quickshell.screens.filter(s => !Quickshell.env("EVA_ONLY") || s.name === Quickshell.env("EVA_ONLY"))
 
     PanelWindow {
         id: win
@@ -17,18 +18,31 @@ Variants {
         screen: modelData
 
         WlrLayershell.layer: WlrLayer.Background
-        WlrLayershell.namespace: "whisper-wallpaper"
+        WlrLayershell.namespace: "eva-wallpaper"
         exclusionMode: ExclusionMode.Ignore
         anchors { top: true; bottom: true; left: true; right: true }
         color: Theme.crust
 
         readonly property int wsId: Hyprland.monitorFor(modelData)?.activeWorkspace?.id ?? 3
 
-        Scene {
+        Loader {
             anchors.fill: parent
-            animate: Desktop.skyVisible
-            // workspace 1 → sky shifted right, 5 → left (the painting has room to spare)
-            shift: (3 - Math.max(1, Math.min(5, win.wsId))) * 22
+            sourceComponent: Theme.magi ? magi : unit01
+        }
+        Component {
+            id: unit01
+            Unit01Scene {
+                animate: Desktop.skyVisible
+                // workspace 1 → shifted right, 5 → left
+                shift: (3 - Math.max(1, Math.min(5, win.wsId))) * 22
+            }
+        }
+        Component {
+            id: magi
+            MagiScene {
+                animate: Desktop.skyVisible
+                screenName: win.modelData.name
+            }
         }
     }
 }

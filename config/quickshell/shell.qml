@@ -4,7 +4,8 @@ import QtQuick
 import Quickshell
 import qs.modules
 
-// whisper-shell — the desktop for the "whisper" rice (see README).
+// nerv-shell — the desktop for the eva rice (see README): two setups,
+// UNIT-01 / SHINJI and NERV HQ / MAGI, switched with Super+Shift+U.
 ShellRoot {
     Wallpaper {}
     Bar {}

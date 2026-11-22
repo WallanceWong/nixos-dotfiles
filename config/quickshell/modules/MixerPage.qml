@@ -39,7 +39,7 @@ ColumnLayout {
                 icon: app.node.audio.muted ? "volume_off" : "volume_up"
                 value: app.node.audio.volume
                 dimmed: app.node.audio.muted
-                accent: Theme.teal
+                accent: Theme.armour
                 onMoved: v => { app.node.audio.muted = false; app.node.audio.volume = v; }
                 onIconClicked: app.node.audio.muted = !app.node.audio.muted
             }

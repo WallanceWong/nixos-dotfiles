@@ -5,17 +5,17 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import qs.services
 
-// Rounded screen corners: four tiny click-through surfaces per monitor that
-// paint the corners night-black. Hidden for fullscreen apps and game mode.
+// Cut screen corners: four tiny click-through surfaces per monitor that paint
+// a 45° chamfer black, like the HUD frames. Hidden for fullscreen apps and game mode.
 Variants {
-    model: Settings.corners ? Quickshell.screens.filter(s => !Quickshell.env("WHISPER_ONLY") || s.name === Quickshell.env("WHISPER_ONLY")) : []
+    model: Settings.corners ? Quickshell.screens.filter(s => !Quickshell.env("EVA_ONLY") || s.name === Quickshell.env("EVA_ONLY")) : []
 
     Scope {
         id: scr
         required property var modelData
         readonly property var monitor: Hyprland.monitorFor(modelData)
         readonly property bool hidden: Settings.gameMode || (!!Hyprland.activeToplevel?.wayland?.fullscreen && Hyprland.focusedMonitor === monitor)
-        readonly property int r: 14
+        readonly property int r: 10
 
         Variants {
             model: ["tl", "tr", "bl", "br"]
@@ -31,14 +31,14 @@ Variants {
                 implicitHeight: scr.r
                 exclusionMode: ExclusionMode.Ignore
                 WlrLayershell.layer: WlrLayer.Overlay
-                WlrLayershell.namespace: "whisper-corner"
+                WlrLayershell.namespace: "eva-corner"
                 color: "transparent"
                 mask: Region {}
 
                 Shape {
                     anchors.fill: parent
                     preferredRendererType: Shape.CurveRenderer
-                    // quarter-circle cut-out: fill the corner, leave the arc
+                    // a triangle in each corner
                     transform: Scale {
                         origin.x: scr.r / 2; origin.y: scr.r / 2
                         xScale: corner.isLeft ? 1 : -1
@@ -49,7 +49,7 @@ Variants {
                         strokeColor: "transparent"
                         startX: 0; startY: 0
                         PathLine { x: scr.r; y: 0 }
-                        PathArc { x: 0; y: scr.r; radiusX: scr.r; radiusY: scr.r; direction: PathArc.Counterclockwise }
+                        PathLine { x: 0; y: scr.r }
                         PathLine { x: 0; y: 0 }
                     }
                 }

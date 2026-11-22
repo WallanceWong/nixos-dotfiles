@@ -12,7 +12,7 @@ PanelWindow {
     readonly property bool open: Panels.open === "power"
     screen: Panels.screen
     visible: open || veil.opacity > 0
-    WlrLayershell.namespace: "whisper-power"
+    WlrLayershell.namespace: "eva-power"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: open ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
@@ -23,11 +23,11 @@ PanelWindow {
     onOpenChanged: if (open) { selected = 0; keys.forceActiveFocus(); }
 
     readonly property var actions: [
-        { icon: "lock", name: "Lock", key: "l", fn: () => Locker.lock() },
-        { icon: "bedtime", name: "Sleep", key: "s", cmd: ["systemctl", "suspend"] },
-        { icon: "logout", name: "Log out", key: "e", cmd: ["hyprctl", "dispatch", "exit"] },
-        { icon: "restart_alt", name: "Restart", key: "r", cmd: ["systemctl", "reboot"] },
-        { icon: "power_settings_new", name: "Shut down", key: "p", cmd: ["systemctl", "poweroff"] }
+        { icon: "hexagon", name: "AT FIELD", real: "LOCK", key: "l", fn: () => Locker.lock() },
+        { icon: "bedtime", name: "STANDBY", real: "SLEEP", key: "s", cmd: ["systemctl", "suspend"] },
+        { icon: "eject", name: "EJECT PLUG", real: "LOG OUT", key: "e", cmd: ["hyprctl", "dispatch", "exit"] },
+        { icon: "restart_alt", name: "REACTIVATE", real: "RESTART", key: "r", cmd: ["systemctl", "reboot"] },
+        { icon: "power_settings_new", name: Theme.magi ? "SELF-DESTRUCT" : "SHUTDOWN", real: "POWER OFF", key: "p", cmd: ["systemctl", "poweroff"] }
     ]
     function run(i) {
         const a = actions[i];
@@ -38,7 +38,7 @@ PanelWindow {
     Rectangle {
         id: veil
         anchors.fill: parent
-        color: Qt.alpha(Theme.crust, 0.62)
+        color: Qt.alpha(Theme.crust, 0.72)
         opacity: panel.open ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: Theme.normal; easing.type: Theme.easing } }
         MouseArea { anchors.fill: parent; onClicked: Panels.close() }
@@ -64,40 +64,73 @@ PanelWindow {
         opacity: veil.opacity
         scale: 0.94 + 0.06 * veil.opacity
 
-        Label {
+        Column {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "good night, " + Quickshell.env("USER")
-            font.pixelSize: 26
-            font.weight: Font.ExtraBold
-            color: Theme.lamp
+            spacing: 4
+            Caps {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: Theme.magi ? "NERV HQ · SYSTEM CONTROL" : "EVA-01 · PILOT " + (Quickshell.env("USER") ?? "")
+                color: Theme.accent
+                font.pixelSize: 15
+                font.weight: Font.Bold
+                font.letterSpacing: 5
+            }
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: Theme.magi ? "作戦終了" : "活動限界"
+                color: Theme.text
+                font.family: Theme.title
+                font.weight: Font.Black
+                font.pixelSize: 54
+            }
         }
 
         Row {
             spacing: 18
             Repeater {
                 model: panel.actions
-                Rectangle {
+                Item {
                     id: btn
                     required property var modelData
                     required property int index
                     readonly property bool sel: panel.selected === index
-                    readonly property color accent: index === 4 ? Theme.red : Theme.lamp
-                    width: 150
-                    height: 170
-                    radius: Theme.radius + 8
-                    color: sel ? Theme.surface1 : Theme.glassStrong
-                    border.width: sel ? 2 : 1
-                    border.color: sel ? accent : Theme.hairline
+                    readonly property color accent: index === 4 ? Theme.alert : Theme.accent
+                    width: 168
+                    height: 190
                     scale: sel ? 1.04 : 1
                     Behavior on scale { NumberAnimation { duration: Theme.normal; easing.type: Easing.OutBack } }
-                    Behavior on color { ColorAnimation { duration: Theme.fast } }
+
+                    HudFrame {
+                        anchors.fill: parent
+                        cut: 18
+                        fill: btn.sel ? Qt.alpha(btn.accent, 0.14) : Theme.glassStrong
+                        stroke: btn.sel ? btn.accent : Theme.hairline
+                        strokeWidth: btn.sel ? 2 : 1
+                        ticks: btn.sel
+                        tickColor: btn.accent
+                    }
+                    Hazard {
+                        visible: btn.index === 4 && btn.sel
+                        anchors { left: parent.left; right: parent.right; bottom: parent.bottom; margins: 4; leftMargin: 22 }
+                        height: 6
+                        color: Theme.alert
+                        stripe: 6
+                        running: Theme.drama
+                    }
+                    Text {
+                        anchors { right: parent.right; rightMargin: 12; top: parent.top; topMargin: 8 }
+                        text: "[" + btn.modelData.key.toUpperCase() + "]"
+                        color: btn.sel ? btn.accent : Theme.overlay
+                        font.family: Theme.mono
+                        font.pixelSize: 11
+                    }
 
                     Column {
                         anchors.centerIn: parent
-                        spacing: 14
-                        Icon { anchors.horizontalCenter: parent.horizontalCenter; icon: btn.modelData.icon; size: 46; fill: btn.sel ? 1 : 0; color: btn.sel ? btn.accent : Theme.text }
-                        Label { anchors.horizontalCenter: parent.horizontalCenter; text: btn.modelData.name; font.pixelSize: 15; font.weight: Font.Bold; color: btn.sel ? btn.accent : Theme.text }
-                        Label { anchors.horizontalCenter: parent.horizontalCenter; text: btn.modelData.key.toUpperCase(); font.pixelSize: 11; color: Theme.overlay }
+                        spacing: 10
+                        Icon { anchors.horizontalCenter: parent.horizontalCenter; icon: btn.modelData.icon; size: 50; fill: btn.sel ? 1 : 0; color: btn.sel ? btn.accent : Theme.text }
+                        Caps { anchors.horizontalCenter: parent.horizontalCenter; text: btn.modelData.name; font.pixelSize: 17; font.weight: Font.Bold; font.letterSpacing: 2; color: btn.sel ? btn.accent : Theme.text }
+                        Caps { anchors.horizontalCenter: parent.horizontalCenter; text: btn.modelData.real; font.pixelSize: 11; color: Theme.subtext }
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -110,9 +143,9 @@ PanelWindow {
             }
         }
 
-        Label {
+        Caps {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Esc to stay up a little longer"
+            text: "← → SELECT   ·   ENTER CONFIRM   ·   ESC CANCEL"
             color: Theme.subtext
             font.pixelSize: 12
         }

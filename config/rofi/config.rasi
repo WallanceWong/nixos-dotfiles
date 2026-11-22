@@ -1,4 +1,4 @@
-/* whisper — launcher */
+/* eva — rescue launcher */
 
 configuration {
     modi: "drun,run,window";
@@ -12,14 +12,14 @@ configuration {
 }
 
 * {
-    base:     #071a28e6;
-    surface0: #0c2a3d;
-    surface1: #13384e;
-    overlay:  #3f6e74;
-    subtext:  #9fb5bd;
-    text:     #e3e8e1;
-    lamp:     #f0e3a8;
-    teal:     #7fc3c6;
+    base:     #0f1331e6;
+    surface0: #172044;
+    surface1: #1e2a56;
+    overlay:  #4b5c8c;
+    subtext:  #a7b2cf;
+    text:     #e8e5e1;
+    lamp:     #9be34a;
+    teal:     #9a7fe6;
 
     background-color: transparent;
     text-color: @text;
@@ -34,7 +34,7 @@ window {
     anchor: center;
     border: 2px;
     border-color: @lamp;
-    border-radius: 18px;
+    border-radius: 2px;
     background-color: @base;
 }
 
@@ -47,7 +47,7 @@ mainbox {
 inputbar {
     padding: 12px 16px;
     spacing: 12px;
-    border-radius: 12px;
+    border-radius: 2px;
     background-color: @surface0;
     children: [ prompt, entry ];
 }
@@ -73,7 +73,7 @@ listview {
 element {
     padding: 9px 12px;
     spacing: 14px;
-    border-radius: 10px;
+    border-radius: 2px;
 }
 
 element normal.normal, element alternate.normal,
@@ -99,6 +99,6 @@ element-text {
 
 message {
     padding: 10px 14px;
-    border-radius: 10px;
+    border-radius: 2px;
     background-color: @surface0;
 }

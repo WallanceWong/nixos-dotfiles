@@ -4,12 +4,13 @@ import Quickshell.Wayland
 import qs.services
 import qs.components
 
-// The screensaver: after a while idle (hypridle → `qs ipc call whisper
-// screensaver`), the night fills the screen — a slow drift across the painting,
-// more shooting stars, and a small clock that wanders so nothing burns in.
+// The screensaver: after a while idle (hypridle → `qs ipc call nerv
+// screensaver`) the scene fills the screen — a slow drift across the painting
+// (UNIT-01) or the full MAGI display (NERV HQ), and a clock that wanders so
+// nothing burns in.
 // Any key, click or real mouse movement brings the desktop back.
 Variants {
-    model: Quickshell.screens.filter(s => !Quickshell.env("WHISPER_ONLY") || s.name === Quickshell.env("WHISPER_ONLY"))
+    model: Quickshell.screens.filter(s => !Quickshell.env("EVA_ONLY") || s.name === Quickshell.env("EVA_ONLY"))
 
     PanelWindow {
         id: win
@@ -17,13 +18,13 @@ Variants {
         screen: modelData
 
         readonly property bool on: Desktop.saver && !Locker.locked
-        readonly property bool test: Quickshell.env("WHISPER_SAVER_TEST") === "1"   // ignore input (for screenshots)
+        readonly property bool test: Quickshell.env("EVA_SAVER_TEST") === "1"   // ignore input (for screenshots)
         property real fade: on ? 1 : 0
         Behavior on fade { NumberAnimation { duration: win.on ? 2200 : 450; easing.type: Easing.InOutSine } }
 
         visible: on || fade > 0.001
         WlrLayershell.layer: WlrLayer.Overlay
-        WlrLayershell.namespace: "whisper-screensaver"
+        WlrLayershell.namespace: "eva-screensaver"
         WlrLayershell.keyboardFocus: on && !test ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
         exclusionMode: ExclusionMode.Ignore
         anchors { top: true; bottom: true; left: true; right: true }
@@ -49,19 +50,20 @@ Variants {
             }
             Item {
                 anchors.fill: parent
-                transform: [
+                transform: Theme.magi ? [] : drift
+                property list<QtObject> drift: [
                     Scale {
                         origin.x: stage.width / 2; origin.y: stage.height / 2
                         xScale: 1.05 + 0.05 * stage.drift; yScale: xScale
                     },
                     Translate { x: (stage.drift - 0.5) * -70; y: (stage.drift - 0.5) * 18 }
                 ]
-                Scene {
+                Loader {
                     anchors.fill: parent
-                    animate: win.visible
-                    showDate: false
-                    meteorRate: 4
+                    sourceComponent: Theme.magi ? magiScene : unitScene
                 }
+                Component { id: unitScene; Unit01Scene { animate: win.visible; showDate: false; showCaption: false } }
+                Component { id: magiScene; MagiScene { animate: win.visible } }
             }
 
             // soft vignette, so the edges fall away into the night
@@ -89,19 +91,23 @@ Variants {
                 Component.onCompleted: wander()
                 Behavior on opacity { NumberAnimation { duration: 1400; easing.type: Easing.InOutSine } }
 
+                visible: !Theme.magi      // the MAGI display has its own clocks
                 Text {
                     text: Qt.formatTime(clock.date, "HH:mm")
-                    color: Theme.lamp
-                    font.family: Theme.font
-                    font.pixelSize: Math.round(stage.height * 0.06)
-                    font.weight: Font.Light
+                    color: "#ffffff"
+                    font.family: Theme.title
+                    font.weight: Font.Black
+                    font.pixelSize: Math.round(stage.height * 0.08)
+                    style: Text.Outline
+                    styleColor: Qt.alpha(Theme.crust, 0.3)
                 }
                 Text {
-                    text: Astro.moonName + "  ·  " + Qt.formatDate(clock.date, "dddd d MMMM")
-                    color: Theme.subtext
-                    font.family: Theme.font
-                    font.pixelSize: 14
-                    font.weight: Font.DemiBold
+                    text: Qt.formatDate(clock.date, "dddd · d MMMM").toUpperCase()
+                    color: "#ffffff"
+                    font.family: Theme.hud
+                    font.pixelSize: 15
+                    font.weight: Font.Bold
+                    font.letterSpacing: 3
                 }
             }
             // fade out, move, fade in — once a minute

@@ -1,101 +1,126 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import Quickshell.Widgets
 import Quickshell.Services.Mpris
-import Quickshell.Services.UPower
 import qs.services
 import qs.components
 
-// Dashboard: drops from the clock. Time, calendar, music, how the laptop is doing.
+// Dashboard: drops from the clock. Segment clock and calendar; the music
+// (Shinji's S-DAT tape player in UNIT-01, an audio link in NERV HQ); and the
+// machine in Eva terms — sync ratio, LCL density, core temperature, power.
 PanelWindow {
     id: panel
 
     readonly property bool open: Panels.open === "dashboard"
     screen: Panels.screen
     visible: open || sheet.opacity > 0
-    WlrLayershell.namespace: "whisper-dashboard"
+    WlrLayershell.namespace: "eva-dashboard"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: open ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
     anchors { top: true }
     margins { top: 54 }
-    implicitWidth: 760
+    implicitWidth: 800
     implicitHeight: sheet.implicitHeight
     color: "transparent"
 
     HyprlandFocusGrab { active: panel.open; windows: [panel]; onCleared: Panels.close() }
-
     SystemClock { id: clock; precision: SystemClock.Seconds; enabled: panel.open }
+    StatsUser { active: panel.open }
 
-    Rectangle {
+    component Section: Item {
+        id: sec
+        property string title: ""
+        property string code: ""
+        default property alias content: inner.data
+        implicitHeight: inner.childrenRect.height + 44
+        HudFrame { anchors.fill: parent; cut: 12; fill: Qt.alpha(Theme.surface0, 0.75); stroke: Theme.hairline }
+        Rectangle { x: 14; y: 0; width: secTitle.implicitWidth + 10; height: 2; color: Theme.accent }
+        Caps { id: secTitle; x: 18; y: 10; text: sec.title; color: Theme.accent; font.pixelSize: 12; font.weight: Font.Bold; font.letterSpacing: 2.5 }
+        Caps { anchors { right: parent.right; rightMargin: 14; top: parent.top; topMargin: 10 } text: sec.code; color: Theme.overlay; font.pixelSize: 10 }
+        Item { id: inner; x: 14; y: 32; width: sec.width - 28; height: childrenRect.height }
+    }
+
+    Item {
         id: sheet
         width: parent.width
         implicitHeight: row.implicitHeight + 36
-        radius: Theme.radius + 8
-        color: Theme.glassStrong
-        border.width: 1
-        border.color: Qt.alpha(Theme.lamp, 0.22)
+        height: implicitHeight
         opacity: panel.open ? 1 : 0
         transform: Translate { y: panel.open ? 0 : -24 }
         Behavior on opacity { NumberAnimation { duration: Theme.normal; easing.type: Theme.easing } }
         focus: panel.open
         Keys.onEscapePressed: Panels.close()
 
+        HudFrame {
+            anchors.fill: parent
+            fill: Theme.glassStrong
+            stroke: Qt.alpha(Theme.accent, 0.45)
+            cut: 18
+            ticks: true
+            cutTopRight: true
+            cutBottomLeft: true
+        }
+
         RowLayout {
             id: row
             anchors { left: parent.left; right: parent.right; top: parent.top; margins: 18 }
-            spacing: 18
+            spacing: 16
 
             // ───────────── time + calendar ─────────────
             ColumnLayout {
                 Layout.preferredWidth: 330
                 Layout.maximumWidth: 330
-                Layout.fillWidth: false
                 Layout.alignment: Qt.AlignTop
-                spacing: 2
+                spacing: 6
 
                 Row {
-                    spacing: 8
-                    Label { text: Qt.formatTime(clock.date, "HH:mm"); color: Theme.lamp; font.pixelSize: 64; font.weight: Font.Black }
-                    Label { text: Qt.formatTime(clock.date, "ss"); color: Theme.overlay; font.pixelSize: 22; font.weight: Font.Bold; topPadding: 36 }
+                    spacing: 10
+                    SevenSeg { text: Qt.formatTime(clock.date, "HH:mm"); digitHeight: 58; color: Theme.accent }
+                    SevenSeg { text: Qt.formatTime(clock.date, "ss"); digitHeight: 24; color: Theme.armour; anchors.bottom: parent.bottom }
                 }
-                Label { text: Qt.formatDate(clock.date, "dddd, d MMMM yyyy"); color: Theme.text; font.pixelSize: 15 }
-                Label {
-                    readonly property var d: clock.date
-                    function k(n) { const s = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"]; return n < 10 ? s[n] : n === 10 ? "十" : n < 20 ? "十" + s[n - 10] : s[Math.floor(n / 10)] + "十" + s[n % 10]; }
-                    text: k(d.getMonth() + 1) + "月" + k(d.getDate()) + "日（" + ["日", "月", "火", "水", "木", "金", "土"][d.getDay()] + "）"
-                    font.family: Theme.jp
-                    font.pixelSize: 14
-                    color: Theme.subtext
-                    Layout.bottomMargin: 10
+                Row {
+                    spacing: 12
+                    topPadding: 4
+                    Text {
+                        readonly property var d: clock.date
+                        function k(n) { const s = ["〇", "一", "二", "三", "四", "五", "六", "七", "八", "九"]; return n < 10 ? s[n] : n < 20 ? "十" + (n > 10 ? s[n - 10] : "") : s[Math.floor(n / 10)] + "十" + (n % 10 ? s[n % 10] : ""); }
+                        text: k(d.getMonth() + 1) + "月" + k(d.getDate()) + "日"
+                        font.family: Theme.title
+                        font.weight: Font.Black
+                        font.pixelSize: 22
+                        color: Theme.text
+                    }
+                    Caps {
+                        anchors.baseline: parent.children[0].baseline
+                        text: Qt.formatDate(clock.date, "dddd · yyyy")
+                        font.pixelSize: 13
+                        color: Theme.subtext
+                    }
                 }
 
-                // calendar
-                Rectangle {
+                Section {
                     Layout.fillWidth: true
-                    implicitHeight: cal.implicitHeight + 24
-                    radius: Theme.radius
-                    color: Theme.surface0
-                    border.width: 1
-                    border.color: Theme.hairline
-
+                    Layout.topMargin: 8
+                    title: Qt.formatDate(cal.month, "MMMM yyyy")
+                    code: "CALENDAR"
                     ColumnLayout {
                         id: cal
-                        anchors { left: parent.left; right: parent.right; top: parent.top; margins: 12 }
-                        spacing: 6
+                        width: parent.width
+                        spacing: 4
                         property int offset: 0
                         Connections { target: panel; function onOpenChanged() { if (panel.open) cal.offset = 0; } }
                         readonly property date month: new Date(clock.date.getFullYear(), clock.date.getMonth() + offset, 1)
 
                         RowLayout {
                             Layout.fillWidth: true
-                            IconButton { icon: "chevron_left"; implicitWidth: 30; implicitHeight: 30; onClicked: cal.offset-- }
-                            Label { Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: Qt.formatDate(cal.month, "MMMM yyyy"); font.weight: Font.ExtraBold; color: Theme.lamp }
-                            IconButton { icon: "chevron_right"; implicitWidth: 30; implicitHeight: 30; onClicked: cal.offset++ }
+                            IconButton { icon: "chevron_left"; implicitWidth: 28; implicitHeight: 28; onClicked: cal.offset-- }
+                            Item { Layout.fillWidth: true }
+                            IconButton { icon: "today"; implicitWidth: 28; implicitHeight: 28; visible: cal.offset !== 0; onClicked: cal.offset = 0 }
+                            IconButton { icon: "chevron_right"; implicitWidth: 28; implicitHeight: 28; onClicked: cal.offset++ }
                         }
                         GridLayout {
                             Layout.fillWidth: true
@@ -103,8 +128,8 @@ PanelWindow {
                             rowSpacing: 2
                             columnSpacing: 2
                             Repeater {
-                                model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
-                                Label { required property string modelData; Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: modelData; font.pixelSize: 11; color: Theme.teal }
+                                model: ["MO", "TU", "WE", "TH", "FR", "SA", "SU"]
+                                Caps { required property string modelData; Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: modelData; font.pixelSize: 11; color: Theme.armour }
                             }
                             Repeater {
                                 model: 42
@@ -115,15 +140,17 @@ PanelWindow {
                                     readonly property bool inMonth: day.getMonth() === cal.month.getMonth()
                                     readonly property bool today: day.toDateString() === clock.date.toDateString()
                                     Layout.fillWidth: true
-                                    implicitHeight: 30
-                                    radius: 15
-                                    color: today ? Theme.lamp : "transparent"
-                                    Label {
+                                    implicitHeight: 28
+                                    color: today ? Theme.accent : "transparent"
+                                    border.width: today ? 0 : (inMonth ? 1 : 0)
+                                    border.color: Qt.alpha(Theme.overlay, 0.18)
+                                    Text {
                                         anchors.centerIn: parent
-                                        text: day.getDate()
-                                        font.pixelSize: 12
-                                        font.weight: today ? Font.ExtraBold : Font.Medium
-                                        color: today ? Theme.base : inMonth ? Theme.text : Theme.overlay
+                                        text: String(day.getDate()).padStart(2, "0")
+                                        font.family: Theme.mono
+                                        font.pixelSize: 11
+                                        font.weight: today ? Font.Bold : Font.Normal
+                                        color: today ? Theme.crust : inMonth ? Theme.text : Qt.alpha(Theme.overlay, 0.7)
                                     }
                                 }
                             }
@@ -135,173 +162,163 @@ PanelWindow {
             // ───────────── music + system ─────────────
             ColumnLayout {
                 Layout.fillWidth: true
-                Layout.minimumWidth: 370
                 Layout.alignment: Qt.AlignTop
                 spacing: 12
 
-                // now playing
-                Rectangle {
+                Section {
                     id: music
                     readonly property var players: Mpris.players.values.filter(p => !p.dbusName.includes("playerctld"))
                     readonly property var player: players.find(p => p.isPlaying) ?? players[0]
+                    readonly property bool playing: !!player?.isPlaying
                     Layout.fillWidth: true
-                    implicitHeight: 152
-                    radius: Theme.radius
-                    color: Theme.surface0
-                    border.width: 1
-                    border.color: Theme.hairline
-                    clip: true
+                    title: Theme.magi ? "AUDIO LINK" : "S-DAT"
+                    code: music.player?.identity?.toUpperCase() ?? "NO DEVICE"
 
-                    // album art, softly blurred behind
-                    Image {
-                        anchors.fill: parent
-                        source: music.player?.trackArtUrl ?? ""
-                        fillMode: Image.PreserveAspectCrop
-                        opacity: 0.18
-                        visible: status === Image.Ready
-                    }
+                    Timer { running: panel.open && music.playing; interval: 1000; repeat: true; onTriggered: music.player.positionChanged() }
 
-                    Timer { running: panel.open && !!music.player?.isPlaying; interval: 1000; repeat: true; onTriggered: music.player.positionChanged() }
+                    Item {
+                        width: parent.width
+                        height: 120
 
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 14
-                        spacing: 14
-                        visible: !!music.player
-
-                        ClippingRectangle {
-                            Layout.preferredWidth: 110
-                            Layout.preferredHeight: 110
-                            radius: 14
-                            color: Theme.surface1
-                            Image { anchors.fill: parent; source: music.player?.trackArtUrl ?? ""; fillMode: Image.PreserveAspectCrop; asynchronous: true }
-                            Icon { anchors.centerIn: parent; visible: !(music.player?.trackArtUrl ?? "").length; icon: "music_note"; size: 40; color: Theme.overlay }
-                        }
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            spacing: 2
-                            Label { Layout.fillWidth: true; text: music.player?.trackTitle || "Unknown"; font.pixelSize: 15; font.weight: Font.ExtraBold; color: Theme.lamp }
-                            Label { Layout.fillWidth: true; text: music.player?.trackArtist || music.player?.identity || ""; color: Theme.subtext }
-                            Item { Layout.fillHeight: true }
+                        // the tape (UNIT-01) or the cover art (NERV HQ)
+                        Item {
+                            id: deck
+                            width: 150; height: 104
+                            anchors.verticalCenter: parent.verticalCenter
                             Rectangle {
+                                visible: !Theme.magi
+                                anchors.fill: parent
+                                color: Qt.alpha(Theme.crust, 0.6)
+                                border.color: Theme.armour
+                                border.width: 1.5
+                                Caps { x: 10; y: 6; text: "SONY · DAT"; font.pixelSize: 9; color: Theme.subtext }
+                                Rectangle { x: 18; y: 30; width: parent.width - 36; height: 40; color: "transparent"; border.color: Qt.alpha(Theme.armour, 0.5) }
+                                Repeater {
+                                    model: 2
+                                    Item {
+                                        required property int index
+                                        x: index === 0 ? 30 : parent.width - 30 - 30
+                                        y: 35
+                                        width: 30; height: 30
+                                        Rectangle { anchors.fill: parent; radius: 15; color: "transparent"; border.color: Theme.armour; border.width: 2 }
+                                        Item {
+                                            anchors.fill: parent
+                                            RotationAnimation on rotation { running: music.playing && panel.open && !Theme.magi; from: 0; to: 360; duration: 2200; loops: Animation.Infinite }
+                                            Repeater {
+                                                model: 6
+                                                Rectangle { required property int index; width: 2; height: 8; color: Theme.armour; x: 14; y: 3; transformOrigin: Item.Bottom; rotation: index * 60; antialiasing: true }
+                                            }
+                                        }
+                                    }
+                                }
+                                Caps {
+                                    anchors { left: parent.left; leftMargin: 10; bottom: parent.bottom; bottomMargin: 6 }
+                                    text: "TRACK " + String(25 + (music.player?.trackNumber ?? 0) % 2).padStart(2, "0")
+                                    font.pixelSize: 10
+                                    color: Theme.accent
+                                }
+                            }
+                            ClippingRectangle {
+                                visible: Theme.magi
+                                anchors.fill: parent
+                                radius: 0
+                                color: Theme.surface1
+                                border.color: Theme.hairline
+                                border.width: 1
+                                Image { anchors.fill: parent; source: music.player?.trackArtUrl ?? ""; fillMode: Image.PreserveAspectCrop; asynchronous: true }
+                                Icon { anchors.centerIn: parent; visible: !(music.player?.trackArtUrl ?? "").length; icon: "graphic_eq"; size: 40; color: Theme.overlay }
+                            }
+                        }
+
+                        ColumnLayout {
+                            anchors { left: deck.right; leftMargin: 14; right: parent.right; top: parent.top; bottom: parent.bottom }
+                            spacing: 2
+                            visible: !!music.player
+                            Label { Layout.fillWidth: true; text: music.player?.trackTitle || "UNKNOWN"; font.pixelSize: 16; font.weight: Font.Bold; color: Theme.text }
+                            Label { Layout.fillWidth: true; text: music.player?.trackArtist || music.player?.identity || ""; color: Theme.subtext; font.pixelSize: 13 }
+                            Item { Layout.fillHeight: true }
+                            // position as segments
+                            Row {
+                                id: posBar
                                 Layout.fillWidth: true
-                                implicitHeight: 4
-                                radius: 2
-                                color: Theme.surface2
+                                height: 6
+                                spacing: 2
                                 visible: (music.player?.lengthSupported ?? false) && (music.player?.length ?? 0) > 0
-                                Rectangle { height: parent.height; radius: 2; color: Theme.teal; width: parent.width * Math.min(1, (music.player?.position ?? 0) / Math.max(1, music.player?.length ?? 1)) }
+                                readonly property real f: Math.min(1, (music.player?.position ?? 0) / Math.max(1, music.player?.length ?? 1))
+                                Repeater {
+                                    model: 36
+                                    Rectangle { required property int index; width: (posBar.width - 35 * 2) / 36; height: 6; color: (index + 0.5) / 36 <= posBar.f ? Theme.armour : Qt.alpha(Theme.overlay, 0.25) }
+                                }
                             }
                             RowLayout {
                                 spacing: 4
                                 IconButton { icon: "skip_previous"; enabled: music.player?.canGoPrevious ?? false; onClicked: music.player.previous() }
-                                IconButton { icon: music.player?.isPlaying ? "pause" : "play_arrow"; iconSize: 26; active: true; onClicked: music.player.togglePlaying() }
+                                IconButton { icon: music.playing ? "pause" : "play_arrow"; iconSize: 24; active: true; onClicked: music.player.togglePlaying() }
                                 IconButton { icon: "skip_next"; enabled: music.player?.canGoNext ?? false; onClicked: music.player.next() }
+                                Item { Layout.fillWidth: true }
+                                Caps { text: music.playing ? "▶ PLAY" : "■ STOP"; color: music.playing ? Theme.signal : Theme.overlay; font.pixelSize: 11; font.weight: Font.Bold }
                             }
                         }
-                    }
-                    Column {
-                        anchors.centerIn: parent
-                        visible: !music.player
-                        spacing: 6
-                        Icon { anchors.horizontalCenter: parent.horizontalCenter; icon: "music_off"; size: 32; color: Theme.overlay }
-                        Label { anchors.horizontalCenter: parent.horizontalCenter; text: "nothing playing"; color: Theme.overlay }
+                        Caps {
+                            anchors { left: deck.right; leftMargin: 14; verticalCenter: parent.verticalCenter }
+                            visible: !music.player
+                            text: Theme.magi ? "NO SIGNAL" : "NO TAPE"
+                            color: Theme.overlay
+                            font.pixelSize: 14
+                        }
                     }
                 }
 
-                // system
-                Rectangle {
-                    id: sys
+                Section {
                     Layout.fillWidth: true
-                    implicitHeight: stats.implicitHeight + 24
-                    radius: Theme.radius
-                    color: Theme.surface0
-                    border.width: 1
-                    border.color: Theme.hairline
-
-                    property real cpu: 0
-                    property var lastCpu: null
-                    property real mem: 0
-                    property string memText: ""
-                    property real temp: 0
-
-                    FileView { id: statFile; path: "/proc/stat" }
-                    FileView { id: memFile; path: "/proc/meminfo" }
-                    FileView { id: tempFile; path: "/sys/class/thermal/thermal_zone" + panel.tempZone + "/temp" }
-                    Timer {
-                        running: panel.open
-                        interval: 2000
-                        repeat: true
-                        triggeredOnStart: true
-                        onTriggered: {
-                            statFile.reload(); memFile.reload(); tempFile.reload();
-                            const f = statFile.text().split("\n")[0].trim().split(/\s+/).slice(1).map(Number);
-                            const idle = f[3] + f[4], total = f.reduce((a, b) => a + b, 0);
-                            const p = sys;
-                            if (p.lastCpu) p.cpu = 1 - (idle - p.lastCpu.idle) / Math.max(1, total - p.lastCpu.total);
-                            p.lastCpu = { idle: idle, total: total };
-                            const m = {};
-                            for (const line of memFile.text().split("\n")) { const s = line.split(/:\s+/); if (s.length === 2) m[s[0]] = parseInt(s[1]); }
-                            p.mem = 1 - m.MemAvailable / m.MemTotal;
-                            p.memText = ((m.MemTotal - m.MemAvailable) / 1048576).toFixed(1) + " / " + (m.MemTotal / 1048576).toFixed(1) + " GB";
-                            p.temp = parseInt(tempFile.text()) / 1000;
-                        }
-                    }
-
-                    GridLayout {
-                        id: stats
-                        anchors { left: parent.left; right: parent.right; top: parent.top; margins: 14 }
-                        columns: 2
-                        rowSpacing: 12
-                        columnSpacing: 16
-
-                        component Meter: ColumnLayout {
-                            property string icon
-                            property string name
-                            property string valueText
-                            property real value
-                            property color accent: Theme.teal
-                            Layout.fillWidth: true
-                            spacing: 5
-                            RowLayout {
-                                Icon { icon: parent.parent.icon; size: 17; color: parent.parent.accent; fill: 1 }
-                                Label { Layout.fillWidth: true; text: parent.parent.name; font.pixelSize: 12; color: Theme.subtext }
-                                Label { text: parent.parent.valueText; font.pixelSize: 12; font.weight: Font.Bold }
+                    title: Theme.magi ? "MAGI DIAGNOSTICS" : "UNIT STATUS"
+                    code: "EVA-01"
+                    Column {
+                        width: parent.width
+                        spacing: 10
+                        Repeater {
+                            model: [
+                                { name: "SYNC RATIO", sub: "CPU", value: Stats.cpu, text: (Stats.cpu * 100).toFixed(1) + "%" },
+                                { name: "LCL DENSITY", sub: "MEMORY", value: Stats.mem, text: Stats.memText },
+                                { name: "CORE TEMP", sub: "PACKAGE", value: Math.max(0, Math.min(1, (Stats.temp - 30) / 70)), text: Math.round(Stats.temp) + " °C" },
+                                { name: Stats.onBattery ? "INTERNAL POWER" : "EXTERNAL POWER", sub: Stats.onBattery ? Stats.clock(Stats.countdown) + " LEFT" : Stats.charging ? "CHARGING · " + Stats.clock(Stats.timeLeft) : "UMBILICAL", value: Stats.battery, text: Math.round(Stats.battery * 100) + "%" }
+                            ]
+                            Column {
+                                id: gauge
+                                required property var modelData
+                                required property int index
+                                width: parent.width
+                                spacing: 4
+                                Item {
+                                    width: parent.width; height: 16
+                                    Row {
+                                        spacing: 8
+                                        Caps { text: gauge.modelData.name; color: Theme.text; font.pixelSize: 12; font.weight: Font.Bold }
+                                        Caps { text: gauge.modelData.sub; color: Theme.overlay; font.pixelSize: 10; anchors.verticalCenter: parent.verticalCenter }
+                                    }
+                                    Text { anchors.right: parent.right; text: gauge.modelData.text; color: Theme.text; font.family: Theme.mono; font.pixelSize: 12 }
+                                }
+                                Row {
+                                    spacing: 2
+                                    Repeater {
+                                        model: 40
+                                        Rectangle {
+                                            required property int index
+                                            readonly property real f: (index + 0.5) / 40
+                                            readonly property bool isPower: gauge.index === 3
+                                            width: (gauge.width - 39 * 2) / 40
+                                            height: 9
+                                            color: f > gauge.modelData.value ? Qt.alpha(Theme.overlay, 0.25)
+                                                 : isPower ? (Stats.onBattery && gauge.modelData.value <= 0.15 ? Theme.alert : Theme.signal)
+                                                 : f > 0.85 ? Theme.alert : f > 0.65 ? Theme.caution : Theme.accent
+                                        }
+                                    }
+                                }
                             }
-                            Rectangle {
-                                Layout.fillWidth: true
-                                implicitHeight: 5
-                                radius: 3
-                                color: Theme.surface2
-                                Rectangle { height: parent.height; radius: 3; color: parent.parent.accent; width: parent.width * Math.max(0, Math.min(1, parent.parent.value)); Behavior on width { NumberAnimation { duration: Theme.slow; easing.type: Theme.easing } } }
-                            }
-                        }
-
-                        Meter { icon: "memory"; name: "CPU"; value: sys.cpu; valueText: Math.round(sys.cpu * 100) + "%"; accent: Theme.teal }
-                        Meter { icon: "memory_alt"; name: "Memory"; value: sys.mem; valueText: sys.memText; accent: Theme.blue }
-                        Meter { icon: "device_thermostat"; name: "Temperature"; value: (sys.temp - 30) / 70; valueText: Math.round(sys.temp) + "°C"; accent: sys.temp > 80 ? Theme.red : sys.temp > 65 ? Theme.mustard : Theme.green }
-                        Meter {
-                            readonly property var b: UPower.displayDevice
-                            icon: "battery_horiz_075"
-                            name: b?.state === UPowerDeviceState.Charging ? "Charging" : b?.state === UPowerDeviceState.Discharging ? "On battery" : "Plugged in"
-                            value: b?.percentage ?? 0
-                            valueText: {
-                                const pct = Math.round((b?.percentage ?? 0) * 100) + "%";
-                                const t = b?.state === UPowerDeviceState.Discharging ? b.timeToEmpty : b?.state === UPowerDeviceState.Charging ? b.timeToFull : 0;
-                                return t > 0 ? pct + " · " + Math.floor(t / 3600) + "h " + Math.floor(t % 3600 / 60) + "m" : pct;
-                            }
-                            accent: Theme.lamp
                         }
                     }
                 }
             }
         }
-    }
-
-    // pick the CPU package thermal zone once
-    property int tempZone: 0
-    Process {
-        running: true
-        command: ["sh", "-c", "for z in /sys/class/thermal/thermal_zone*; do [ \"$(cat $z/type)\" = x86_pkg_temp ] && basename $z | tr -dc 0-9 && exit; done; echo 0"]
-        stdout: StdioCollector { onStreamFinished: panel.tempZone = parseInt(text.trim()) || 0 }
     }
 }

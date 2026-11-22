@@ -8,16 +8,16 @@ pidfile=${XDG_RUNTIME_DIR:-/tmp}/autoclick.pid
 
 if [ -f "$pidfile" ] && kill "$(cat "$pidfile")" 2>/dev/null; then
   rm -f "$pidfile"
-  notify-send -a whisper -i input-mouse "Auto clicker" "Stopped"
+  notify-send -a NERV -i input-mouse "Auto clicker" "Stopped"
   exit 0
 fi
 
 cps=${1:-20}
 delay=$(awk "BEGIN { print 1 / $cps }")
-notify-send -a whisper -i input-mouse "Auto clicker" "Clicking $cps times a second — Super+Alt+C to stop"
+notify-send -a NERV -i input-mouse "Auto clicker" "Clicking $cps times a second — Super+Alt+C to stop"
 (
   while ydotool click 0xC0 >/dev/null 2>&1; do sleep "$delay"; done
   rm -f "$pidfile"
-  notify-send -a whisper -i dialog-error "Auto clicker" "Stopped: ydotool isn't working (log out and back in once after installing)"
+  notify-send -a NERV -i dialog-error "Auto clicker" "Stopped: ydotool isn't working (log out and back in once after installing)"
 ) &
 echo $! > "$pidfile"

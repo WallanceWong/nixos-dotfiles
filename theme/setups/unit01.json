@@ -1,0 +1,41 @@
+{
+  "_comment": "UNIT-01 / SHINJI: calm. Colours sampled from the wallpaper (Shinji at the railing, Unit-01 rising out of the sea): deep indigo night, cloud white, Unit-01 lime and purple, ember sparks. Edit here; the shell reads it live, everything else picks it up on rebuild.",
+  "id": "unit01",
+  "name": "UNIT-01",
+  "subtitle": "SHINJI IKARI · THIRD CHILD",
+  "drama": false,
+
+  "crust":    "#06071a",
+  "mantle":   "#0a0c24",
+  "base":     "#0f1331",
+  "sunken":   "#121738",
+  "surface0": "#172044",
+  "surface1": "#1e2a56",
+  "surface2": "#293a6b",
+  "overlay":  "#4b5c8c",
+  "subtext":  "#a7b2cf",
+  "text":     "#e8e5e1",
+
+  "accent":    "#9be34a",
+  "accentDim": "#6fae30",
+  "armour":    "#9a7fe6",
+  "signal":    "#9be34a",
+  "info":      "#68a6d0",
+  "caution":   "#ff9a4a",
+  "alert":     "#ff5d73",
+
+  "font":   "Barlow Semi Condensed",
+  "hud":    "Barlow Condensed",
+  "mono":   "JetBrainsMono Nerd Font",
+  "title":  "Noto Serif CJK JP",
+
+  "radius": 3,
+  "fast": 170,
+  "normal": 280,
+  "slow": 480,
+
+  "terminal": [
+    "#172044", "#ff5d73", "#9be34a", "#ff9a4a", "#68a6d0", "#9a7fe6", "#6fd3c8", "#c9cde0",
+    "#4b5c8c", "#ff8a9a", "#b9f07a", "#ffbb80", "#96c4e6", "#bba6f2", "#9ce6dd", "#f2f0ec"
+  ]
+}

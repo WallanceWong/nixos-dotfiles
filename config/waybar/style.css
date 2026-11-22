@@ -1,17 +1,17 @@
-/* whisper — a floating bar of little lit windows over the city */
+/* eva — rescue bar (Super+Ctrl+B): HUD plates */
 
-@define-color base     rgba(7, 26, 40, 0.82);
-@define-color surface0 #0c2a3d;
-@define-color surface1 #13384e;
-@define-color overlay  #3f6e74;
-@define-color subtext  #9fb5bd;
-@define-color text     #e3e8e1;
-@define-color lamp     #f0e3a8;
-@define-color teal     #7fc3c6;
-@define-color blue     #6d9fd1;
-@define-color red      #e0786c;
-@define-color mustard  #e3b35c;
-@define-color green    #8fbf9a;
+@define-color base     rgba(15, 19, 49, 0.82);
+@define-color surface0 #172044;
+@define-color surface1 #1e2a56;
+@define-color overlay  #4b5c8c;
+@define-color subtext  #a7b2cf;
+@define-color text     #e8e5e1;
+@define-color lamp     #9be34a;
+@define-color teal     #9a7fe6;
+@define-color blue     #68a6d0;
+@define-color red      #ff5d73;
+@define-color mustard  #ff9a4a;
+@define-color green    #9be34a;
 
 * {
     font-family: "JetBrainsMono Nerd Font";
@@ -28,9 +28,9 @@ window#waybar {
 }
 
 tooltip {
-    background: rgba(7, 26, 40, 0.95);
+    background: rgba(15, 19, 49, 0.95);
     border: 1px solid @lamp;
-    border-radius: 12px;
+    border-radius: 2px;
 }
 tooltip label {
     color: @text;
@@ -41,8 +41,8 @@ tooltip label {
 #custom-moon, #workspaces, #window, #clock, #mpris, #tray, #pulseaudio,
 #backlight, #network, #bluetooth, #power-profiles-daemon, #battery, #custom-power {
     background: @base;
-    border: 1px solid rgba(240, 227, 168, 0.10);
-    border-radius: 14px;
+    border: 1px solid rgba(155, 227, 74, 0.10);
+    border-radius: 2px;
     padding: 0 14px;
     margin: 0;
 }
@@ -62,11 +62,11 @@ tooltip label {
     background: transparent;
     transition: all 0.3s ease;
 }
-#workspaces button.empty { color: rgba(63, 110, 116, 0.6); }
+#workspaces button.empty { color: rgba(75, 92, 140, 0.6); }
 #workspaces button:not(.empty) { color: @subtext; }
 #workspaces button.active {
     color: @lamp;
-    text-shadow: 0 0 8px rgba(240, 227, 168, 0.6);
+    text-shadow: 0 0 8px rgba(155, 227, 74, 0.6);
 }
 #workspaces button.urgent { color: @red; }
 #workspaces button:hover {
@@ -86,7 +86,7 @@ window#waybar.empty #window { color: @overlay; }
     font-size: 14px;
     font-weight: 800;
     padding: 0 18px;
-    border-color: rgba(240, 227, 168, 0.25);
+    border-color: rgba(155, 227, 74, 0.25);
 }
 
 #mpris { color: @teal; font-weight: 500; }
@@ -113,7 +113,7 @@ window#waybar.empty #window { color: @overlay; }
 @keyframes blink { to { color: @text; } }
 
 #tray { padding: 0 10px; }
-#tray > .needs-attention { background: @red; border-radius: 8px; }
+#tray > .needs-attention { background: @red; border-radius: 2px; }
 
 #custom-power {
     color: @red;
