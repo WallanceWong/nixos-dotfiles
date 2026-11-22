@@ -483,10 +483,9 @@ let
         install -m 644 "$cfg/eva/$id/firefox.js" "$ff/user.js"
       fi
       # VS Code repaints when its colour theme setting changes
-      code="$cfg/Code/User/settings.json"
-      if [ -f "$code" ]; then
-        sed -i -E "s|(\"workbench.colorTheme\": *)\"[^\"]*\"|\1\"$(cat "$cfg/eva/$id/vscode-theme")\"|" "$code"
-      fi
+      for code in "$cfg/Code/User/settings.json" "$cfg/Cursor/User/settings.json"; do
+        [ -f "$code" ] && sed -i -E "s|(\"workbench.colorTheme\": *)\"[^\"]*\"|\1\"$(cat "$cfg/eva/$id/vscode-theme")\"|" "$code"
+      done
 
       # live reloads
       # Hyprland re-runs the setup's hypr.lua (borders, motion) — no full reload

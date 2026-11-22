@@ -39,6 +39,14 @@ in
       echo "$have" | grep -qx "whisper.whisper" && run ${vscode}/bin/code --uninstall-extension whisper.whisper >/dev/null 2>&1 || true
       rm -f "$HOME/.vscode/extensions/.whisper-build"
 
+      # Cursor (the VS Code-based editor) gets the same extension and themes
+      cstamp="$HOME/.cursor/extensions/.eva-build"
+      if command -v ${pkgs.code-cursor}/bin/cursor >/dev/null && [ "$(cat "$cstamp" 2>/dev/null)" != "${eva}" ]; then
+        ${pkgs.code-cursor}/bin/cursor --uninstall-extension whisper.whisper >/dev/null 2>&1 || true
+        run ${pkgs.code-cursor}/bin/cursor --install-extension ${eva}/eva.vsix --force >"$HOME/.cache/eva-cursor-install.log" 2>&1 \
+          && run mkdir -p "$HOME/.cursor/extensions" && run sh -c 'echo "${eva}" > "$1"' sh "$cstamp" || true
+      fi
+
       stamp="$HOME/.vscode/extensions/.eva-build"
       if [ "$(cat "$stamp" 2>/dev/null)" != "${eva}" ]; then
         run ${vscode}/bin/code --install-extension ${eva}/eva.vsix --force >"$HOME/.cache/eva-vscode-install.log" 2>&1 \
