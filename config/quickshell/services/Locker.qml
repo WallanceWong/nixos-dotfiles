@@ -19,13 +19,21 @@ Singleton {
     property int fails: 0
     property int unreadAtLock: 0
     property double lockedAt: 0
+    // the lock right after autologin (lock.sh login): always the Eva-01 screen,
+    // whichever setup is active
+    property bool boot: false
+    // how long the "yes" lingers before the screen goes (the MAGI vote takes longer)
+    property int unlockDelay: 320
+    property bool granted: false        // PAM said yes; the view is playing its exit
     signal failed()
     signal typing()
 
-    readonly property string flag: Quickshell.env("WHISPER_LOCK_FLAG") || ((Quickshell.env("XDG_RUNTIME_DIR") || "/tmp") + "/whisper-locked")
+    readonly property string flag: Quickshell.env("EVA_LOCK_FLAG") || ((Quickshell.env("XDG_RUNTIME_DIR") || "/tmp") + "/eva-locked")
 
-    function lock() {
+    function lock(atBoot) {
         if (locked) return;
+        boot = !!atBoot;
+        granted = false;
         typed = "";
         message = "";
         fails = 0;
@@ -33,7 +41,7 @@ Singleton {
         lockedAt = Date.now();
         Panels.close();
         locked = true;
-        Quickshell.execDetached(["touch", flag]);
+        Quickshell.execDetached(["sh", "-c", "echo " + (boot ? "boot" : "lock") + " > \"$0\"", flag]);
         // type the password in English, whatever the input method was doing
         Quickshell.execDetached(["sh", "-c", "command -v fcitx5-remote >/dev/null && fcitx5-remote -c"]);
     }
@@ -41,6 +49,8 @@ Singleton {
     function unlock() {
         locked = false;
         unlocking = false;
+        granted = false;
+        boot = false;
         typed = "";
         busy = false;
         message = "";
@@ -65,7 +75,7 @@ Singleton {
 
     PamContext {
         id: pam
-        config: Quickshell.env("WHISPER_PAM") || "hyprlock"
+        config: Quickshell.env("EVA_PAM") || "hyprlock"
         onPamMessage: {
             if (responseRequired) respond(root.typed);
             else if (messageIsError) root.message = message;
@@ -73,12 +83,12 @@ Singleton {
         onCompleted: result => {
             root.busy = false;
             if (result === PamResult.Success) {
-                root.unlocking = true;
-                fadeOut.restart();
+                root.granted = true;
+                exitDelay.restart();
             } else {
                 root.typed = "";
                 root.fails++;
-                root.message = root.fails > 2 ? "still not it — take a breath" : "not quite — try again";
+                root.message = root.fails > 2 ? "ACCESS DENIED · " + root.fails + " ATTEMPTS" : "ACCESS DENIED";
                 root.failed();
             }
         }
@@ -90,12 +100,15 @@ Singleton {
         }
     }
 
+    Timer { id: exitDelay; interval: Math.max(0, root.unlockDelay - 320); onTriggered: { root.unlocking = true; fadeOut.restart(); } }
     Timer { id: fadeOut; interval: 320; onTriggered: root.unlock() }
 
     // locked before this shell started (login, or a restart while locked)?
+    // The flag says which: "boot" (autologin) or "lock".
     Process {
         running: true
-        command: ["test", "-e", root.flag]
-        onExited: code => { if (code === 0) root.lock(); }
+        command: ["cat", root.flag]
+        stdout: StdioCollector { id: flagText }
+        onExited: code => { if (code === 0) root.lock(flagText.text.trim() === "boot"); }
     }
 }

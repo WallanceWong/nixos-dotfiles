@@ -1,0 +1,41 @@
+{
+  "_comment": "NERV HQ / MAGI: full drama. Command-room black, NERV orange HUD text, emergency red, amber hazard, MAGI terminal green, pattern blue. Edit here; the shell reads it live, everything else picks it up on rebuild.",
+  "id": "magi",
+  "name": "NERV HQ",
+  "subtitle": "MAGI SYSTEM · CENTRAL DOGMA",
+  "drama": true,
+
+  "crust":    "#000000",
+  "mantle":   "#040405",
+  "base":     "#08080a",
+  "sunken":   "#0b0b0e",
+  "surface0": "#111114",
+  "surface1": "#1a1a1f",
+  "surface2": "#26262d",
+  "overlay":  "#5a4634",
+  "subtext":  "#b8a08a",
+  "text":     "#ffeedd",
+
+  "accent":    "#ff7a1a",
+  "accentDim": "#c25a10",
+  "armour":    "#ffb000",
+  "signal":    "#3dff7f",
+  "info":      "#33b8ff",
+  "caution":   "#ffb000",
+  "alert":     "#ff2633",
+
+  "font":   "Barlow Condensed",
+  "hud":    "Barlow Condensed",
+  "mono":   "JetBrainsMono Nerd Font",
+  "title":  "Noto Serif CJK JP",
+
+  "radius": 0,
+  "fast": 110,
+  "normal": 190,
+  "slow": 320,
+
+  "terminal": [
+    "#111114", "#ff2633", "#3dff7f", "#ffb000", "#33b8ff", "#ff7a1a", "#ffd27a", "#d8c8b8",
+    "#5a4634", "#ff5c66", "#7dffa8", "#ffcc4d", "#7fd2ff", "#ffa060", "#ffe3a8", "#fff6ec"
+  ]
+}

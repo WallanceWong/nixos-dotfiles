@@ -215,8 +215,8 @@ Item {
         opacity: Astro.twilight * 0.5
         gradient: Gradient {
             GradientStop { position: 0.0; color: "transparent" }
-            GradientStop { position: 0.5; color: Qt.alpha(Theme.red, 0.5) }
-            GradientStop { position: 0.68; color: Qt.alpha(Theme.mustard, 0.8) }
+            GradientStop { position: 0.5; color: Qt.alpha(Theme.alert, 0.5) }
+            GradientStop { position: 0.68; color: Qt.alpha(Theme.caution, 0.8) }
             GradientStop { position: 1.0; color: "transparent" }
         }
     }
@@ -228,7 +228,7 @@ Item {
         opacity: scene.level * 0.5
         gradient: Gradient {
             GradientStop { position: 0.0; color: "transparent" }
-            GradientStop { position: 0.63; color: Qt.alpha(Theme.teal, 0.8) }
+            GradientStop { position: 0.63; color: Qt.alpha(Theme.armour, 0.8) }
             GradientStop { position: 1.0; color: "transparent" }
         }
     }
@@ -345,8 +345,8 @@ Item {
                 Text {
                     required property string modelData
                     text: modelData
-                    color: Theme.lamp
-                    font.family: Theme.jp
+                    color: Theme.accent
+                    font.family: Theme.title
                     font.pixelSize: 30
                     font.weight: Font.DemiBold
                     style: Text.Raised
@@ -363,7 +363,7 @@ Item {
                     required property string modelData
                     text: modelData
                     color: Theme.text
-                    font.family: Theme.jp
+                    font.family: Theme.title
                     font.pixelSize: 19
                     style: Text.Raised
                     styleColor: Qt.alpha(Theme.crust, 0.6)

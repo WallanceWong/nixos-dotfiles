@@ -5,13 +5,13 @@ import Quickshell.Hyprland
 import qs.services
 
 // Keys from hyprland.conf ("global, quickshell:<name>") and an IPC target
-// (`qs ipc call whisper <fn>`) that drive the shell.
+// (`qs ipc call nerv <fn>`) that drive the shell.
 Scope {
     component Shortcut: GlobalShortcut { appid: "quickshell" }
 
-    // global keys — not in a test instance (WHISPER_ONLY), so it never steals them
+    // global keys — not in a test instance (EVA_ONLY), so it never steals them
     LazyLoader {
-        active: !Quickshell.env("WHISPER_ONLY")
+        active: !Quickshell.env("EVA_ONLY")
         Scope {
             Shortcut { name: "launcher"; description: "App launcher"; onPressed: Panels.launcher("apps") }
             Shortcut { name: "clipboard"; description: "Clipboard history"; onPressed: Panels.launcher("clipboard") }
@@ -28,7 +28,7 @@ Scope {
             Shortcut { name: "brightness"; description: "Show brightness"; onPressed: brightnessDelay.restart() }
             Shortcut { name: "ime"; description: "Switch English / Chinese"; onPressed: Ime.toggle() }
             Shortcut { name: "cheatsheet"; description: "Keyboard shortcuts"; onPressed: Panels.toggle("cheatsheet") }
-            Shortcut { name: "settings"; description: "whisper settings"; onPressed: Panels.toggle("settings") }
+            Shortcut { name: "settings"; description: "Settings"; onPressed: Panels.toggle("settings") }
         }
     }
 
@@ -36,13 +36,15 @@ Scope {
     Timer { id: brightnessDelay; interval: 90; onTriggered: Brightness.refresh(true) }
 
     IpcHandler {
-        target: "whisper"
+        target: "nerv"
         function toggle(name: string): void { Panels.toggle(name); }
         function launcher(mode: string): void { Panels.launcher(mode); }
         function close(): void { Panels.close(); }
         function brightness(): void { Brightness.refresh(true); }
         function gamemode(): void { Desktop.setGameMode(!Settings.gameMode); }
         function lock(): void { Locker.lock(); }
+        // the autologin lock (lock.sh login): always the Eva-01 screen
+        function lockboot(): void { Locker.lock(true); }
         // hypridle: screensaver after 2 minutes idle, wake on any input
         function screensaver(): void { Desktop.startSaver(); }
         function wake(): void { Desktop.stopSaver(); }
@@ -51,6 +53,6 @@ Scope {
         // Feral GameMode hooks (programs.gamemode.settings.custom)
         function gamestart(): void { Automations.gameStarted(); }
         function gameend(): void { Automations.gameEnded(); }
-        function notify(): void { Quickshell.execDetached(["notify-send", "-a", "whisper", "-i", "weather-clear-night", "a quiet night", "the city is still awake below"]); }
+        function notify(): void { Quickshell.execDetached(["notify-send", "-a", "NERV", "-i", "weather-clear-night", "a quiet night", "the city is still awake below"]); }
     }
 }

@@ -10,7 +10,7 @@ PanelWindow {
     id: root
 
     screen: Panels.screen
-    WlrLayershell.namespace: "whisper-osd"
+    WlrLayershell.namespace: "eva-osd"
     WlrLayershell.layer: WlrLayer.Overlay
     exclusionMode: ExclusionMode.Ignore
     anchors { bottom: true }
@@ -54,7 +54,7 @@ PanelWindow {
         radius: height / 2
         color: Theme.glassStrong
         border.width: 1
-        border.color: Qt.alpha(Theme.teal, 0.45)
+        border.color: Qt.alpha(Theme.armour, 0.45)
         opacity: root.shown ? 1 : 0
         scale: root.shown ? 1 : 0.92
         Behavior on opacity { NumberAnimation { duration: Theme.normal; easing.type: Theme.easing } }
@@ -65,7 +65,7 @@ PanelWindow {
             anchors.leftMargin: 18
             anchors.rightMargin: 20
             spacing: 12
-            Icon { icon: root.icon; size: 22; fill: 1; color: root.dimmed ? Theme.overlay : Theme.lamp }
+            Icon { icon: root.icon; size: 22; fill: 1; color: root.dimmed ? Theme.overlay : Theme.accent }
             ColumnLayout {
                 Layout.fillWidth: true
                 spacing: 5
@@ -83,7 +83,7 @@ PanelWindow {
                         height: parent.height
                         radius: 3
                         width: parent.width * Math.min(1, root.value)
-                        color: root.dimmed ? Theme.overlay : Theme.teal
+                        color: root.dimmed ? Theme.overlay : Theme.armour
                         Behavior on width { NumberAnimation { duration: Theme.fast; easing.type: Theme.easing } }
                     }
                 }

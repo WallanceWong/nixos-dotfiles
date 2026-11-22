@@ -10,7 +10,7 @@ import Quickshell.Services.UPower
 //  • boards — an Arduino / CH340 plugged in gets a note with its port, and a
 //    button to open PictoBlox
 //  • auto game mode — Feral GameMode's start/end hooks (a game asking for
-//    gamemode, e.g. Sober) call `qs ipc call whisper gamestart|gameend`
+//    gamemode, e.g. Sober) call `qs ipc call nerv gamestart|gameend`
 Singleton {
     id: root
 
@@ -33,7 +33,7 @@ Singleton {
             PowerProfiles.profile = PowerProfile.PowerSaver;
             if (!Settings.gameMode)
                 Quickshell.execDetached(["hyprctl", "--batch", "keyword animations:enabled 0; keyword decoration:blur:enabled 0; keyword decoration:shadow:enabled 0"]);
-            Quickshell.execDetached(["notify-send", "-a", "whisper", "-i", "battery-caution", "battery saver", Math.round(pct * 100) + "% left — the night goes still until you plug in"]);
+            Quickshell.execDetached(["notify-send", "-a", "NERV", "-i", "battery-caution", "battery saver", Math.round(pct * 100) + "% left — the night goes still until you plug in"]);
         } else {
             if (PowerProfiles.profile === PowerProfile.PowerSaver) PowerProfiles.profile = profileBefore;
             if (!Settings.gameMode) Quickshell.execDetached(["hyprctl", "reload"]);
@@ -108,7 +108,7 @@ Singleton {
     }
 
     function announce(p) {
-        boardNote.command = ["notify-send", "-a", "whisper", "-i", "media-flash", "-A", "open=Open PictoBlox",
+        boardNote.command = ["notify-send", "-a", "NERV", "-i", "media-flash", "-A", "open=Open PictoBlox",
                              p.name + " plugged in", "on /dev/" + p.dev + " — ready to upload"];
         boardNote.running = true;
     }

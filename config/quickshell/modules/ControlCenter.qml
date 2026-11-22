@@ -42,7 +42,7 @@ Scope {
     PanelWindow {
         id: inhibitHost
         screen: Quickshell.screens[0]
-        WlrLayershell.namespace: "whisper-inhibit"
+        WlrLayershell.namespace: "eva-inhibit"
         WlrLayershell.layer: WlrLayer.Bottom
         exclusionMode: ExclusionMode.Ignore
         anchors { top: true; left: true }
@@ -57,7 +57,7 @@ Scope {
         id: panel
         screen: Panels.screen
         visible: root.open || sheet.opacity > 0
-        WlrLayershell.namespace: "whisper-control"
+        WlrLayershell.namespace: "eva-control"
         WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.keyboardFocus: root.open ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
         exclusionMode: ExclusionMode.Ignore
@@ -81,7 +81,7 @@ Scope {
             radius: Theme.radius + 6
             color: Theme.glassStrong
             border.width: 1
-            border.color: Qt.alpha(Theme.lamp, 0.22)
+            border.color: Qt.alpha(Theme.accent, 0.22)
             clip: true
 
             opacity: root.open ? 1 : 0
@@ -113,15 +113,15 @@ Scope {
                             Layout.preferredHeight: 46
                             radius: 23
                             gradient: Gradient {
-                                GradientStop { position: 0; color: Theme.lamp }
-                                GradientStop { position: 1; color: Theme.teal }
+                                GradientStop { position: 0; color: Theme.accent }
+                                GradientStop { position: 1; color: Theme.armour }
                             }
                             Icon { anchors.centerIn: parent; icon: "bedtime"; size: 24; fill: 1; color: Theme.base; rotation: -20 }
                         }
                         ColumnLayout {
                             Layout.fillWidth: true
                             spacing: 0
-                            Label { text: Quickshell.env("USER"); font.pixelSize: 16; font.weight: Font.ExtraBold; color: Theme.lamp }
+                            Label { text: Quickshell.env("USER"); font.pixelSize: 16; font.weight: Font.ExtraBold; color: Theme.accent }
                             Label { id: uptimeLabel; text: ""; font.pixelSize: 12; color: Theme.subtext }
                             FileView {
                                 id: uptimeFile
@@ -136,7 +136,7 @@ Scope {
                         }
                         IconButton { icon: "screenshot_region"; tooltip: "Screenshot"; onClicked: { Panels.close(); Quickshell.execDetached(["sh", "-c", "sleep 0.4; " + Theme.dots + "/config/hypr/screenshot.sh region"]); } }
                         IconButton { icon: "lock"; onClicked: Locker.lock() }
-                        IconButton { icon: "power_settings_new"; iconColor: Theme.red; onClicked: Panels.show("power") }
+                        IconButton { icon: "power_settings_new"; iconColor: Theme.alert; onClicked: Panels.show("power") }
                     }
 
                     // ───────────── sliders ─────────────
@@ -149,7 +149,7 @@ Scope {
                             icon: Audio.icon
                             value: Audio.volume
                             dimmed: Audio.muted
-                            accent: Theme.teal
+                            accent: Theme.armour
                             onMoved: v => Audio.setVolume(v)
                             onIconClicked: Audio.toggleMute()
                         }
@@ -162,7 +162,7 @@ Scope {
                         icon: Audio.micMuted ? "mic_off" : "mic"
                         value: Audio.micVolume
                         dimmed: Audio.micMuted
-                        accent: Theme.blue
+                        accent: Theme.info
                         onMoved: v => Audio.setMic(v)
                         onIconClicked: Audio.toggleMic()
                     }
@@ -172,7 +172,7 @@ Scope {
                         visible: root.page === "main"
                         icon: "brightness_6"
                         value: Brightness.value
-                        accent: Theme.lamp
+                        accent: Theme.accent
                         onMoved: v => Brightness.set(v)
                     }
 
@@ -267,13 +267,13 @@ Scope {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     radius: height / 2
-                                    color: on ? Qt.alpha(Theme.lamp, 0.18) : ppMouse.containsMouse ? Theme.surface1 : "transparent"
+                                    color: on ? Qt.alpha(Theme.accent, 0.18) : ppMouse.containsMouse ? Theme.surface1 : "transparent"
                                     Behavior on color { ColorAnimation { duration: Theme.normal } }
                                     Row {
                                         anchors.centerIn: parent
                                         spacing: 6
-                                        Icon { icon: modelData.icon; size: 17; fill: on ? 1 : 0; color: on ? Theme.lamp : Theme.subtext }
-                                        Label { text: modelData.name; font.pixelSize: 12; color: on ? Theme.lamp : Theme.subtext }
+                                        Icon { icon: modelData.icon; size: 17; fill: on ? 1 : 0; color: on ? Theme.accent : Theme.subtext }
+                                        Label { text: modelData.name; font.pixelSize: 12; color: on ? Theme.accent : Theme.subtext }
                                     }
                                     Timer { id: recheck; interval: 500; onTriggered: if (!profileProbe.running) profileProbe.running = true }
                                     MouseArea { id: ppMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { PowerProfiles.profile = modelData.p; recheck.restart(); } }
@@ -307,7 +307,7 @@ Scope {
                                 Column {
                                     anchors.centerIn: parent
                                     spacing: 3
-                                    Icon { anchors.horizontalCenter: parent.horizontalCenter; icon: modelData.icon; size: 20; color: modelData.name === "Stop" ? Theme.red : Theme.lamp }
+                                    Icon { anchors.horizontalCenter: parent.horizontalCenter; icon: modelData.icon; size: 20; color: modelData.name === "Stop" ? Theme.alert : Theme.accent }
                                     Label { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.name; font.pixelSize: 11; color: Theme.subtext }
                                 }
                                 MouseArea { id: qaMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: modelData.run() }
@@ -320,11 +320,11 @@ Scope {
                         Layout.fillWidth: true
                         Layout.topMargin: 4
                         visible: root.page === "main"
-                        Label { Layout.fillWidth: true; text: "Notifications"; font.pixelSize: 14; font.weight: Font.ExtraBold; color: Theme.lamp }
+                        Label { Layout.fillWidth: true; text: "Notifications"; font.pixelSize: 14; font.weight: Font.ExtraBold; color: Theme.accent }
                         Label {
                             visible: Notifs.history.count > 0
                             text: "clear"
-                            color: clearMouse.containsMouse ? Theme.lamp : Theme.subtext
+                            color: clearMouse.containsMouse ? Theme.accent : Theme.subtext
                             font.pixelSize: 12
                             MouseArea { id: clearMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: Notifs.clearHistory() }
                         }
@@ -387,7 +387,7 @@ Scope {
                             text: root.page === "wifi" ? "Wi-Fi" : root.page === "bluetooth" ? "Bluetooth" : "App volume"
                             font.pixelSize: 16
                             font.weight: Font.ExtraBold
-                            color: Theme.lamp
+                            color: Theme.accent
                         }
                     }
 

@@ -1,8 +1,8 @@
 import QtQuick
 import qs.services
 
-// Round icon button with a soft hover glow.
-Rectangle {
+// Square icon button; hover lights a frame, active fills it in the accent.
+Item {
     id: root
 
     property string icon: ""
@@ -10,20 +10,26 @@ Rectangle {
     property color iconColor: Theme.text
     property bool active: false
     property string tooltip: ""
+    // kept for older call sites that set a background colour
+    property color color: "transparent"
     signal clicked()
     signal rightClicked()
 
     implicitWidth: 36
     implicitHeight: 36
-    radius: height / 2
-    color: active ? Qt.alpha(Theme.lamp, 0.16) : mouse.containsMouse ? Qt.alpha(Theme.surface2, 0.7) : "transparent"
-    Behavior on color { ColorAnimation { duration: Theme.fast } }
+
+    HudFrame {
+        anchors.fill: parent
+        cut: Math.min(8, root.height / 4)
+        fill: root.active ? Qt.alpha(Theme.accent, 0.16) : mouse.containsMouse ? Qt.alpha(Theme.surface2, 0.7) : root.color
+        stroke: root.active || mouse.containsMouse ? Qt.alpha(Theme.accent, 0.45) : "transparent"
+    }
 
     Icon {
         anchors.centerIn: parent
         icon: root.icon
         size: root.iconSize
-        color: root.active ? Theme.lamp : root.iconColor
+        color: root.active ? Theme.accent : root.iconColor
         fill: root.active ? 1 : 0
         scale: mouse.pressed ? 0.88 : 1
         Behavior on scale { NumberAnimation { duration: Theme.fast; easing.type: Easing.OutBack } }

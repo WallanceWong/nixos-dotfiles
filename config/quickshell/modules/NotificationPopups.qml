@@ -13,7 +13,7 @@ PanelWindow {
 
     screen: Panels.screen
 
-    WlrLayershell.namespace: "whisper-notifications"
+    WlrLayershell.namespace: "eva-notifications"
     WlrLayershell.layer: WlrLayer.Overlay
     exclusionMode: ExclusionMode.Ignore
     anchors { top: true; right: true }
@@ -63,7 +63,7 @@ PanelWindow {
                     radius: Theme.radius
                     color: Theme.glassStrong
                     border.width: 1
-                    border.color: card.critical ? Qt.alpha(Theme.red, 0.7) : Qt.alpha(Theme.lamp, 0.28)
+                    border.color: card.critical ? Qt.alpha(Theme.alert, 0.7) : Qt.alpha(Theme.accent, 0.28)
 
                     MouseArea {
                         id: hover
@@ -102,7 +102,7 @@ PanelWindow {
                             spacing: 3
                             RowLayout {
                                 Layout.fillWidth: true
-                                Label { Layout.fillWidth: true; text: card.n.summary; font.pixelSize: 14; font.weight: Font.Bold; color: card.critical ? Theme.red : Theme.lamp }
+                                Label { Layout.fillWidth: true; text: card.n.summary; font.pixelSize: 14; font.weight: Font.Bold; color: card.critical ? Theme.alert : Theme.accent }
                                 Label { text: card.n.appName; font.pixelSize: 11; color: Theme.overlay }
                             }
                             Text {
@@ -145,7 +145,7 @@ PanelWindow {
                         anchors { left: parent.left; bottom: parent.bottom; leftMargin: 14; bottomMargin: 7 }
                         height: 3; radius: 2
                         width: (parent.width - 28) * Math.max(0, Math.min(100, v ?? 0)) / 100
-                        color: Theme.teal
+                        color: Theme.armour
                     }
                 }
             }

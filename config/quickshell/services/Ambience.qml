@@ -11,7 +11,7 @@ import Quickshell.Services.Pipewire
 Singleton {
     id: root
 
-    readonly property var others: Audio.streams.filter(n => n.properties["application.name"] !== "whisper-ambience")
+    readonly property var others: Audio.streams.filter(n => n.properties["application.name"] !== "eva-ambience")
     readonly property bool wanted: Settings.ambience && !Settings.gameMode && !Desktop.fullscreen
                                    && !Audio.muted && !othersAudible
 
@@ -43,13 +43,13 @@ Singleton {
     property bool active: false
     onWantedChanged: settle.restart()
     // a player left behind by an earlier shell (crash, reload) goes first
-    Component.onCompleted: { Quickshell.execDetached(["pkill", "-f", "audio-client-name=whisper-ambience"]); settle.restart(); }
+    Component.onCompleted: { Quickshell.execDetached(["pkill", "-f", "audio-client-name=eva-ambience"]); settle.restart(); }
     Timer { id: settle; interval: 1500; onTriggered: root.active = root.wanted }
 
     property real level: active ? Settings.ambienceVolume : 0
     Behavior on level { NumberAnimation { duration: 2500; easing.type: Easing.InOutSine } }
 
-    readonly property var node: Audio.streams.find(n => n.properties["application.name"] === "whisper-ambience") ?? null
+    readonly property var node: Audio.streams.find(n => n.properties["application.name"] === "eva-ambience") ?? null
     // the stream's volume can only be set once PipeWire has bound it
     Connections { target: root.node; function onReadyChanged() { root.apply(); } }
     onLevelChanged: apply()
@@ -65,13 +65,13 @@ Singleton {
         if (active && !started) {
             started = true;
             if (!node)
-                Quickshell.execDetached(["mpv", "--no-video", "--no-terminal", "--ao=pulse", "--loop-file=inf", "--audio-client-name=whisper-ambience",
+                Quickshell.execDetached(["mpv", "--no-video", "--no-terminal", "--ao=pulse", "--loop-file=inf", "--audio-client-name=eva-ambience",
                                          "--af=afade=t=in:d=2", Theme.assets + "/sounds/night.ogg"]);
         }
         if (!active && level < 0.005 && started) {
             started = false;
-            Quickshell.execDetached(["pkill", "-f", "audio-client-name=whisper-ambience"]);
+            Quickshell.execDetached(["pkill", "-f", "audio-client-name=eva-ambience"]);
         }
     }
-    Component.onDestruction: if (started) Quickshell.execDetached(["pkill", "-f", "audio-client-name=whisper-ambience"])
+    Component.onDestruction: if (started) Quickshell.execDetached(["pkill", "-f", "audio-client-name=eva-ambience"])
 }

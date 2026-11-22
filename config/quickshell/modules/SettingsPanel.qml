@@ -13,7 +13,7 @@ PanelWindow {
     readonly property bool open: Panels.open === "settings"
     screen: Panels.screen
     visible: open || veil.opacity > 0
-    WlrLayershell.namespace: "whisper-settings"
+    WlrLayershell.namespace: "eva-settings"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: open ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
@@ -37,7 +37,7 @@ PanelWindow {
         font.pixelSize: 12
         font.weight: Font.ExtraBold
         font.letterSpacing: 1.2
-        color: Theme.teal
+        color: Theme.armour
     }
 
     Rectangle {
@@ -59,8 +59,8 @@ PanelWindow {
 
             RowLayout {
                 spacing: 12
-                Icon { icon: "tune"; size: 26; color: Theme.lamp; fill: 1 }
-                Label { text: "whisper"; font.pixelSize: 22; font.weight: Font.ExtraBold; color: Theme.lamp }
+                Icon { icon: "tune"; size: 26; color: Theme.accent; fill: 1 }
+                Label { text: "whisper"; font.pixelSize: 22; font.weight: Font.ExtraBold; color: Theme.accent }
                 Label { text: "how the night behaves"; color: Theme.subtext; font.pixelSize: 13 }
                 Item { Layout.fillWidth: true }
                 IconButton { icon: "close"; onClicked: Panels.close() }
@@ -93,7 +93,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 visible: Settings.ambience
                 icon: "nights_stay"
-                accent: Theme.teal
+                accent: Theme.armour
                 value: Settings.ambienceVolume
                 onMoved: v => Settings.ambienceVolume = v
             }

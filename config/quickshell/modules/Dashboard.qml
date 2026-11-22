@@ -17,7 +17,7 @@ PanelWindow {
     readonly property bool open: Panels.open === "dashboard"
     screen: Panels.screen
     visible: open || sheet.opacity > 0
-    WlrLayershell.namespace: "whisper-dashboard"
+    WlrLayershell.namespace: "eva-dashboard"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: open ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
@@ -38,7 +38,7 @@ PanelWindow {
         radius: Theme.radius + 8
         color: Theme.glassStrong
         border.width: 1
-        border.color: Qt.alpha(Theme.lamp, 0.22)
+        border.color: Qt.alpha(Theme.accent, 0.22)
         opacity: panel.open ? 1 : 0
         transform: Translate { y: panel.open ? 0 : -24 }
         Behavior on opacity { NumberAnimation { duration: Theme.normal; easing.type: Theme.easing } }
@@ -60,7 +60,7 @@ PanelWindow {
 
                 Row {
                     spacing: 8
-                    Label { text: Qt.formatTime(clock.date, "HH:mm"); color: Theme.lamp; font.pixelSize: 64; font.weight: Font.Black }
+                    Label { text: Qt.formatTime(clock.date, "HH:mm"); color: Theme.accent; font.pixelSize: 64; font.weight: Font.Black }
                     Label { text: Qt.formatTime(clock.date, "ss"); color: Theme.overlay; font.pixelSize: 22; font.weight: Font.Bold; topPadding: 36 }
                 }
                 Label { text: Qt.formatDate(clock.date, "dddd, d MMMM yyyy"); color: Theme.text; font.pixelSize: 15 }
@@ -68,7 +68,7 @@ PanelWindow {
                     readonly property var d: clock.date
                     function k(n) { const s = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"]; return n < 10 ? s[n] : n === 10 ? "十" : n < 20 ? "十" + s[n - 10] : s[Math.floor(n / 10)] + "十" + s[n % 10]; }
                     text: k(d.getMonth() + 1) + "月" + k(d.getDate()) + "日（" + ["日", "月", "火", "水", "木", "金", "土"][d.getDay()] + "）"
-                    font.family: Theme.jp
+                    font.family: Theme.title
                     font.pixelSize: 14
                     color: Theme.subtext
                     Layout.bottomMargin: 10
@@ -94,7 +94,7 @@ PanelWindow {
                         RowLayout {
                             Layout.fillWidth: true
                             IconButton { icon: "chevron_left"; implicitWidth: 30; implicitHeight: 30; onClicked: cal.offset-- }
-                            Label { Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: Qt.formatDate(cal.month, "MMMM yyyy"); font.weight: Font.ExtraBold; color: Theme.lamp }
+                            Label { Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: Qt.formatDate(cal.month, "MMMM yyyy"); font.weight: Font.ExtraBold; color: Theme.accent }
                             IconButton { icon: "chevron_right"; implicitWidth: 30; implicitHeight: 30; onClicked: cal.offset++ }
                         }
                         GridLayout {
@@ -104,7 +104,7 @@ PanelWindow {
                             columnSpacing: 2
                             Repeater {
                                 model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
-                                Label { required property string modelData; Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: modelData; font.pixelSize: 11; color: Theme.teal }
+                                Label { required property string modelData; Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: modelData; font.pixelSize: 11; color: Theme.armour }
                             }
                             Repeater {
                                 model: 42
@@ -117,7 +117,7 @@ PanelWindow {
                                     Layout.fillWidth: true
                                     implicitHeight: 30
                                     radius: 15
-                                    color: today ? Theme.lamp : "transparent"
+                                    color: today ? Theme.accent : "transparent"
                                     Label {
                                         anchors.centerIn: parent
                                         text: day.getDate()
@@ -180,7 +180,7 @@ PanelWindow {
                         ColumnLayout {
                             Layout.fillWidth: true
                             spacing: 2
-                            Label { Layout.fillWidth: true; text: music.player?.trackTitle || "Unknown"; font.pixelSize: 15; font.weight: Font.ExtraBold; color: Theme.lamp }
+                            Label { Layout.fillWidth: true; text: music.player?.trackTitle || "Unknown"; font.pixelSize: 15; font.weight: Font.ExtraBold; color: Theme.accent }
                             Label { Layout.fillWidth: true; text: music.player?.trackArtist || music.player?.identity || ""; color: Theme.subtext }
                             Item { Layout.fillHeight: true }
                             Rectangle {
@@ -189,7 +189,7 @@ PanelWindow {
                                 radius: 2
                                 color: Theme.surface2
                                 visible: (music.player?.lengthSupported ?? false) && (music.player?.length ?? 0) > 0
-                                Rectangle { height: parent.height; radius: 2; color: Theme.teal; width: parent.width * Math.min(1, (music.player?.position ?? 0) / Math.max(1, music.player?.length ?? 1)) }
+                                Rectangle { height: parent.height; radius: 2; color: Theme.armour; width: parent.width * Math.min(1, (music.player?.position ?? 0) / Math.max(1, music.player?.length ?? 1)) }
                             }
                             RowLayout {
                                 spacing: 4
@@ -259,7 +259,7 @@ PanelWindow {
                             property string name
                             property string valueText
                             property real value
-                            property color accent: Theme.teal
+                            property color accent: Theme.armour
                             Layout.fillWidth: true
                             spacing: 5
                             RowLayout {
@@ -276,9 +276,9 @@ PanelWindow {
                             }
                         }
 
-                        Meter { icon: "memory"; name: "CPU"; value: sys.cpu; valueText: Math.round(sys.cpu * 100) + "%"; accent: Theme.teal }
-                        Meter { icon: "memory_alt"; name: "Memory"; value: sys.mem; valueText: sys.memText; accent: Theme.blue }
-                        Meter { icon: "device_thermostat"; name: "Temperature"; value: (sys.temp - 30) / 70; valueText: Math.round(sys.temp) + "°C"; accent: sys.temp > 80 ? Theme.red : sys.temp > 65 ? Theme.mustard : Theme.green }
+                        Meter { icon: "memory"; name: "CPU"; value: sys.cpu; valueText: Math.round(sys.cpu * 100) + "%"; accent: Theme.armour }
+                        Meter { icon: "memory_alt"; name: "Memory"; value: sys.mem; valueText: sys.memText; accent: Theme.info }
+                        Meter { icon: "device_thermostat"; name: "Temperature"; value: (sys.temp - 30) / 70; valueText: Math.round(sys.temp) + "°C"; accent: sys.temp > 80 ? Theme.alert : sys.temp > 65 ? Theme.caution : Theme.signal }
                         Meter {
                             readonly property var b: UPower.displayDevice
                             icon: "battery_horiz_075"
@@ -289,7 +289,7 @@ PanelWindow {
                                 const t = b?.state === UPowerDeviceState.Discharging ? b.timeToEmpty : b?.state === UPowerDeviceState.Charging ? b.timeToFull : 0;
                                 return t > 0 ? pct + " · " + Math.floor(t / 3600) + "h " + Math.floor(t % 3600 / 60) + "m" : pct;
                             }
-                            accent: Theme.lamp
+                            accent: Theme.accent
                         }
                     }
                 }

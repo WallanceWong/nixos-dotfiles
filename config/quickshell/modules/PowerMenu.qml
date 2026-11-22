@@ -12,7 +12,7 @@ PanelWindow {
     readonly property bool open: Panels.open === "power"
     screen: Panels.screen
     visible: open || veil.opacity > 0
-    WlrLayershell.namespace: "whisper-power"
+    WlrLayershell.namespace: "eva-power"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: open ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
@@ -69,7 +69,7 @@ PanelWindow {
             text: "good night, " + Quickshell.env("USER")
             font.pixelSize: 26
             font.weight: Font.ExtraBold
-            color: Theme.lamp
+            color: Theme.accent
         }
 
         Row {
@@ -81,7 +81,7 @@ PanelWindow {
                     required property var modelData
                     required property int index
                     readonly property bool sel: panel.selected === index
-                    readonly property color accent: index === 4 ? Theme.red : Theme.lamp
+                    readonly property color accent: index === 4 ? Theme.alert : Theme.accent
                     width: 150
                     height: 170
                     radius: Theme.radius + 8

@@ -38,9 +38,9 @@ ColumnLayout {
             Layout.fillWidth: true
             implicitHeight: 50
             radius: Theme.radiusSmall + 2
-            color: d.connected ? Qt.alpha(Theme.lamp, 0.13) : devMouse.containsMouse ? Theme.surface1 : Theme.surface0
+            color: d.connected ? Qt.alpha(Theme.accent, 0.13) : devMouse.containsMouse ? Theme.surface1 : Theme.surface0
             border.width: 1
-            border.color: d.connected ? Qt.alpha(Theme.lamp, 0.35) : Theme.hairline
+            border.color: d.connected ? Qt.alpha(Theme.accent, 0.35) : Theme.hairline
             RowLayout {
                 anchors.fill: parent
                 anchors.leftMargin: 12
@@ -51,12 +51,12 @@ ColumnLayout {
                         : dev.d.icon.includes("headset") || dev.d.icon.includes("headphone") || dev.d.icon.includes("audio") ? "headphones"
                         : dev.d.icon.includes("phone") ? "smartphone" : dev.d.icon.includes("game") ? "sports_esports" : "bluetooth"
                     size: 19
-                    color: dev.d.connected ? Theme.lamp : Theme.blue
+                    color: dev.d.connected ? Theme.accent : Theme.info
                 }
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 0
-                    Label { Layout.fillWidth: true; text: dev.d.name; color: dev.d.connected ? Theme.lamp : Theme.text }
+                    Label { Layout.fillWidth: true; text: dev.d.name; color: dev.d.connected ? Theme.accent : Theme.text }
                     Label {
                         text: dev.d.state === BluetoothDeviceState.Connecting ? "connecting…" : dev.d.pairing ? "pairing…"
                             : dev.d.connected ? ("connected" + (dev.d.batteryAvailable ? " · " + Math.round(dev.d.battery * 100) + "%" : ""))

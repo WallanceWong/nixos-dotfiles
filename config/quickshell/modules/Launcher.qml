@@ -18,7 +18,7 @@ PanelWindow {
     readonly property string mode: Panels.launcherMode
     screen: Panels.screen
     visible: open || box.opacity > 0
-    WlrLayershell.namespace: "whisper-launcher"
+    WlrLayershell.namespace: "eva-launcher"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: open ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
@@ -140,7 +140,7 @@ PanelWindow {
         radius: Theme.radius + 8
         color: Theme.glassStrong
         border.width: 1
-        border.color: Qt.alpha(Theme.lamp, 0.35)
+        border.color: Qt.alpha(Theme.accent, 0.35)
         opacity: panel.open ? 1 : 0
         scale: panel.open ? 1 : 0.96
         Behavior on opacity { NumberAnimation { duration: Theme.normal; easing.type: Theme.easing } }
@@ -158,7 +158,7 @@ PanelWindow {
                 radius: 26
                 color: Theme.surface0
                 border.width: 1
-                border.color: search.activeFocus ? Qt.alpha(Theme.lamp, 0.5) : Theme.hairline
+                border.color: search.activeFocus ? Qt.alpha(Theme.accent, 0.5) : Theme.hairline
                 RowLayout {
                     anchors.fill: parent
                     anchors.leftMargin: 18
@@ -166,7 +166,7 @@ PanelWindow {
                     spacing: 12
                     Icon {
                         icon: panel.mode === "clipboard" ? "content_paste" : panel.mode === "emoji" ? "mood" : panel.mode === "windows" ? "select_window" : "bedtime"
-                        size: 22; fill: 1; color: Theme.lamp; rotation: panel.mode === "apps" ? -20 : 0
+                        size: 22; fill: 1; color: Theme.accent; rotation: panel.mode === "apps" ? -20 : 0
                     }
                     TextField {
                         id: search
@@ -223,7 +223,7 @@ PanelWindow {
                 model: panel.results
                 highlightMoveDuration: Theme.fast
                 boundsBehavior: Flickable.StopAtBounds
-                highlight: Rectangle { radius: Theme.radiusSmall + 2; color: Theme.surface1; border.width: 1; border.color: Qt.alpha(Theme.lamp, 0.25) }
+                highlight: Rectangle { radius: Theme.radiusSmall + 2; color: Theme.surface1; border.width: 1; border.color: Qt.alpha(Theme.accent, 0.25) }
 
                 delegate: Item {
                     id: item
@@ -247,13 +247,13 @@ PanelWindow {
                                 source: visible ? Theme.icon(item.modelData.icon ?? "", "application-x-executable") : ""
                                 asynchronous: true
                             }
-                            Icon { anchors.centerIn: parent; visible: !!item.modelData.glyph; icon: item.modelData.icon ?? ""; size: 22; color: Theme.teal }
+                            Icon { anchors.centerIn: parent; visible: !!item.modelData.glyph; icon: item.modelData.icon ?? ""; size: 22; color: Theme.armour }
                             Text { anchors.centerIn: parent; visible: !!item.modelData.emoji; text: item.modelData.emoji ?? ""; font.pixelSize: 24 }
                         }
                         ColumnLayout {
                             Layout.fillWidth: true
                             spacing: 0
-                            Label { Layout.fillWidth: true; text: item.modelData.name; font.pixelSize: 14; color: item.current ? Theme.lamp : Theme.text; maximumLineCount: 1 }
+                            Label { Layout.fillWidth: true; text: item.modelData.name; font.pixelSize: 14; color: item.current ? Theme.accent : Theme.text; maximumLineCount: 1 }
                             Label { Layout.fillWidth: true; visible: text.length > 0; text: item.modelData.desc ?? ""; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.subtext }
                         }
                     }

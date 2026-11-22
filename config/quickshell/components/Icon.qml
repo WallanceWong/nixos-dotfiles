@@ -1,7 +1,7 @@
 import QtQuick
 import qs.services
 
-// Material Symbols Rounded, referenced by name ("wifi", "volume_up", ...).
+// Material Symbols Sharp, referenced by name ("wifi", "volume_up", ...).
 Text {
     id: root
 

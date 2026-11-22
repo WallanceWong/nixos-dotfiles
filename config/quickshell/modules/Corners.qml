@@ -8,7 +8,7 @@ import qs.services
 // Rounded screen corners: four tiny click-through surfaces per monitor that
 // paint the corners night-black. Hidden for fullscreen apps and game mode.
 Variants {
-    model: Settings.corners ? Quickshell.screens.filter(s => !Quickshell.env("WHISPER_ONLY") || s.name === Quickshell.env("WHISPER_ONLY")) : []
+    model: Settings.corners ? Quickshell.screens.filter(s => !Quickshell.env("EVA_ONLY") || s.name === Quickshell.env("EVA_ONLY")) : []
 
     Scope {
         id: scr
@@ -31,7 +31,7 @@ Variants {
                 implicitHeight: scr.r
                 exclusionMode: ExclusionMode.Ignore
                 WlrLayershell.layer: WlrLayer.Overlay
-                WlrLayershell.namespace: "whisper-corner"
+                WlrLayershell.namespace: "eva-corner"
                 color: "transparent"
                 mask: Region {}
 
