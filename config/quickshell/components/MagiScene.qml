@@ -588,7 +588,9 @@ Item {
             clip: true
             Text {
                 id: ticker
-                readonly property string msg: "  ◆  MAGI SYSTEM ONLINE  ◆  " + (scene.emergency ? "WARNING · INTERNAL POWER CRITICAL · EVACUATE NON-ESSENTIAL PERSONNEL" : "NO PATTERN DETECTED · TOKYO-3 DEFENCE STATUS NORMAL")
+                // the real MAGI log (services/EventLog.qml), then the live readings
+                readonly property string msg: "  ◆  " + EventLog.entries.slice(0, 8).map(e => EventLog.stamp(e) + " " + e.text).join("  ◆  ")
+                                           + (scene.emergency ? "  ◆  WARNING · INTERNAL POWER CRITICAL · EVACUATE NON-ESSENTIAL PERSONNEL" : "")
                                            + "  ◆  SYNC " + (Stats.cpu * 100).toFixed(1) + "%  ◆  LCL " + Math.round(Stats.mem * 100) + "%  ◆  CORE " + Math.round(Stats.temp) + "°C  ◆  GOD'S IN HIS HEAVEN · ALL'S RIGHT WITH THE WORLD"
                 text: msg + msg
                 color: scene.hud

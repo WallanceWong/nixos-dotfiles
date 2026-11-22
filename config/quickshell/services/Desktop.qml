@@ -23,6 +23,7 @@ Singleton {
     Timer { running: true; interval: 4000; onTriggered: root.started = true }
     // keeps the always-on Leds service alive (singletons start on first use)
     readonly property string ledMode: Leds.mode
+    readonly property int logSize: EventLog.entries.length
 
     function setGameMode(on) {
         if (on === Settings.gameMode) return;
