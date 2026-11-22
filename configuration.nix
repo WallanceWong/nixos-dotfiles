@@ -1,8 +1,9 @@
 {config, lib, pkgs, ...}:
 
 let
-  # the one palette (see theme/palette.json)
-  palette = builtins.fromJSON (builtins.readFile ./theme/palette.json);
+  # the boot login is always Eva-01: TTY colours and the splash use UNIT-01
+  # (theme/setups/unit01.json), whichever setup the desktop is in
+  palette = builtins.fromJSON (builtins.readFile ./theme/setups/unit01.json);
   hex = c: lib.removePrefix "#" c;
 in
 {
@@ -23,6 +24,18 @@ in
   boot.loader.systemd-boot.configurationLimit = 10;
   # 1 s menu (was 5): hold Space while booting to stay in it and pick an older generation
   boot.loader.timeout = 1;
+
+  # boot splash: Unit-01's eye comes on green (theme/plymouth), and a quiet
+  # boot so no kernel text scrolls past. It will also ask for the disk
+  # password after the LUKS reinstall.
+  boot.plymouth = {
+    enable = true;
+    theme = "eva";
+    themePackages = [ (import ./theme/plymouth { inherit pkgs; }) ];
+  };
+  boot.consoleLogLevel = 3;
+  boot.initrd.verbose = false;
+  boot.kernelParams = [ "quiet" "splash" "loglevel=3" "rd.systemd.show_status=auto" "udev.log_level=3" "vt.global_cursor_default=0" ];
   # only root may read /boot (systemd-boot warns otherwise: its random seed lives there)
   fileSystems."/boot".options = lib.mkForce [ "fmask=0077" "dmask=0077" ];
 
@@ -41,7 +54,7 @@ in
 
   time.timeZone = "Asia/Kuching";
 
-  # whisper palette for the text consoles (TTYs); colour 0 is the background
+  # UNIT-01 colours for the text consoles (TTYs); colour 0 is the background
   console.colors = [ (hex palette.base) ] ++ map hex (lib.drop 1 palette.terminal);
   services.getty.autologinUser = "Wallance";
 
@@ -128,7 +141,7 @@ in
      libnotify
      hypridle
      hyprpolkitagent
-     # whisper-shell (the desktop) and its tools
+     # nerv-shell (the desktop) and its tools
      quickshell
      satty          # draw on screenshots
      hyprpicker     # colour picker
@@ -156,10 +169,10 @@ in
       };
       settings.addons = {
         classicui.globalSection = {
-          Theme = "whisper";
-          DarkTheme = "whisper";
-          Font = "Nunito 12";
-          MenuFont = "Nunito 11";
+          Theme = "eva";
+          DarkTheme = "eva";
+          Font = "Barlow Semi Condensed 12";
+          MenuFont = "Barlow Semi Condensed 11";
           "Vertical Candidate List" = "False";
         };
         pinyin.globalSection = {
@@ -182,24 +195,24 @@ in
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
   # Feral GameMode; Sober (flatpak) requests it through the portal.
-  # Its hooks flip whisper-shell's game mode on and off (if auto game mode is on).
+  # Its hooks flip nerv-shell's game mode on and off (if auto game mode is on).
   programs.gamemode = let
     # gamemoded runs hooks without WAYLAND_DISPLAY, which qs needs to find the shell
-    hook = what: pkgs.writeShellScript "whisper-game${what}" ''
+    hook = what: pkgs.writeShellScript "eva-game${what}" ''
       if [ -z "$WAYLAND_DISPLAY" ]; then
         for s in "''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/wayland-*; do
           case "$s" in *.lock) continue ;; esac
           export WAYLAND_DISPLAY="''${s##*/}"; break
         done
       fi
-      exec /run/current-system/sw/bin/qs ipc call whisper game${what}
+      exec /run/current-system/sw/bin/qs ipc call nerv game${what}
     '';
   in {
     enable = true;
     settings.custom = { start = "${hook "start"}"; end = "${hook "end"}"; };
   };
 
-  # Qt apps follow the palette too (qt5ct/qt6ct; colours in theme/whisper.nix)
+  # Qt apps follow the setup too (qt5ct/qt6ct; colours in theme/eva.nix)
   qt = {
     enable = true;
     platformTheme = "qt5ct";
@@ -213,10 +226,10 @@ in
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono   # bar numbers, fallback mono
     maple-mono.NF               # terminal (rounded, with Nerd Font icons)
-    nunito                      # whisper-shell text
-    material-symbols            # whisper-shell icons
+    barlow                      # nerv-shell HUD text (Barlow / Condensed / Semi Condensed)
+    material-symbols            # nerv-shell icons (Sharp)
     noto-fonts-cjk-sans         # Chinese / Japanese text
-    noto-fonts-cjk-serif        # the vertical Japanese date in the sky
+    noto-fonts-cjk-serif        # Eva title cards (heavy Mincho)
   ];
 
   # needed by home-manager dconf settings (dark mode)

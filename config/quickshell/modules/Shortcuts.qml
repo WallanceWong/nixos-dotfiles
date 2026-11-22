@@ -29,6 +29,7 @@ Scope {
             Shortcut { name: "ime"; description: "Switch English / Chinese"; onPressed: Ime.toggle() }
             Shortcut { name: "cheatsheet"; description: "Keyboard shortcuts"; onPressed: Panels.toggle("cheatsheet") }
             Shortcut { name: "settings"; description: "Settings"; onPressed: Panels.toggle("settings") }
+            Shortcut { name: "setup"; description: "Switch setup (UNIT-01 / NERV HQ)"; onPressed: Setups.next() }
         }
     }
 
@@ -45,6 +46,8 @@ Scope {
         function lock(): void { Locker.lock(); }
         // the autologin lock (lock.sh login): always the Eva-01 screen
         function lockboot(): void { Locker.lock(true); }
+        // switch setup: "unit01", "magi" or "next"
+        function setup(id: string): void { id === "next" ? Setups.next() : Setups.set(id); }
         // hypridle: screensaver after 2 minutes idle, wake on any input
         function screensaver(): void { Desktop.startSaver(); }
         function wake(): void { Desktop.stopSaver(); }
@@ -53,6 +56,6 @@ Scope {
         // Feral GameMode hooks (programs.gamemode.settings.custom)
         function gamestart(): void { Automations.gameStarted(); }
         function gameend(): void { Automations.gameEnded(); }
-        function notify(): void { Quickshell.execDetached(["notify-send", "-a", "NERV", "-i", "weather-clear-night", "a quiet night", "the city is still awake below"]); }
+        function notify(): void { Quickshell.execDetached(["notify-send", "-a", "NERV", "-i", "dialog-information", "MAGI SYSTEM", "all systems nominal"]); }
     }
 }

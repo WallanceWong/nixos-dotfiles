@@ -1,57 +1,58 @@
-@import url("whisper-colors.css");   /* generated from theme/palette.json */
-@import url("whisper-tokens.css");   /* recolours Firefox's own pages (about:…) */
+@import url("eva-colors.css");   /* per setup, from theme/setups (eva-switch) */
+@import url("eva-tokens.css");   /* recolours Firefox's own pages (about:…) */
 
-/* whisper — the pages Firefox draws itself. Websites keep their own look; they
+/* eva — the pages Firefox draws itself. Websites keep their own look; they
    only get the palette's scrollbars and are asked for their dark mode
    (layout.css.prefers-color-scheme.content-override in user.js). */
 
 /* ── every page: thin night scrollbars ── */
-:root { scrollbar-color: color-mix(in srgb, var(--w-overlay) 75%, transparent) transparent; }
+:root { scrollbar-color: color-mix(in srgb, var(--eva-overlay) 75%, transparent) transparent; }
 
-/* ── Firefox's own pages: Nunito, rounded, lamp-lit selection ── */
+/* ── Firefox's own pages: Barlow, square, accent-lit selection ── */
 @-moz-document url-prefix("about:"), url-prefix("chrome:") {
   :root {
-    --in-content-page-background: var(--w-base) !important;
-    --in-content-page-color: var(--w-text) !important;
-    --in-content-box-background: var(--w-surface0) !important;
-    --in-content-box-border-color: var(--w-surface1) !important;
-    --in-content-item-hover: var(--w-surface1) !important;
-    --in-content-item-selected: color-mix(in srgb, var(--w-lamp) 18%, var(--w-surface0)) !important;
-    --in-content-primary-button-background: var(--w-lamp) !important;
-    --in-content-primary-button-text-color: var(--w-crust) !important;
-    --in-content-accent-color: var(--w-lamp) !important;
-    --in-content-link-color: var(--w-teal) !important;
-    --in-content-table-background: var(--w-sunken) !important;
-    font-family: "Nunito", sans-serif;
+    --in-content-page-background: var(--eva-base) !important;
+    --in-content-page-color: var(--eva-text) !important;
+    --in-content-box-background: var(--eva-surface0) !important;
+    --in-content-box-border-color: var(--eva-surface1) !important;
+    --in-content-item-hover: var(--eva-surface1) !important;
+    --in-content-item-selected: color-mix(in srgb, var(--eva-accent) 18%, var(--eva-surface0)) !important;
+    --in-content-primary-button-background: var(--eva-accent) !important;
+    --in-content-primary-button-text-color: var(--eva-crust) !important;
+    --in-content-accent-color: var(--eva-accent) !important;
+    --in-content-link-color: var(--eva-armour) !important;
+    --in-content-table-background: var(--eva-sunken) !important;
+    font-family: "Barlow Semi Condensed", "Barlow", sans-serif;
   }
-  ::selection { background-color: color-mix(in srgb, var(--w-lamp) 30%, transparent); color: var(--w-text); }
+  ::selection { background-color: color-mix(in srgb, var(--eva-accent) 30%, transparent); color: var(--eva-text); }
   h1, h2, .main-heading, .header-name { font-weight: 800 !important; letter-spacing: .3px; }
   input[type="checkbox"]:checked, input[type="radio"]:checked {
-    accent-color: var(--w-lamp);
+    accent-color: var(--eva-accent);
   }
-  moz-card, .card, .addon.card { border-radius: 14px !important; }
+  moz-card, .card, .addon.card { border-radius: 2px !important; }
 }
 
-/* ── the new tab page: the painting itself, with tonight's moon ── */
+/* ── the new tab page: the setup's wallpaper and the NERV crest. The background
+   image and crest live in eva-colors.css (per setup, swapped by eva-switch). ── */
 @-moz-document url("about:newtab"), url("about:home"), url("about:privatebrowsing") {
   :root {
-    --newtab-background-color: var(--w-base) !important;
-    --newtab-background-color-secondary: color-mix(in srgb, var(--w-base) 72%, transparent) !important;
-    --newtab-text-primary-color: var(--w-text) !important;
-    --newtab-text-secondary-color: var(--w-subtext) !important;
-    --newtab-primary-action-background: var(--w-lamp) !important;
-    --newtab-element-hover-color: color-mix(in srgb, var(--w-surface1) 70%, transparent) !important;
-    --newtab-element-active-color: var(--w-surface2) !important;
-    --newtab-button-background: color-mix(in srgb, var(--w-base) 70%, transparent) !important;
-    --newtab-button-hover-background: color-mix(in srgb, var(--w-surface1) 80%, transparent) !important;
-    --newtab-wordmark-color: var(--w-text) !important;
+    --newtab-background-color: var(--eva-base) !important;
+    --newtab-background-color-secondary: color-mix(in srgb, var(--eva-base) 72%, transparent) !important;
+    --newtab-text-primary-color: var(--eva-text) !important;
+    --newtab-text-secondary-color: var(--eva-subtext) !important;
+    --newtab-primary-action-background: var(--eva-accent) !important;
+    --newtab-element-hover-color: color-mix(in srgb, var(--eva-surface1) 70%, transparent) !important;
+    --newtab-element-active-color: var(--eva-surface2) !important;
+    --newtab-button-background: color-mix(in srgb, var(--eva-base) 70%, transparent) !important;
+    --newtab-button-hover-background: color-mix(in srgb, var(--eva-surface1) 80%, transparent) !important;
+    --newtab-wordmark-color: var(--eva-text) !important;
     --newtab-wallpaper: none !important;
   }
-  /* the painting on <html>, the night's shading on <body> above it. (Keep the
-     url() out of any declaration that uses var(): Firefox drops it there.) */
+  /* the wallpaper on <html> (its image comes from eva-colors.css: keep the url()
+     out of any declaration that uses var(): Firefox drops it there), shading on
+     <body> above it */
   html {
-    background-color: var(--w-base) !important;
-    background-image: url("whisper-wall.jpg") !important;
+    background-color: var(--eva-base) !important;
     background-position: center 30% !important;
     background-size: cover !important;
     background-repeat: no-repeat !important;
@@ -59,15 +60,17 @@
   }
   body {
     min-height: 100vh;
-    background: linear-gradient(to bottom, color-mix(in srgb, var(--w-crust) 55%, transparent),
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--eva-crust) 55%, transparent),
                                 transparent 30%, transparent 62%,
-                                color-mix(in srgb, var(--w-crust) 70%, transparent)) !important;
+                                color-mix(in srgb, var(--eva-crust) 70%, transparent)) !important;
   }
-  /* the Firefox logo becomes the crescent; the wordmark says whisper */
+  /* the Firefox logo becomes the NERV crest (image in eva-colors.css); the
+     wordmark says EVANGELION in title-card Mincho */
   .logo-and-wordmark .logo, .logo-and-wordmark-wrapper .logo {
-    background-image: url("whisper-moon.svg") !important;
     background-size: contain !important;
-    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--w-lamp) 30%, transparent));
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--eva-accent) 30%, transparent));
   }
   .logo-and-wordmark .wordmark {
     background-image: none !important;
@@ -76,88 +79,89 @@
     fill: none !important;
   }
   .logo-and-wordmark .wordmark::after {
-    content: "whisper";
-    font: 300 46px/1 "Nunito", sans-serif;
-    letter-spacing: 6px;
-    color: var(--w-text);
-    text-shadow: 0 0 22px color-mix(in srgb, var(--w-lamp) 35%, transparent), 0 2px 8px var(--w-crust);
+    content: "EVANGELION";
+    font: 900 46px/1 "Noto Serif CJK JP", serif;
+    letter-spacing: 1px;
+    transform: scaleX(.86);
+    color: var(--eva-text);
+    text-shadow: 0 0 22px color-mix(in srgb, var(--eva-accent) 35%, transparent), 0 2px 8px var(--eva-crust);
   }
   /* the search box: glass over the painting, lamp-lit when focused (its insides
      are in a shadow DOM, styled through these variables) */
   .search-wrapper content-search-handoff-ui {
-    --content-search-handoff-ui-background-color: color-mix(in srgb, var(--w-mantle) 70%, transparent) !important;
-    --content-search-handoff-ui-color: var(--w-text) !important;
-    --content-search-handoff-ui-fill: var(--w-lamp) !important;
-    --content-search-handoff-ui-caret-color: var(--w-lamp) !important;
-    --content-search-handoff-ui-border-radius: 16px !important;
-    --content-search-handoff-ui-unfocused-border-color: color-mix(in srgb, var(--w-lamp) 20%, transparent) !important;
-    --content-search-handoff-ui-fakefocus-border-color: color-mix(in srgb, var(--w-lamp) 55%, transparent) !important;
-    --content-search-handoff-ui-fakefocus-box-shadow-inner: color-mix(in srgb, var(--w-lamp) 14%, transparent) !important;
-    border-radius: 16px;
+    --content-search-handoff-ui-background-color: color-mix(in srgb, var(--eva-mantle) 70%, transparent) !important;
+    --content-search-handoff-ui-color: var(--eva-text) !important;
+    --content-search-handoff-ui-fill: var(--eva-accent) !important;
+    --content-search-handoff-ui-caret-color: var(--eva-accent) !important;
+    --content-search-handoff-ui-border-radius: 2px !important;
+    --content-search-handoff-ui-unfocused-border-color: color-mix(in srgb, var(--eva-accent) 20%, transparent) !important;
+    --content-search-handoff-ui-fakefocus-border-color: color-mix(in srgb, var(--eva-accent) 55%, transparent) !important;
+    --content-search-handoff-ui-fakefocus-box-shadow-inner: color-mix(in srgb, var(--eva-accent) 14%, transparent) !important;
+    border-radius: 2px;
     backdrop-filter: blur(14px) saturate(1.2);
-    box-shadow: 0 12px 34px color-mix(in srgb, var(--w-crust) 80%, transparent),
-                0 0 26px color-mix(in srgb, var(--w-lamp) 8%, transparent);
+    box-shadow: 0 12px 34px color-mix(in srgb, var(--eva-crust) 80%, transparent),
+                0 0 26px color-mix(in srgb, var(--eva-accent) 8%, transparent);
   }
   .search-wrapper .search-handoff-button,
   .search-wrapper .search-inner-wrapper input,
   .search-wrapper .fake-textbox,
   content-search-handoff-ui {
-    background-color: color-mix(in srgb, var(--w-mantle) 72%, transparent) !important;
+    background-color: color-mix(in srgb, var(--eva-mantle) 72%, transparent) !important;
     backdrop-filter: blur(14px) saturate(1.2);
-    border: 1px solid color-mix(in srgb, var(--w-lamp) 18%, transparent) !important;
-    border-radius: 16px !important;
-    color: var(--w-text) !important;
-    box-shadow: 0 12px 34px color-mix(in srgb, var(--w-crust) 80%, transparent),
-                0 0 24px color-mix(in srgb, var(--w-lamp) 7%, transparent) !important;
+    border: 1px solid color-mix(in srgb, var(--eva-accent) 18%, transparent) !important;
+    border-radius: 2px !important;
+    color: var(--eva-text) !important;
+    box-shadow: 0 12px 34px color-mix(in srgb, var(--eva-crust) 80%, transparent),
+                0 0 24px color-mix(in srgb, var(--eva-accent) 7%, transparent) !important;
   }
   .search-wrapper .search-handoff-button:hover,
   .search-wrapper.fake-focus .search-handoff-button {
-    border-color: color-mix(in srgb, var(--w-lamp) 45%, transparent) !important;
-    box-shadow: 0 12px 34px color-mix(in srgb, var(--w-crust) 80%, transparent),
-                0 0 30px color-mix(in srgb, var(--w-lamp) 16%, transparent) !important;
+    border-color: color-mix(in srgb, var(--eva-accent) 45%, transparent) !important;
+    box-shadow: 0 12px 34px color-mix(in srgb, var(--eva-crust) 80%, transparent),
+                0 0 30px color-mix(in srgb, var(--eva-accent) 16%, transparent) !important;
   }
-  .search-wrapper .fake-textbox, .search-handoff-button .fake-caret { color: var(--w-subtext) !important; font-weight: 600; }
+  .search-wrapper .fake-textbox, .search-handoff-button .fake-caret { color: var(--eva-subtext) !important; font-weight: 600; }
   /* shortcuts: small glass tiles */
   .top-site-outer .tile, .top-site-outer .top-site-inner > a .tile {
-    background-color: color-mix(in srgb, var(--w-mantle) 62%, transparent) !important;
+    background-color: color-mix(in srgb, var(--eva-mantle) 62%, transparent) !important;
     backdrop-filter: blur(12px);
-    border: 1px solid color-mix(in srgb, var(--w-text) 8%, transparent) !important;
-    border-radius: 16px !important;
-    box-shadow: 0 8px 24px color-mix(in srgb, var(--w-crust) 70%, transparent) !important;
+    border: 1px solid color-mix(in srgb, var(--eva-text) 8%, transparent) !important;
+    border-radius: 2px !important;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--eva-crust) 70%, transparent) !important;
   }
   .top-site-outer:is(:hover, :focus-within) .tile {
-    border-color: color-mix(in srgb, var(--w-lamp) 40%, transparent) !important;
-    box-shadow: 0 8px 24px color-mix(in srgb, var(--w-crust) 70%, transparent),
-                0 0 18px color-mix(in srgb, var(--w-lamp) 14%, transparent) !important;
+    border-color: color-mix(in srgb, var(--eva-accent) 40%, transparent) !important;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--eva-crust) 70%, transparent),
+                0 0 18px color-mix(in srgb, var(--eva-accent) 14%, transparent) !important;
   }
   .top-site-outer .title, .top-site-outer .title span {
-    color: var(--w-text) !important;
+    color: var(--eva-text) !important;
     font-size: 13px !important;
     font-weight: 600;
     overflow-wrap: normal !important;
     word-break: normal !important;
-    text-shadow: 0 1px 4px var(--w-crust);
+    text-shadow: 0 1px 4px var(--eva-crust);
   }
-  .top-site-outer .sponsored-label { color: var(--w-subtext) !important; }
+  .top-site-outer .sponsored-label { color: var(--eva-subtext) !important; }
   .top-site-outer:is(:hover, :focus-within) .top-site-inner { background: transparent !important; }
   .personalize-button, .customize-menu, .weather-widget, .weather {
-    border-radius: 14px !important;
+    border-radius: 2px !important;
   }
   .customize-menu {
-    background-color: var(--w-base) !important;
-    border-inline-start: 1px solid var(--w-surface1) !important;
+    background-color: var(--eva-base) !important;
+    border-inline-start: 1px solid var(--eva-surface1) !important;
   }
 }
 
 /* ── private windows: the same night, a deeper violet hush ── */
 @-moz-document url("about:privatebrowsing") {
   .logo-and-wordmark .wordmark::after {
-    content: "whisper · private" !important;
+    content: "EVANGELION · PRIVATE" !important;
     white-space: nowrap;
     font-size: 34px !important;
     letter-spacing: 4px !important;
   }
-  .info { border-radius: 14px !important; background-color: color-mix(in srgb, var(--w-mantle) 75%, transparent) !important; backdrop-filter: blur(12px); }
+  .info { border-radius: 2px !important; background-color: color-mix(in srgb, var(--eva-mantle) 75%, transparent) !important; backdrop-filter: blur(12px); }
 }
 
 /* ── settings, add-ons and the other about: pages ── */
@@ -165,86 +169,86 @@
                url-prefix("about:downloads"), url-prefix("about:profiles"), url-prefix("about:support"),
                url-prefix("about:logins"), url-prefix("about:config"), url-prefix("about:firefoxview"),
                url-prefix("about:protections"), url-prefix("about:certificate") {
-  body, html { background-color: var(--w-base) !important; color: var(--w-text) !important; }
+  body, html { background-color: var(--eva-base) !important; color: var(--eva-text) !important; }
   #categories .category[selected], .category[selected], #categories > .category:is([selected], .selected) {
-    color: var(--w-lamp) !important;
-    background-color: color-mix(in srgb, var(--w-lamp) 10%, transparent) !important;
-    border-radius: 9px !important;
+    color: var(--eva-accent) !important;
+    background-color: color-mix(in srgb, var(--eva-accent) 10%, transparent) !important;
+    border-radius: 2px !important;
   }
   #categories .category[selected] .category-icon, .category[selected] .category-icon {
-    fill: var(--w-lamp) !important;
-    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--w-lamp) 45%, transparent));
+    fill: var(--eva-accent) !important;
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--eva-accent) 45%, transparent));
   }
-  #categories .category, .category { border-radius: 9px !important; }
-  #categories .category:hover:not([selected]) { background-color: var(--w-surface0) !important; }
+  #categories .category, .category { border-radius: 2px !important; }
+  #categories .category:hover:not([selected]) { background-color: var(--eva-surface0) !important; }
   .sticky-container, #searchInput, search-textbox, #about-config-search {
-    border-radius: 10px !important;
+    border-radius: 2px !important;
   }
   input:is([type="text"], [type="search"], [type="url"], [type="email"], [type="password"], [type="number"]),
   select, textarea, menulist, search-textbox {
-    background-color: var(--w-sunken) !important;
-    color: var(--w-text) !important;
-    border: 1px solid var(--w-surface1) !important;
-    border-radius: 9px !important;
+    background-color: var(--eva-sunken) !important;
+    color: var(--eva-text) !important;
+    border: 1px solid var(--eva-surface1) !important;
+    border-radius: 2px !important;
   }
   input:focus-visible, select:focus-visible, textarea:focus-visible, search-textbox[focused] {
-    outline: 2px solid color-mix(in srgb, var(--w-lamp) 55%, transparent) !important;
+    outline: 2px solid color-mix(in srgb, var(--eva-accent) 55%, transparent) !important;
     outline-offset: 0 !important;
   }
-  button, .button, moz-button { border-radius: 8px !important; }
+  button, .button, moz-button { border-radius: 2px !important; }
   /* about:config: a quieter table */
-  #prefs tr:nth-child(odd) { background-color: var(--w-base) !important; }
-  #prefs tr:nth-child(even) { background-color: var(--w-sunken) !important; }
-  #prefs tr.has-user-value th { color: var(--w-lamp) !important; }
+  #prefs tr:nth-child(odd) { background-color: var(--eva-base) !important; }
+  #prefs tr:nth-child(even) { background-color: var(--eva-sunken) !important; }
+  #prefs tr.has-user-value th { color: var(--eva-accent) !important; }
 }
 
 /* ── reader view: the colours come from user.js; this is the type ── */
 @-moz-document url-prefix("about:reader") {
-  body { font-family: "Nunito", sans-serif; }
+  body { font-family: "Barlow Semi Condensed", "Barlow", sans-serif; }
   .reader-header .reader-title { font-weight: 800 !important; letter-spacing: .2px; }
-  .toolbar, .reader-controls { background-color: var(--w-mantle) !important; border-radius: 12px; }
+  .toolbar, .reader-controls { background-color: var(--eva-mantle) !important; border-radius: 2px; }
 }
 
 /* ── error pages (can't connect, certificate problems …) ── */
 @-moz-document url-prefix("about:neterror"), url-prefix("about:certerror"), url-prefix("about:blocked"),
                url-prefix("about:tabcrashed"), url-prefix("about:sessionrestore"), url-prefix("about:restartrequired") {
-  body { background: var(--w-base) !important; color: var(--w-text) !important; }
-  .title, .title-text, h1 { color: var(--w-lamp) !important; }
+  body { background: var(--eva-base) !important; color: var(--eva-text) !important; }
+  .title, .title-text, h1 { color: var(--eva-accent) !important; }
   .container::before { opacity: .8; }
 }
 
 /* ── blank pages: no white flash ── */
 @-moz-document url("about:blank") {
-  html:not([style]) { background-color: var(--w-base) !important; }
+  html:not([style]) { background-color: var(--eva-base) !important; }
 }
 
 /* ── the PDF viewer (dark theme from user.js; palette here) ── */
 @-moz-document regexp("^(file|https?|blob|resource)://.*\\.pdf(\\?.*)?(#.*)?$"), url-prefix("resource://pdf.js/") {
   :root {
-    --body-bg-color: var(--w-base) !important;
-    --toolbar-bg-color: var(--w-mantle) !important;
-    --sidebar-toolbar-bg-color: var(--w-mantle) !important;
-    --sidebar-narrow-bg-color: var(--w-mantle) !important;
-    --toolbar-border-color: var(--w-surface0) !important;
-    --toolbar-icon-bg-color: var(--w-subtext) !important;
-    --toolbar-icon-hover-bg-color: var(--w-text) !important;
-    --field-bg-color: var(--w-sunken) !important;
-    --field-color: var(--w-text) !important;
-    --field-border-color: var(--w-surface1) !important;
-    --dropdown-btn-bg-color: var(--w-sunken) !important;
-    --doorhanger-bg-color: var(--w-base) !important;
-    --doorhanger-border-color: var(--w-surface1) !important;
-    --doorhanger-hover-bg-color: var(--w-surface1) !important;
-    --doorhanger-hover-color: var(--w-text) !important;
-    --main-color: var(--w-text) !important;
-    --button-hover-color: var(--w-surface1) !important;
-    --toggled-btn-bg-color: color-mix(in srgb, var(--w-lamp) 18%, transparent) !important;
-    --toggled-btn-color: var(--w-lamp) !important;
-    --progressBar-color: var(--w-lamp) !important;
-    --progressBar-bg-color: var(--w-surface0) !important;
-    --treeitem-selected-bg-color: color-mix(in srgb, var(--w-lamp) 18%, transparent) !important;
-    --treeitem-color: var(--w-text) !important;
-    --thumbnail-selected-color: var(--w-lamp) !important;
+    --body-bg-color: var(--eva-base) !important;
+    --toolbar-bg-color: var(--eva-mantle) !important;
+    --sidebar-toolbar-bg-color: var(--eva-mantle) !important;
+    --sidebar-narrow-bg-color: var(--eva-mantle) !important;
+    --toolbar-border-color: var(--eva-surface0) !important;
+    --toolbar-icon-bg-color: var(--eva-subtext) !important;
+    --toolbar-icon-hover-bg-color: var(--eva-text) !important;
+    --field-bg-color: var(--eva-sunken) !important;
+    --field-color: var(--eva-text) !important;
+    --field-border-color: var(--eva-surface1) !important;
+    --dropdown-btn-bg-color: var(--eva-sunken) !important;
+    --doorhanger-bg-color: var(--eva-base) !important;
+    --doorhanger-border-color: var(--eva-surface1) !important;
+    --doorhanger-hover-bg-color: var(--eva-surface1) !important;
+    --doorhanger-hover-color: var(--eva-text) !important;
+    --main-color: var(--eva-text) !important;
+    --button-hover-color: var(--eva-surface1) !important;
+    --toggled-btn-bg-color: color-mix(in srgb, var(--eva-accent) 18%, transparent) !important;
+    --toggled-btn-color: var(--eva-accent) !important;
+    --progressBar-color: var(--eva-accent) !important;
+    --progressBar-bg-color: var(--eva-surface0) !important;
+    --treeitem-selected-bg-color: color-mix(in srgb, var(--eva-accent) 18%, transparent) !important;
+    --treeitem-color: var(--eva-text) !important;
+    --thumbnail-selected-color: var(--eva-accent) !important;
   }
-  #viewerContainer .page { box-shadow: 0 6px 22px var(--w-crust) !important; border-radius: 3px; }
+  #viewerContainer .page { box-shadow: 0 6px 22px var(--eva-crust) !important; border-radius: 2px; }
 }

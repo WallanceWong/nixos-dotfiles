@@ -1,32 +1,39 @@
-# NixOS + Hyprland Dotfiles — whisper
+# NixOS + Hyprland Dotfiles — eva
 
 Rice for Wallance's ThinkPad E14 Gen 7: NixOS, Hyprland and Home Manager, with
-**whisper-shell**, a desktop built in [Quickshell](https://quickshell.org) around
-the wallpaper — a starry night over the city lights from *Whisper of the Heart*.
-The painting is alive: its own stars twinkle, the city shimmers, the streetlamps
-breathe, fireflies drift and a shooting star crosses now and then.
+**nerv-shell**, a desktop built in [Quickshell](https://quickshell.org) in the
+look of *Neon Genesis Evangelion*: HUD plates with 45° cut corners, condensed
+capitals, seven-segment readouts, heavy Mincho title cards.
 
-It is also two layers deep: the sky drifts behind the foreground as you change
-workspace, carries **tonight's real moon** (its true phase), and is tinted by the
-**real time of day** over Kuching (worked out offline from the sun's position).
-The city lights and their glow on the haze follow whatever music is playing.
-Each of these can be switched off in **whisper settings** (Super + ,).
+There are **two setups**, switched live with **Super + Shift + U** (or the
+setup buttons in the control centre and settings, or `eva-switch` in a terminal):
+
+| | **UNIT-01 / SHINJI** (calm) | **NERV HQ / MAGI** (full drama) |
+| --- | --- | --- |
+| Colours | indigo night, Unit-01 lime and purple, ember orange | command-room black, NERV orange, emergency red, amber |
+| Wallpaper | the painting of Shinji at the railing as Unit-01 rises from the sea — embers drift up, Unit-01's eye breathes (and flares with your music), sea haze rolls past, a vertical Mincho date | the MAGI command display, all live: CASPER/BALTHASAR/MELCHIOR vote on your machine's state, SYNC RATIO (CPU) with its trace, LCL density (memory), core temperature, the power panel with the internal-power countdown, angel radar, AT-field hex grid, a signal trace that follows music, a status ticker |
+| Lock screen | Unit-01 in the dark, eye lit green, title card (逃げちゃダメだ), pilot sync code | the MAGI vote: three 承認 open the doors, 否決 turns the room red |
+| Sounds | quiet clicks, tape-deck clunks, optional cicadas | square-wave beeps, buzzer, klaxon for critical alerts |
+| Motion | slow tide | fast and mechanical |
+
+The **boot login is always Eva-01**, whichever setup is active: the Plymouth
+splash (Unit-01's eye coming on), the TTY colours and the first lock after
+autologin.
 
 ## Structure
 
 - `flake.nix`, `configuration.nix`, `home.nix` — the NixOS system and the user config
 - `hardware-configuration.nix` — hardware scan for this ThinkPad (machine-specific; replace it on other machines)
-- `theme/palette.json` — **the one palette**. Every colour on the desktop comes from here
-- `theme/whisper.nix` — generates each program's colours from the palette (Hyprland, hyprlock, kitty, GTK, Qt, Firefox, btop, starship, nano, satty, fcitx5, the TTY) and starts whisper-shell
-- `theme/scene.json` — where the stars, city lights, lamps and windows are in the painting (for the living wallpaper)
-- `wallpapers/layers/` — the painting split into `sky.jpg` and `foreground.png` (for the depth effect); stacked, they are the original
-- `config/quickshell/` — **whisper-shell**: `shell.qml`, `modules/` (wallpaper, bar, panels…), `services/` (audio, notifications…), `components/`, `assets/` (glows, sounds)
-- `config/hypr/` — Hyprland, hypridle (idle), `lock.sh` (locks with whisper-shell, hyprlock as the fallback), hyprlock, hyprpaper, `screenshot.sh`, `annotate.sh`, `picker.sh`
+- `theme/setups/unit01.json`, `theme/setups/magi.json` — **the two setups**: colours, fonts, shape, motion, drama. Every colour on the desktop comes from these
+- `theme/eva.nix` — generates each program's config for both setups into `~/.config/eva/<id>/` (Hyprland, kitty, GTK, Qt, Firefox, VS Code, btop, starship, fastfetch, nano, satty, fcitx5), points the apps at `~/.config/eva/current`, installs `eva-switch` and starts nerv-shell
+- `theme/plymouth/` — the boot splash; `theme/nerv-crest.txt` — the crest for fastfetch
+- `wallpapers/unit01/wall.jpg` — the UNIT-01 wallpaper (the NERV HQ one is drawn live by the shell)
+- `config/quickshell/` — **nerv-shell**: `shell.qml`, `modules/` (wallpaper, bar, panels…), `services/` (theme, setups, stats, audio, notifications…), `components/` (HUD frames, seven-segment digits, the two scenes, the two lock screens), `assets/` (NERV crest, glows, sounds per setup)
+- `config/hypr/` — Hyprland, hypridle (idle), `lock.sh` (locks with nerv-shell, hyprlock as the fallback), hyprlock, `screenshot.sh`, `annotate.sh`, `picker.sh`
 - `config/kitty/` — terminal settings (colours are generated)
-- `config/firefox/` — the Firefox stylesheets and `user.js`; `theme/firefox/` builds them with the palette, the moon and the new-tab painting into the profile
+- `config/firefox/` — the Firefox stylesheets and `user.js`; `theme/firefox/` builds them with each setup's colours and new tab
 - `config/vscode/` — starter VS Code settings; copied only if VS Code has none yet
-- `config/waybar/`, `config/mako/`, `config/rofi/`, `config/wlogout/` — the previous setup, kept as a fallback (Super + Ctrl + B)
-- `wallpapers/wall.jpg` — the wallpaper
+- `config/waybar/`, `config/mako/`, `config/rofi/`, `config/wlogout/` — a rescue desktop (Super + Ctrl + B)
 - `docs/encrypted-reinstall.md` — reinstalling with full-disk encryption, then Secure Boot
 
 ## Keybindings
@@ -43,12 +50,13 @@ Each of these can be switched off in **whisper settings** (Super + ,).
 | Super + Shift + N | Do not disturb on/off |
 | Super + D | Dashboard (calendar, music, system) |
 | Super + G | Game mode on/off |
-| Super + Escape | Power menu (lock, sleep, log out, restart, shut down) |
+| Super + Escape | Power menu: AT FIELD (lock), STANDBY, EJECT PLUG (log out), REACTIVATE, SHUTDOWN / SELF-DESTRUCT |
 | Super + L | Lock screen |
 | Super + / | Every shortcut, searchable (read live from Hyprland) |
-| Super + , | whisper settings: depth, music, moon, sky clock, ambience, corners, automations |
+| Super + , | Settings: setup, depth, music, embers, date, sounds, klaxon, cicadas, corners, automations |
+| Super + Shift + U | Switch setup: UNIT-01 ⇄ NERV HQ |
 | Super + E | File manager (thunar) |
-| Super + Shift + E | VS Code (whisper-themed) |
+| Super + Shift + E | VS Code (Eva theme, follows the setup) |
 | Super + C | Close window |
 | Super + F | Fullscreen |
 | Super + V | Toggle floating |
@@ -67,14 +75,17 @@ Each of these can be switched off in **whisper settings** (Super + ,).
 | Ctrl + Space | Switch typing between English and Chinese (pinyin) |
 | Volume / mute / mic-mute / brightness keys | Work as labelled, with a popup |
 | Play/pause, next, previous keys | Control the current media player |
-| Super + Ctrl + R | Restart whisper-shell |
-| Super + Ctrl + B | Rescue: stop whisper-shell and start the old waybar setup |
+| Super + Ctrl + R | Restart nerv-shell |
+| Super + Ctrl + B | Rescue: stop nerv-shell and start the waybar setup |
 
 Screenshots go to `~/Pictures/Screenshots/`, recordings to `~/Videos/Recordings/`.
-In the bar: the moon opens the launcher, the stars are your workspaces (the lit
-one is where you are), the clock opens the dashboard, and the status pill
-(中/EN, Wi-Fi, Bluetooth, volume, battery) opens the control centre. A small lamp
-dot on it means unread notifications.
+In the bar: the NERV badge opens the launcher, the hex cells 01–05 are your
+workspaces (the filled one is where you are), the segment clock opens the
+dashboard, the status plate (中/EN, Wi-Fi, Bluetooth, volume) and the power plate
+open the control centre. The power plate says **EXT** on the charger and
+**INT** with a countdown of the battery time left on battery; below 15% it
+turns red (and in NERV HQ the whole bar raises the alarm). A small lit square
+on the status plate means unread messages.
 
 ## Typing Chinese
 
@@ -97,21 +108,24 @@ help — Sober does — switches game mode on by itself, and off when it quits.
 
 ## Lock screen
 
-whisper-shell draws the lock screen itself: the same living night, a lamp-lit
-clock, tonight's moon, now playing, battery and how many notifications came in.
-Just type — each letter is a firefly — and press Enter (Esc clears). It checks
-the password with PAM (the `hyprlock` service, so the keyring unlocks too). If
-the shell crashes while locked, systemd restarts it and it locks again; if the
-shell can't be reached at all, `lock.sh` falls back to hyprlock.
+nerv-shell draws the lock screen itself. At boot, and in UNIT-01, it is the
+Eva-01 screen: Unit-01 in the dark with its eye lit green, a title card with the
+clock in heavy Mincho and 逃げちゃダメだ, and the pilot authentication field
+(one block per letter). In NERV HQ it is the MAGI vote: type the code, press
+Enter, and CASPER, BALTHASAR and MELCHIOR deliberate (審議中) and vote one after
+another — 承認 opens it, 否決 turns the room red. Esc clears. It checks the
+password with PAM (the `hyprlock` service, so the keyring unlocks too). If the
+shell crashes while locked, systemd restarts it and it locks again; if the shell
+can't be reached at all, `lock.sh` falls back to hyprlock.
 
 ## Automations
 
-- **Battery saver** — below 20% on battery the night goes still (no animation
-  or blur, power-saver profile) until you plug in.
+- **Battery saver** — below 20% on battery the wallpaper goes still (no
+  animation or blur, power-saver profile) until you plug in.
 - **Boards** — plug in an Arduino or CH340 board and a note shows its port, with
   a button that opens PictoBlox.
-- **Night ambience** (off by default) — crickets and the far-off city, very
-  quietly, only while the desktop is empty (or locked) and nothing else plays.
+- **Cicadas** (off by default) — Tokyo-3's summer, very quietly, only while the
+  desktop is empty (or locked) and nothing else plays.
 
 ## What runs at login
 
@@ -119,15 +133,17 @@ Getty autologins on tty1 and `.bash_profile` starts Hyprland, which then:
 
 - starts the clipboard watcher and fcitx5
 - starts `hyprland-session.target`, which activates `graphical-session.target` —
-  that starts **whisper-shell** (systemd user service), xdg-desktop-portal and hypridle
-- locks once (`lock.sh login`) — autologin skips the password, and unlocking also
-  unlocks the gnome-keyring login keyring (its password must match the login password)
+  that starts **nerv-shell** (systemd user service), xdg-desktop-portal and hypridle
+- locks once with the Eva-01 boot lock (`lock.sh login`) — autologin skips the
+  password, and unlocking also unlocks the gnome-keyring login keyring (its
+  password must match the login password)
 
-After 2 minutes idle the **screensaver** fills the screen with the night — a slow
-drift across the painting, more shooting stars, a clock that wanders so nothing
-burns in; any key, click or real mouse move ends it (switch it off in Super + ,).
+After 2 minutes idle the **screensaver** fills the screen with the setup's scene —
+a slow drift across the painting with a wandering Mincho clock (UNIT-01) or the
+full MAGI display (NERV HQ); any key, click or real mouse move ends it (switch it
+off in Super + ,).
 hypridle dims the screen after 4½ minutes idle, locks at 5 minutes (and before
-sleep), and turns the screen off 30s later. whisper-shell is also the
+sleep), and turns the screen off 30s later. nerv-shell is also the
 notification daemon and the polkit (admin password) agent.
 
 ## Performance
@@ -141,7 +157,7 @@ notification daemon and the polkit (admin password) agent.
   (browser tabs first; never Hyprland, the shell, kitty or audio).
 - **Wi-Fi:** power saving is off on the charger (router round trip 7.2 → 2.2 ms,
   jitter 3.8 → 0.3 ms) and on with battery; BBR for steadier transfers.
-- **Charger-aware:** whisper-shell switches Performance ↔ Balanced with the
+- **Charger-aware:** nerv-shell switches Performance ↔ Balanced with the
   charger, and rests the shimmering border on battery (it redraws every frame).
 - **Smaller things:** `noatime`, Firefox GPU video decoding and WebRender,
   1 s boot menu, launcher apps in their own systemd scopes.
@@ -167,71 +183,45 @@ home printer (HP DeskJet 2800, on Wi-Fi) was set up with:
 (Kept out of the Nix config on purpose: declaring it makes every boot fail
 when the printer is switched off.)
 
-## VS Code — whisper
-
-![VS Code with the whisper theme: kernel C and boot assembly side by side, the terminal below, the night wallpaper glowing through](docs/vscode-whisper.jpg)
+## VS Code — Eva
 
 `theme/vscode/` (`module.nix`, `gen.py`, `workbench.css.in`, `extension.js`,
-`snippets/`). Everything is generated from `theme/palette.json`, so a palette
-change recolours VS Code with the rest of the desktop on the next rebuild.
+`snippets/`). Everything is generated from `theme/setups/*.json`.
 
-- **The Whisper theme** — ~545 interface colours and syntax for C, assembly
-  (x86 mnemonics teal, registers violet, directives blue), Nix, Make, linker
-  scripts and markup; function names glow lamp-gold, comments are Maple Mono's
-  cursive italics; the terminal uses kitty's 16 colours. Built as a real `.vsix`
-  and reinstalled automatically when it changes.
-- **Inside VS Code** — it's installed patched: the interface is in Nunito, the
-  caret glows like the streetlamp, popups and the command palette are rounded
-  glass, a lamp-lit crescent replaces the VS Code logo, and the empty editor
-  shows the moon. (Its integrity checksum is updated, so no "corrupt" warning.)
-- **Frosted glass** — Hyprland draws the window at 95% (90% unfocused) so the
-  living wallpaper glows through the blur, like kitty.
-- **Status bar** — tonight's moon with its Japanese name and date
-  (`● 新月 十月十日`); click it for the phase and days to the full moon.
-- **Night mode** — `Ctrl+K Ctrl+N` (or "Whisper: Night mode"): fullscreen,
-  centred, nothing but the code.
+- **Two themes** — "Eva Unit-01" and "Eva NERV HQ", ~560 interface colours and
+  syntax for C, assembly, Nix, Make, linker scripts and markup. `eva-switch`
+  sets the matching one in your settings, and VS Code repaints at once. Built as
+  a real `.vsix` and reinstalled automatically when it changes.
+- **Inside VS Code** — it's installed patched: the interface is in Barlow, the
+  caret glows in the accent, popups and the command palette are square glass,
+  the NERV crest replaces the VS Code logo and sits on the empty editor. The
+  patch reads the active theme's colours, so it follows the setup too. (Its
+  integrity checksum is updated, so no "corrupt" warning.)
+- **Status bar** — the date in Japanese numerals (`◢ 十一月二十二日`).
+- **Entry plug mode** — `Ctrl+K Ctrl+N`: fullscreen, centred, nothing but the code.
 - **OS-dev snippets** — in C: `kmain`, `portio`, `serial`, `gdt`, `idt`,
   `panic`, `packed`; in assembly: `multiboot`, `isr`, `lgdt`, `portio`; in
   linker scripts: `kernel-ld`.
-- **Also** — Maple Mono with ligatures (Noto Sans Mono CJK for Chinese), Material
-  icons in the palette, inline errors (Error Lens), smooth caret, sticky scroll,
-  file nesting (`.o` under `.c`, `flake.lock` under `flake.nix`), dimmed
-  unfocused splits, a minimap that appears on hover, no window buttons (Hyprland
-  tiles it), and folder icons for an OS tree (`kernel`, `boot`, `drivers`,
-  `arch`, `mm`, `fs`, `iso`). Open it with **Super + Shift + E**.
 
 The marketplace extensions it relies on (Material icons, Error Lens, clangd,
 x86 assembly, linker scripts, Native Debug, Nix IDE) are installed on rebuild
 if missing. Settings live in `~/.config/Code/User/settings.json` (a starter
 copy is in `config/vscode/`).
 
-## Firefox — whisper
-
-![Firefox with the whisper theme: the new tab page is the painting, with a lamp-lit crescent, "whisper", a glass search box and shortcut tiles](docs/firefox-whisper.jpg)
+## Firefox — Eva
 
 `config/firefox/chrome/` (stylesheets) and `theme/firefox/` (builds the
-profile's `chrome/` folder and `user.js` from `theme/palette.json`).
+profile's `chrome/` folder, plus a colours file and `user.js` per setup).
 
-- **One colour map** — `whisper-tokens.css` maps Firefox's own design tokens
-  (including the new "Nova" design) onto the palette, so the toolbars, menus,
-  settings, add-ons, sidebar, downloads, error pages and about:config all turn
-  night-blue with lamplight as the accent. Websites keep their own look; they
-  are only asked for their dark mode and get thin night scrollbars.
-- **The window** — tabs float in the darkest band; the selected one glows from
-  above with a lamp line and gold title, a tab playing sound turns teal, a tab
-  with news gets a lamp dot. The address bar is a pill of night glass that
-  catches the lamp when focused; results, menus and panels are rounded glass.
-  The interface is in Nunito, no window buttons (Hyprland tiles it).
-- **New tab** — the painting itself, tonight's crescent and "whisper", a glass
-  search box and glass shortcut tiles; no stories, ads or weather. Private
-  windows say "whisper · private".
-- **Reading** — reader view in the palette (Nunito, teal links), the PDF viewer
-  dark with lamp highlights.
-- **user.js** — dark everywhere, smooth weighted scrolling, GPU video decoding,
-  WebRender, no about:config warning. It is reapplied at every Firefox start,
-  so change those prefs here rather than in Settings.
-
-After a rebuild, restart Firefox to see changes.
+- **One colour map** — `eva-tokens.css` maps Firefox's own design tokens onto
+  the setup's colours, so toolbars, menus, settings, add-ons and about: pages
+  follow it. Websites keep their own look.
+- **The window** — square tabs and plates, the accent on the selected tab and
+  the focused address bar, Barlow for the interface.
+- **New tab** — the Unit-01 painting (UNIT-01) or a command-room grid (NERV HQ),
+  the NERV crest and "EVANGELION" in title-card Mincho.
+- **Switching** — `eva-switch` copies the setup's `eva-colors.css` and `user.js`
+  into the profile; restart Firefox to see the other setup.
 
 ## OS and kernel development
 
@@ -278,12 +268,16 @@ Nix IDE; C files use kernel style (tabs, 8 wide, rulers at 80/100).
 
 ## Changing colours and the shell
 
-- Colours: edit `theme/palette.json`. whisper-shell picks it up immediately;
+- Switch setups: **Super + Shift + U**, the control centre, settings, or
+  `eva-switch unit01|magi|next` (`eva` for short). Firefox, Qt apps and btop
+  follow on their next start; everything else at once.
+- Colours: edit `theme/setups/<id>.json`. nerv-shell picks it up immediately;
   everything else on the next rebuild.
 - The shell: `~/.config/quickshell` links straight to `config/quickshell/`, and
   Quickshell reloads itself when a file is saved — no rebuild needed. Its log:
-  `journalctl --user -u whisper-shell -f`.
-- Soft UI sounds can be turned off in the control centre (Sounds tile).
+  `journalctl --user -u nerv-shell -f`.
+- UI sounds can be turned off in the control centre (Sounds tile); the klaxon
+  separately in settings.
 
 ## Power and maintenance
 
