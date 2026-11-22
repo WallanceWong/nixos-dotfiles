@@ -18,6 +18,8 @@ Singleton {
     readonly property bool skyVisible: windowCount === 0 && !Settings.gameMode && !Automations.saving
 
     property bool dndBeforeGame: false
+    // keeps the always-on Leds service alive (singletons start on first use)
+    readonly property string ledMode: Leds.mode
 
     function setGameMode(on) {
         if (on === Settings.gameMode) return;

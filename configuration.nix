@@ -8,6 +8,21 @@ let
 
   # bind the Walnut buggy's serial data interface ($1, e.g. 3-2:1.2) to `option`,
   # stealing it from usbserial_generic if that grabbed it first
+  # eva-led normal|battery|alert|record-on|record-off
+  evaLed = pkgs.writeShellScriptBin "eva-led" ''
+    dot=/sys/class/leds/tpacpi::lid_logo_dot
+    mic=/sys/class/leds/platform::micmute
+    blink() { echo timer > $dot/trigger; echo "$1" > $dot/delay_on; echo "$2" > $dot/delay_off; }
+    case "''${1:-}" in
+      normal)     echo none > $dot/trigger; echo 255 > $dot/brightness ;;
+      battery)    blink 2200 260 ;;               # a slow heartbeat on internal power
+      alert)      blink 110 110 ;;                # emergency
+      record-on)  echo none > $mic/trigger; echo 1 > $mic/brightness ;;
+      record-off) echo audio-micmute > $mic/trigger ;;
+      *) echo "usage: eva-led normal|battery|alert|record-on|record-off" >&2; exit 1 ;;
+    esac
+  '';
+
   walnutBuggyBind = pkgs.writeShellScript "walnut-buggy-bind" ''
     echo "2f4e 0112" > /sys/bus/usb-serial/drivers/option1/new_id 2>/dev/null
     d=/sys/bus/usb/devices/$1/driver
@@ -118,6 +133,15 @@ in
     HandleLidSwitchExternalPower = "ignore";
   };
 
+  # ThinkPad lights for the eva rice: the red dot on the lid logo pulses on
+  # battery and blinks fast on alerts; the mic-mute light shows a recording.
+  # nerv-shell calls `sudo -n eva-led <mode>` — only these fixed modes, no
+  # password (see security.sudo below).
+  security.sudo.extraRules = [{
+    users = [ "Wallance" ];
+    commands = [{ command = "${evaLed}/bin/eva-led"; options = [ "NOPASSWD" ]; }];
+  }];
+
   # keep the keyboard backlight off at every boot (Fn+Space still turns it on if wanted)
   systemd.services.kbd-backlight-off = {
     description = "Turn off the ThinkPad keyboard backlight";
@@ -152,6 +176,7 @@ in
   '';
 
   environment.systemPackages = with pkgs; [
+     evaLed    # ThinkPad lid-dot / mic LED modes for nerv-shell (see above)
      vim
      wget
      foot
@@ -321,7 +346,7 @@ services.udev.extraRules = ''
   SUBSYSTEM=="tty", ENV{ID_VENDOR_ID}=="2f4e", ENV{ID_MODEL_ID}=="0112", ENV{ID_USB_INTERFACE_NUM}=="02", SYMLINK+="walnut-buggy", MODE="0666"
 '';
 # Wine's COM5 -> /dev/walnut-buggy (symlink in ~/.wine-walnut/dosdevices)
-boot.kernelModules = [ "option" ];
+boot.kernelModules = [ "option" "ledtrig-timer" ];   # ledtrig-timer: eva-led blinks the lid dot
 
 }
 

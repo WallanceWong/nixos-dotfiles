@@ -58,7 +58,7 @@ PanelWindow {
                 }
 
                 // the klaxon, once, for critical messages (NERV HQ only)
-                Timer { running: card.critical && Theme.drama; interval: 10; onTriggered: Sounds.play("alarm", 0.5) }
+                Timer { running: card.critical; interval: 10; onTriggered: { if (Theme.drama) Sounds.play("alarm", 0.5); Leds.alert(); } }
 
                 Item {
                     id: box
