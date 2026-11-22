@@ -4,6 +4,18 @@ let
   # the one palette (see theme/palette.json)
   palette = builtins.fromJSON (builtins.readFile ./theme/palette.json);
   hex = c: lib.removePrefix "#" c;
+
+  # bind the Walnut buggy's serial data interface ($1, e.g. 3-2:1.2) to `option`,
+  # stealing it from usbserial_generic if that grabbed it first
+  walnutBuggyBind = pkgs.writeShellScript "walnut-buggy-bind" ''
+    echo "2f4e 0112" > /sys/bus/usb-serial/drivers/option1/new_id 2>/dev/null
+    d=/sys/bus/usb/devices/$1/driver
+    if [ "$(basename "$(readlink "$d")")" != option ]; then
+      [ -e "$d" ] && echo "$1" > "$d/unbind"
+      echo "$1" > /sys/bus/usb/drivers/option/bind
+    fi
+    exit 0
+  '';
 in
 {
   imports =
@@ -76,6 +88,10 @@ in
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
 
+  # Android apps (Walnut Education etc.) via Waydroid; first run: `sudo waydroid init`
+  # off for now: the Walnut desktop app runs under Wine instead (~/.wine-walnut)
+  # virtualisation.waydroid.enable = true;
+
   # local LLM runtime for OpenClaw (the Halcyon agent) — listens on 127.0.0.1:11434
   services.ollama.enable = true;
   # Ollama defaults to a 4096-token window, too small for OpenClaw's system prompt;
@@ -100,8 +116,30 @@ in
     };
   };
 
+  # the Goodix touchpad sometimes stops sending input; reloading its driver brings it
+  # back. Super+Ctrl+T starts this, and polkit lets Wallance do so without a password.
+  systemd.services.touchpad-reset = {
+    description = "Reload the touchpad driver";
+    serviceConfig.Type = "oneshot";
+    path = [ pkgs.kmod ];
+    script = ''
+      modprobe -r hid_multitouch i2c_hid_acpi
+      sleep 1
+      modprobe i2c_hid_acpi
+      modprobe hid_multitouch
+    '';
+  };
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (action.id == "org.freedesktop.systemd1.manage-units" &&
+          action.lookup("unit") == "touchpad-reset.service" &&
+          action.lookup("verb") == "start" && subject.user == "Wallance")
+        return polkit.Result.YES;
+    });
+  '';
+
   environment.systemPackages = with pkgs; [
-     vim 
+     vim
      wget
      foot
      code-cursor   # Cursor, the AI code editor (VS Code based)
@@ -243,14 +281,14 @@ in
   # realtime scheduling for PipeWire: fewer audio crackles under load (games)
   security.rtkit.enable = true;
 
-  # Stop charging at 80% to extend battery lifespan (start must stay below end)
+  # Stop charging at 90% to extend battery lifespan (start must stay below end)
   systemd.services.battery-charge-threshold = {
     description = "Set battery charge thresholds";
     wantedBy = [ "multi-user.target" ];
     serviceConfig.Type = "oneshot";
     script = ''
-      echo 75 > /sys/class/power_supply/BAT0/charge_control_start_threshold
-      echo 80 > /sys/class/power_supply/BAT0/charge_control_end_threshold
+      echo 85 > /sys/class/power_supply/BAT0/charge_control_start_threshold
+      echo 90 > /sys/class/power_supply/BAT0/charge_control_end_threshold
     '';
   };
 
@@ -261,7 +299,16 @@ services.udev.extraRules = ''
   SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE="0666", TAG+="uaccess"
   SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="5523", MODE="0666", TAG+="uaccess"
   KERNEL=="ttyUSB*", MODE="0666", TAG+="uaccess"
+  # Walnut Education robot (HETAO_BUGGY 2f4e:0112) for the Walnut app under Wine:
+  # its CDC serial descriptors are broken (union points at ifaces 0/1, real ones are 1/2)
+  # so cdc_acm refuses it; drive the data iface with the `option` driver instead (it
+  # supports DTR/RTS, which the app needs) and give it a fixed name for Wine's COM5
+  KERNEL=="hidraw*", ATTRS{idVendor}=="2f4e", MODE="0666", TAG+="uaccess"
+  ACTION=="add|bind", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_interface", ATTRS{idVendor}=="2f4e", ATTRS{idProduct}=="0112", ATTR{bInterfaceNumber}=="02", RUN+="${walnutBuggyBind} %k"
+  SUBSYSTEM=="tty", ENV{ID_VENDOR_ID}=="2f4e", ENV{ID_MODEL_ID}=="0112", ENV{ID_USB_INTERFACE_NUM}=="02", SYMLINK+="walnut-buggy", MODE="0666"
 '';
+# Wine's COM5 -> /dev/walnut-buggy (symlink in ~/.wine-walnut/dosdevices)
+boot.kernelModules = [ "option" ];
 
 }
 
