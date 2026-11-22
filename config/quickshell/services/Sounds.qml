@@ -3,19 +3,23 @@ import QtQuick
 import Quickshell
 
 // UI sounds, played through PipeWire. Each setup has its own set
-// (assets/sounds/<setup>/*.wav): quiet clicks and tape-deck clunks for UNIT-01,
-// command-room beeps for NERV HQ. "alarm" is the klaxon (NERV HQ only, and only
-// with Settings.klaxon on).
+// (assets/sounds/<setup>/*.wav): quiet clicks for UNIT-01 and Misato's
+// "okaerinasai" when you come back; command-room beeps for NERV HQ, the real
+// Pattern Blue klaxon ("alarm", only with Settings.klaxon on) and the AT field
+// slamming shut on a wrong code. assets/sounds/common: sounds both share
+// (the umbilical cable disconnecting when the charger comes out).
 Singleton {
     id: root
 
     property double lastTick: 0
+    readonly property var common: ["unplug"]
 
     function play(name, volume) {
         if (!Settings.sounds) return;
         if (name === "alarm" && !(Theme.drama && Settings.klaxon)) name = "deny";
+        const dir = common.includes(name) ? "common" : Theme.setup;
         Quickshell.execDetached(["pw-play", "--volume", String(volume ?? 0.55),
-                                 Theme.assets + "/sounds/" + Theme.setup + "/" + name + ".wav"]);
+                                 Theme.assets + "/sounds/" + dir + "/" + name + ".wav"]);
     }
 
     // volume ticks fire on every step; keep them from piling up

@@ -18,6 +18,9 @@ Singleton {
     readonly property bool skyVisible: windowCount === 0 && !Settings.gameMode && !Automations.saving
 
     property bool dndBeforeGame: false
+    // false for the first seconds, so startup state changes don't make sounds
+    property bool started: false
+    Timer { running: true; interval: 4000; onTriggered: root.started = true }
     // keeps the always-on Leds service alive (singletons start on first use)
     readonly property string ledMode: Leds.mode
 

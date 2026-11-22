@@ -41,7 +41,7 @@ Singleton {
 
     // ── charger-aware power: performance plugged in, balanced on battery ──
     // (battery saver takes over below 20%)
-    onOnBatteryChanged: Qt.callLater(followCharger)
+    onOnBatteryChanged: { Qt.callLater(followCharger); if (onBattery && Desktop.started) Sounds.play("unplug", 0.6); }
     function followCharger() {
         if (!Settings.autoPower || saving || !bat?.isLaptopBattery) return;
         PowerProfiles.profile = onBattery ? PowerProfile.Balanced : PowerProfile.Performance;
