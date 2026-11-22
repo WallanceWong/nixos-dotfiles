@@ -22,6 +22,8 @@ let
   link = config.lib.file.mkOutOfStoreSymlink;
   ffProfile = ".config/mozilla/firefox/btea7p9y.default";
   evaFirefox = import ./firefox { inherit pkgs lib; };
+  evaCursors = import ./cursors { inherit pkgs lib; };
+  cursorName = p: if p.id == "magi" then "Eva-NERV" else "Eva-Unit01";
 
   # ── Hyprland ──────────────────────────────────────────────────────
   # hypr.lua: the setup's look for Hyprland (borders, rounding, motion), run by
@@ -77,6 +79,8 @@ let
         misc = { background_color = "rgb(${hex p.crust})" },
         animations = { enabled = true },
     })
+    -- the setup's cursor (theme/cursors), for Hyprland and for GTK apps
+    hl.exec_cmd("hyprctl setcursor ${cursorName p} 24; gsettings set org.gnome.desktop.interface cursor-theme ${cursorName p}")
   '' + lib.concatMapStrings (c: ''
     hl.curve("${at c 0}", { type = "bezier", points = { { ${n (at c 1)}, ${n (at c 2)} }, { ${n (at c 3)}, ${n (at c 4)} } } })
   '') curves + lib.concatMapStrings (a: ''
@@ -534,7 +538,7 @@ let
   };
 in
 {
-  home.packages = [ evaSwitch evaCli ];
+  home.packages = [ evaSwitch evaCli evaCursors.unit01 evaCursors.magi ];
 
   # ── per-setup files, and the apps pointed at ~/.config/eva/current ──
   xdg.configFile = lib.mkMerge (map perSetup setups ++ [{

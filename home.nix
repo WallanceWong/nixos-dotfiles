@@ -55,13 +55,15 @@
 		color-scheme = "prefer-dark";
 		accent-color = "purple";
 		icon-theme = "Papirus-Dark";
-		cursor-theme = "Bibata-Modern-Ice";
+		cursor-theme = "Eva-Unit01";
 	};
 
+	# the eva HUD cursor (theme/cursors); each setup's hypr.lua switches it live.
+	# Bibata stays installed: the eva themes inherit the shapes they don't draw
 	home.pointerCursor = {
 		enable = true;
-		name = "Bibata-Modern-Ice";
-		package = pkgs.bibata-cursors;
+		name = "Eva-Unit01";
+		package = (import ./theme/cursors { inherit pkgs lib; }).unit01;
 		size = 24;
 		gtk.enable = true;
 		hyprcursor.enable = true;
@@ -145,5 +147,5 @@
 	programs.zoxide.enable = true;
 	programs.bat.enable = true;
 	programs.zellij.enable = true;
-	home.packages = with pkgs; [ ripgrep fd ];
+	home.packages = with pkgs; [ ripgrep fd bibata-cursors ];
 }
