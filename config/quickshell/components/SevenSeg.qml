@@ -8,7 +8,7 @@ Row {
     property string text: "00:00"
     property real digitHeight: 32
     property color color: Theme.alert
-    property real dim: 0.10
+    property real dim: 0.07
     property real slant: 0.12                 // italic lean
     readonly property real dw: digitHeight * 0.52
     readonly property real t: Math.max(2, digitHeight * 0.11)   // segment thickness

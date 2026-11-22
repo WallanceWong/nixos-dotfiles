@@ -22,6 +22,7 @@ Item {
     Connections {
         target: Locker
         function onTyping() { root.wake(); }
+        function onGrantedChanged() { if (Locker.granted) Sounds.play("grant", 0.55); }
         function onFailed() { root.wake(); view.item.shakes++; Sounds.play(Theme.drama && !Locker.boot ? "alarm" : "deny", 0.6); }
     }
 

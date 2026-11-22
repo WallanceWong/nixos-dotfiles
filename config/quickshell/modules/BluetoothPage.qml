@@ -37,7 +37,7 @@ ColumnLayout {
             readonly property var d: modelData
             Layout.fillWidth: true
             implicitHeight: 50
-            radius: Theme.radiusSmall + 2
+            radius: 0
             color: d.connected ? Qt.alpha(Theme.accent, 0.13) : devMouse.containsMouse ? Theme.surface1 : Theme.surface0
             border.width: 1
             border.color: d.connected ? Qt.alpha(Theme.accent, 0.35) : Theme.hairline

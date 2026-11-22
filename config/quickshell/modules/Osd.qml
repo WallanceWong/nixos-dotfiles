@@ -5,7 +5,8 @@ import Quickshell.Wayland
 import qs.services
 import qs.components
 
-// Volume / microphone / brightness capsule at the bottom centre.
+// Volume / microphone / brightness readout at the bottom centre, as a
+// segmented sync-ratio gauge.
 PanelWindow {
     id: root
 
@@ -15,8 +16,8 @@ PanelWindow {
     exclusionMode: ExclusionMode.Ignore
     anchors { bottom: true }
     margins { bottom: 64 }
-    implicitWidth: 320
-    implicitHeight: 58
+    implicitWidth: 360
+    implicitHeight: 62
     color: "transparent"
     visible: shown || capsule.opacity > 0
     mask: Region {}
@@ -48,43 +49,51 @@ PanelWindow {
         function onChangedByUser() { root.show(Brightness.value > 0.66 ? "brightness_high" : Brightness.value > 0.33 ? "brightness_medium" : "brightness_low", "Brightness", Brightness.value, false); }
     }
 
-    Rectangle {
+    Item {
         id: capsule
         anchors.fill: parent
-        radius: height / 2
-        color: Theme.glassStrong
-        border.width: 1
-        border.color: Qt.alpha(Theme.armour, 0.45)
         opacity: root.shown ? 1 : 0
-        scale: root.shown ? 1 : 0.92
+        scale: root.shown ? 1 : 0.94
         Behavior on opacity { NumberAnimation { duration: Theme.normal; easing.type: Theme.easing } }
         Behavior on scale { NumberAnimation { duration: Theme.normal; easing.type: Easing.OutBack } }
+        readonly property color tone: root.dimmed ? Theme.overlay : Theme.accent
+
+        HudFrame {
+            anchors.fill: parent
+            fill: Theme.glassStrong
+            stroke: Qt.alpha(capsule.tone, 0.6)
+            cut: 14
+            ticks: true
+            tickColor: capsule.tone
+        }
 
         RowLayout {
             anchors.fill: parent
             anchors.leftMargin: 18
             anchors.rightMargin: 20
-            spacing: 12
-            Icon { icon: root.icon; size: 22; fill: 1; color: root.dimmed ? Theme.overlay : Theme.accent }
+            spacing: 14
+            Icon { icon: root.icon; size: 24; fill: 1; color: capsule.tone }
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 5
+                spacing: 6
                 RowLayout {
                     Layout.fillWidth: true
-                    Label { Layout.fillWidth: true; text: root.label; font.pixelSize: 12; font.weight: Font.Bold }
-                    Label { text: Math.round(root.value * 100) + "%"; font.pixelSize: 12; color: Theme.subtext }
+                    Caps { Layout.fillWidth: true; text: root.label; font.pixelSize: 12; font.weight: Font.Bold; color: Theme.text; font.letterSpacing: 2.5 }
+                    Text { text: String(Math.round(root.value * 100)).padStart(3, " ") + "%"; font.family: Theme.mono; font.pixelSize: 13; font.weight: Font.Bold; color: capsule.tone }
                 }
-                Rectangle {
+                Row {
+                    id: cells
                     Layout.fillWidth: true
-                    implicitHeight: 6
-                    radius: 3
-                    color: Theme.surface1
-                    Rectangle {
-                        height: parent.height
-                        radius: 3
-                        width: parent.width * Math.min(1, root.value)
-                        color: root.dimmed ? Theme.overlay : Theme.armour
-                        Behavior on width { NumberAnimation { duration: Theme.fast; easing.type: Theme.easing } }
+                    height: 10
+                    spacing: 2
+                    Repeater {
+                        model: 30
+                        Rectangle {
+                            required property int index
+                            width: (cells.width - 29 * 2) / 30
+                            height: cells.height
+                            color: (index + 0.5) / 30 <= root.value ? (index >= 27 && !root.dimmed ? Theme.caution : capsule.tone) : Qt.alpha(Theme.overlay, 0.25)
+                        }
                     }
                 }
             }

@@ -13,10 +13,9 @@ Singleton {
     // living scene
     property alias parallax: adapter.parallax
     property alias musicReactive: adapter.musicReactive
-    property alias moon: adapter.moon
-    property alias skyClock: adapter.skyClock
-    property alias meteors: adapter.meteors
-    property alias fireflies: adapter.fireflies
+    property alias skyClock: adapter.skyClock        // the vertical title-card date
+    property alias embers: adapter.embers            // UNIT-01: embers rising
+    property alias klaxon: adapter.klaxon            // NERV HQ: alarms for critical things
     property alias ambience: adapter.ambience
     property alias ambienceVolume: adapter.ambienceVolume
     property alias corners: adapter.corners
@@ -42,10 +41,9 @@ Singleton {
             property var launchCounts: ({})
             property bool parallax: true
             property bool musicReactive: true
-            property bool moon: true
             property bool skyClock: true
-            property bool meteors: true
-            property bool fireflies: true
+            property bool embers: true
+            property bool klaxon: true
             property bool ambience: false
             property real ambienceVolume: 0.6
             property bool corners: true

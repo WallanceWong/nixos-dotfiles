@@ -132,7 +132,7 @@ PanelWindow {
 
                                     ClippingRectangle {
                                         anchors.fill: parent
-                                        radius: 6
+                                        radius: 0
                                         color: Theme.surface0
                                         border.width: 1
                                         border.color: dragArea.containsMouse ? Theme.accent : Qt.alpha(Theme.accent, 0.25)

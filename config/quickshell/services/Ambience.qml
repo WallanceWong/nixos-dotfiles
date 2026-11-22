@@ -4,8 +4,8 @@ import QtQml
 import Quickshell
 import Quickshell.Services.Pipewire
 
-// Night ambience (off by default): crickets and the far-off city, a quiet
-// loop (assets/sounds/night.ogg, made for this rice) that plays whenever
+// Summer ambience (off by default): Tokyo-3 cicadas, a quiet
+// loop (assets/sounds/cicadas.ogg, made for this rice) that plays whenever
 // nothing else is making sound (not over fullscreen apps or in game mode).
 // Fades in and out on its own PipeWire stream.
 Singleton {
@@ -22,7 +22,7 @@ Singleton {
     readonly property bool othersAudible: heardRecently || unmeasurable
     property bool heardRecently: false
     // the level meter can't read mono streams (Roblox's is one): count those as
-    // playing rather than let the crickets talk over them
+    // playing rather than let the cicadas talk over them
     readonly property var measurable: others.filter(n => (n.audio?.channels?.length ?? 0) >= 2)
     readonly property bool unmeasurable: others.length > measurable.length
     Instantiator {
@@ -39,7 +39,7 @@ Singleton {
     }
     readonly property bool playing: node !== null && level > 0.01
 
-    // debounce: a window flashing past shouldn't stop the crickets
+    // debounce: a window flashing past shouldn't stop the cicadas
     property bool active: false
     onWantedChanged: settle.restart()
     // a player left behind by an earlier shell (crash, reload) goes first
@@ -66,7 +66,7 @@ Singleton {
             started = true;
             if (!node)
                 Quickshell.execDetached(["mpv", "--no-video", "--no-terminal", "--ao=pulse", "--loop-file=inf", "--audio-client-name=eva-ambience",
-                                         "--af=afade=t=in:d=2", Theme.assets + "/sounds/night.ogg"]);
+                                         "--af=afade=t=in:d=2", Theme.assets + "/sounds/cicadas.ogg"]);
         }
         if (!active && level < 0.005 && started) {
             started = false;

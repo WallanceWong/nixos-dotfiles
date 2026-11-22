@@ -109,8 +109,9 @@ Item {
     ParticleSystem {
         id: sparks
         anchors.fill: parent
-        running: scene.animate
+        running: scene.animate && Settings.embers
         paused: !scene.animate
+        visible: Settings.embers
     }
     Emitter {
         system: sparks

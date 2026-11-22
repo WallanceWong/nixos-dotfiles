@@ -37,7 +37,7 @@ ColumnLayout {
             Rectangle {
                 Layout.fillWidth: true
                 implicitHeight: 46
-                radius: Theme.radiusSmall + 2
+                radius: 0
                 color: row.n.connected ? Qt.alpha(Theme.accent, 0.13) : netMouse.containsMouse ? Theme.surface1 : Theme.surface0
                 border.width: 1
                 border.color: row.n.connected ? Qt.alpha(Theme.accent, 0.35) : Theme.hairline
@@ -86,7 +86,7 @@ ColumnLayout {
                     placeholderTextColor: Theme.overlay
                     font.family: Theme.font
                     font.pixelSize: 13
-                    background: Rectangle { radius: 12; color: Theme.mantle; border.width: 1; border.color: pw.activeFocus ? Theme.accent : Theme.surface1 }
+                    background: Rectangle { radius: 0; color: Theme.mantle; border.width: 1; border.color: pw.activeFocus ? Theme.accent : Theme.surface1 }
                     onVisibleChanged: if (visible) { text = ""; forceActiveFocus(); }
                     onAccepted: { row.n.connectWithPsk(text); root.asking = null; }
                 }
