@@ -25,8 +25,11 @@ Singleton {
     // playing rather than let the cicadas talk over them
     readonly property var measurable: others.filter(n => (n.audio?.channels?.length ?? 0) >= 2)
     readonly property bool unmeasurable: others.length > measurable.length
+    // metering wakes PipeWire ~100×/s per stream: only while the cicadas could
+    // actually play (never over games or fullscreen video)
+    readonly property bool listening: Settings.ambience && !Settings.gameMode && !Desktop.fullscreen && !Audio.muted
     Instantiator {
-        model: Settings.ambience ? root.measurable : []
+        model: root.listening ? root.measurable : []
         delegate: PwNodePeakMonitor {
             required property var modelData
             node: modelData

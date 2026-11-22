@@ -540,6 +540,14 @@ in
     };
     Service = {
       ExecStart = "${pkgs.quickshell}/bin/quickshell";
+      Environment = [
+        # glibc re-reads /etc/localtime on every time conversion unless TZ is
+        # set — and Quickshell timestamps every log line
+        "TZ=:/etc/localtime"
+        # the PipeWire loop logs twice per event (hundreds a second while the
+        # wallpaper follows music)
+        "QT_LOGGING_RULES=quickshell.service.pipewire.loop.debug=false"
+      ];
       Restart = "on-failure";
       RestartSec = 2;
     };
