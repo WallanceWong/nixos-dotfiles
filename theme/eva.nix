@@ -496,9 +496,45 @@ let
       echo "eva: $id"
     '';
   };
+  # `eva`: one command for the rice
+  evaCli = pkgs.writeShellApplication {
+    name = "eva";
+    runtimeInputs = with pkgs; [ coreutils gnugrep systemd ];
+    text = ''
+      state="''${XDG_STATE_HOME:-$HOME/.local/state}/eva/setup"
+      cfg="''${XDG_CONFIG_HOME:-$HOME/.config}"
+      case "''${1:-next}" in
+        next|unit01|magi) exec eva-switch "''${1:-next}" ;;
+        status)
+          s=$(cat "$state" 2>/dev/null || echo unit01)
+          echo "setup     $s ($( [ "$s" = magi ] && echo "NERV HQ / MAGI" || echo "UNIT-01 / SHINJI"))"
+          echo "current   $(readlink "$cfg/eva/current")"
+          echo "shell     $(systemctl --user is-active nerv-shell)"
+          if [ "$(hyprctl eval 'return 0' 2>/dev/null)" = ok ]; then echo "hyprland  lua config"; else echo "hyprland  legacy .conf (restart Hyprland)"; fi
+          echo "errors    $(hyprctl configerrors 2>/dev/null | grep -c . || true)"
+          echo "locked    $(qs ipc call nerv locked 2>/dev/null || echo "?")"
+          ;;
+        lock) exec qs ipc call nerv lock ;;
+        test) shift; exec "$HOME/nixos-dotfiles/tools/eva-test" "$@" ;;
+        sheet)
+          t="$HOME/nixos-dotfiles/tools/eva-test"
+          "$t" start >/dev/null && "$t" sheet "''${2:-$HOME/Pictures/eva/sheet.png}"; "$t" stop >/dev/null ;;
+        *)
+          cat <<USAGE
+      eva                  switch to the other setup
+      eva unit01|magi      switch to that setup
+      eva status           what's running
+      eva lock             lock the screen
+      eva sheet [file]     every panel in both setups on one image (hidden test desktop)
+      eva test …           the hidden test desktop (tools/eva-test)
+      USAGE
+          ;;
+      esac
+    '';
+  };
 in
 {
-  home.packages = [ evaSwitch ];
+  home.packages = [ evaSwitch evaCli ];
 
   # ── per-setup files, and the apps pointed at ~/.config/eva/current ──
   xdg.configFile = lib.mkMerge (map perSetup setups ++ [{

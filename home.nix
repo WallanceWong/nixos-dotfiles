@@ -19,7 +19,6 @@
 			# the prompt and fetch follow the active setup (theme/eva.nix)
 			export STARSHIP_CONFIG="$HOME/.config/eva/current/starship.toml"
 			if [[ $TERM == xterm-kitty && $SHLVL -eq 1 ]]; then fastfetch -c "$HOME/.config/eva/current/fastfetch.jsonc"; fi
-			alias eva='eva-switch next'
 		'';
 		profileExtra =''
 			if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = "1" ]; then
