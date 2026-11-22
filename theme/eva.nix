@@ -82,7 +82,7 @@ let
         animations = { enabled = true },
     })
     -- the setup's cursor (theme/cursors), for Hyprland and for GTK apps
-    hl.exec_cmd("hyprctl setcursor ${cursorName p} 24; gsettings set org.gnome.desktop.interface cursor-theme ${cursorName p}; gsettings set org.gnome.desktop.interface icon-theme ${iconName p}")
+    hl.exec_cmd("hyprctl setcursor ${cursorName p} 24; ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface cursor-theme ${cursorName p}; ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface icon-theme ${iconName p}")
   '' + lib.concatMapStrings (c: ''
     hl.curve("${at c 0}", { type = "bezier", points = { { ${n (at c 1)}, ${n (at c 2)} }, { ${n (at c 3)}, ${n (at c 4)} } } })
   '') curves + lib.concatMapStrings (a: ''

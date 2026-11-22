@@ -139,7 +139,11 @@ in
   # password (see security.sudo below).
   security.sudo.extraRules = [{
     users = [ "Wallance" ];
-    commands = [{ command = "${evaLed}/bin/eva-led"; options = [ "NOPASSWD" ]; }];
+    # sudo matches the exact path: the store path and the profile link both
+    commands = [
+      { command = "${evaLed}/bin/eva-led"; options = [ "NOPASSWD" ]; }
+      { command = "/run/current-system/sw/bin/eva-led"; options = [ "NOPASSWD" ]; }
+    ];
   }];
 
   # keep the keyboard backlight off at every boot (Fn+Space still turns it on if wanted)
