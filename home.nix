@@ -48,13 +48,14 @@
 	gtk = {
 		enable = true;
 		theme = { name = "adw-gtk3-dark"; package = pkgs.adw-gtk3; };
-		iconTheme = { name = "Papirus-Dark"; package = pkgs.papirus-icon-theme.override { color = "violet"; }; };
+		# folder colours follow the setup (theme/icons overlays on Papirus-Dark)
+		iconTheme = { name = "Eva-Unit01-Icons"; package = (import ./theme/icons { inherit pkgs lib; }).unit01; };
 		# colours: gtk3/gtk4 extraCss (an @import of the active setup) come from theme/eva.nix
 	};
 	dconf.settings."org/gnome/desktop/interface" = {
 		color-scheme = "prefer-dark";
 		accent-color = "purple";
-		icon-theme = "Papirus-Dark";
+		icon-theme = "Eva-Unit01-Icons";
 		cursor-theme = "Eva-Unit01";
 	};
 
@@ -147,5 +148,5 @@
 	programs.zoxide.enable = true;
 	programs.bat.enable = true;
 	programs.zellij.enable = true;
-	home.packages = with pkgs; [ ripgrep fd bibata-cursors ];
+	home.packages = with pkgs; [ ripgrep fd bibata-cursors papirus-icon-theme ];
 }

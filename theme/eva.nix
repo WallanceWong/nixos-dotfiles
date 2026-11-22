@@ -23,6 +23,8 @@ let
   ffProfile = ".config/mozilla/firefox/btea7p9y.default";
   evaFirefox = import ./firefox { inherit pkgs lib; };
   evaCursors = import ./cursors { inherit pkgs lib; };
+  evaIcons = import ./icons { inherit pkgs lib; };
+  iconName = p: if p.id == "magi" then "Eva-NERV-Icons" else "Eva-Unit01-Icons";
   cursorName = p: if p.id == "magi" then "Eva-NERV" else "Eva-Unit01";
 
   # ── Hyprland ──────────────────────────────────────────────────────
@@ -80,7 +82,7 @@ let
         animations = { enabled = true },
     })
     -- the setup's cursor (theme/cursors), for Hyprland and for GTK apps
-    hl.exec_cmd("hyprctl setcursor ${cursorName p} 24; gsettings set org.gnome.desktop.interface cursor-theme ${cursorName p}")
+    hl.exec_cmd("hyprctl setcursor ${cursorName p} 24; gsettings set org.gnome.desktop.interface cursor-theme ${cursorName p}; gsettings set org.gnome.desktop.interface icon-theme ${iconName p}")
   '' + lib.concatMapStrings (c: ''
     hl.curve("${at c 0}", { type = "bezier", points = { { ${n (at c 1)}, ${n (at c 2)} }, { ${n (at c 3)}, ${n (at c 4)} } } })
   '') curves + lib.concatMapStrings (a: ''
@@ -109,14 +111,33 @@ let
 
   # buttons, sliders, switches — the same for GTK3 and GTK4 (square, accent-lit)
   sharedCss = p: ''
-    scale highlight, progressbar progress, levelbar block.filled { background-color: ${p.accent}; border-color: ${p.accent}; }
-    scale slider { background-color: ${p.accent}; border-radius: 0; }
+    /* square HUD plates everywhere */
+    button, entry, spinbutton, combobox, dropdown, popover, popover > contents, menu, .menu, menubar,
+    tooltip, check, radio, switch, switch slider, scale slider, scale trough, progressbar trough, progressbar progress,
+    frame, .frame, .card, notebook, notebook > header tab, list, listview, row, treeview, iconview,
+    window.dialog, messagedialog, .osd, scrollbar slider, headerbar, .titlebar, decoration { border-radius: 0; }
+    decoration { box-shadow: 0 0 0 1px alpha(${p.accent}, 0.25), 0 8px 24px alpha(${p.crust}, 0.6); }
+    headerbar, .titlebar { box-shadow: inset 0 -1px alpha(${p.accent}, 0.45); }
+    headerbar .title { font-weight: 700; letter-spacing: 1px; }
+    entry:focus, entry:focus-within, spinbutton:focus-within { outline: 1px solid ${p.accent}; outline-offset: -1px; box-shadow: none; }
+    scale highlight, levelbar block.filled { background-color: ${p.accent}; border-color: ${p.accent}; }
+    progressbar progress {
+      background-color: ${p.accent};
+      background-image: repeating-linear-gradient(135deg, alpha(${p.crust}, 0.35) 0, alpha(${p.crust}, 0.35) 6px, transparent 6px, transparent 12px);
+      border-color: ${p.accent};
+    }
+    scale slider { background-color: ${p.accent}; }
     switch:checked, checkbutton check:checked, radiobutton radio:checked, check:checked, radio:checked { background-color: ${p.accent}; border-color: ${p.accent}; color: ${p.crust}; }
     notebook > header tab:checked, stackswitcher button:checked { box-shadow: inset 0 -2px ${p.accent}; }
     entry, combobox button, dropdown button, button.combo { background-color: ${p.surface0}; }
     button:not(.flat):not(.suggested-action):not(.destructive-action) { background-color: ${p.surface0}; background-image: none; color: ${p.text}; border-color: ${p.surface1}; }
-    button:not(.flat):hover { background-color: ${p.surface1}; }
-    button, entry, popover > contents, menu, .menu, tooltip, check, switch, scale slider, frame, .card { border-radius: 2px; }
+    button:not(.flat):hover { background-color: ${p.surface1}; border-color: alpha(${p.accent}, 0.5); }
+    button.suggested-action { background-color: ${p.accent}; color: ${p.crust}; }
+    button.destructive-action { background-color: ${p.alert}; color: ${p.crust}; }
+    scrollbar slider { background-color: alpha(${p.accent}, 0.45); min-width: 4px; min-height: 4px; }
+    scrollbar slider:hover { background-color: ${p.accent}; }
+    selection, *:selected, text selection { background-color: alpha(${p.accent}, 0.35); color: ${p.text}; }
+    tooltip, tooltip.background { background-color: ${p.base}; border: 1px solid alpha(${p.accent}, 0.5); }
   '';
   gtk3 = p: ''
     /* ${p.name} — generated from theme/setups/${p.id}.json */
@@ -537,7 +558,7 @@ let
   };
 in
 {
-  home.packages = [ evaSwitch evaCli evaCursors.unit01 evaCursors.magi ];
+  home.packages = [ evaSwitch evaCli evaCursors.unit01 evaCursors.magi evaIcons.unit01 evaIcons.magi ];
 
   # ── per-setup files, and the apps pointed at ~/.config/eva/current ──
   xdg.configFile = lib.mkMerge (map perSetup setups ++ [{
