@@ -65,7 +65,7 @@ Singleton {
         if (!luaMode) return;
         // empty first, so a changed file is read again
         Quickshell.execDetached(["sh", "-c", "hyprctl eval 'hl.config({ decoration = { screen_shader = \"\" } })' >/dev/null; "
-            + (shaderWanted ? "hyprctl eval 'hl.config({ decoration = { screen_shader = \"" + shaderPath + "\" } })' >/dev/null" : "true")]);
+            + (shaderWanted ? "[ -f '" + shaderPath + "' ] && hyprctl eval 'hl.config({ decoration = { screen_shader = \"" + shaderPath + "\" } })' >/dev/null" : "true")]);
     }
     function dispatch(lua, legacy) { Hyprland.dispatch(luaMode ? lua : legacy); }
     function workspace(ws) { dispatch("hl.dsp.focus({ workspace = " + q(ws) + " })", "workspace " + ws); }
