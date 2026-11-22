@@ -85,13 +85,11 @@ PanelWindow {
                         keys: ["eva-window"]
                         onDropped: d => Desktop.moveWindowSilent(d.source.address, wsCol.wsId)
 
-                        ClippingRectangle {
+                        Rectangle {
                             id: card
                             anchors.fill: parent
-                            radius: Theme.radius
-                            color: Theme.crust
-                            border.width: wsCol.current || panel.selected === wsCol.index || drop.containsDrag ? 2 : 1
-                            border.color: drop.containsDrag ? Theme.armour : wsCol.current ? Theme.accent : panel.selected === wsCol.index ? Qt.alpha(Theme.accent, 0.6) : Theme.hairline
+                            clip: true
+                            color: Theme.magi ? Theme.base : Theme.crust
 
                             // the setup's wallpaper in miniature: the painting, or the command grid
                             Image {
@@ -102,14 +100,13 @@ PanelWindow {
                                 fillMode: Image.PreserveAspectCrop
                                 opacity: 0.85
                             }
-                            Grid {
-                                anchors.fill: parent
-                                visible: Theme.magi
-                                columns: 12
-                                Repeater {
-                                    model: 96
-                                    Rectangle { width: card.width / 12; height: card.height / 8; color: "transparent"; border.width: 1; border.color: Qt.alpha(Theme.accent, 0.08) }
-                                }
+                            Repeater {
+                                model: Theme.magi ? 11 : 0
+                                Rectangle { required property int index; x: card.width * (index + 1) / 12; width: 1; height: card.height; color: Qt.alpha(Theme.accent, 0.10) }
+                            }
+                            Repeater {
+                                model: Theme.magi ? 7 : 0
+                                Rectangle { required property int index; y: card.height * (index + 1) / 8; height: 1; width: card.width; color: Qt.alpha(Theme.accent, 0.10) }
                             }
                             MouseArea {
                                 anchors.fill: parent
@@ -172,21 +169,44 @@ PanelWindow {
                                 }
                             }
                         }
+                        // the plate's edge, over the previews
+                        HudFrame {
+                            anchors.fill: parent
+                            fill: "transparent"
+                            cut: 14
+                            strokeWidth: wsCol.current || panel.selected === wsCol.index || drop.containsDrag ? 2 : 1
+                            stroke: drop.containsDrag ? Theme.armour : wsCol.current ? Theme.accent : panel.selected === wsCol.index ? Qt.alpha(Theme.accent, 0.6) : Theme.hairline
+                            ticks: wsCol.current
+                        }
                     }
 
                     Row {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 6
-                        Icon { icon: "star"; size: 16; fill: wsCol.current ? 1 : 0; color: wsCol.current ? Theme.accent : Theme.subtext }
-                        Label { text: String(wsCol.wsId); color: wsCol.current ? Theme.accent : Theme.subtext; font.weight: Font.ExtraBold }
+                        spacing: 8
+                        Item {
+                            width: 34; height: 28
+                            Hexagon {
+                                anchors.centerIn: parent
+                                implicitWidth: 32
+                                fill: wsCol.current ? Theme.accent : "transparent"
+                                stroke: wsCol.current ? Theme.accent : Theme.subtext
+                            }
+                            Text { anchors.centerIn: parent; text: "0" + wsCol.wsId; color: wsCol.current ? Theme.crust : Theme.subtext; font.family: Theme.hud; font.pixelSize: 13; font.weight: Font.Bold }
+                        }
+                        Caps {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: wsCol.current ? "ACTIVE" : (Hyprland.workspaces.values.find(w => w.id === wsCol.wsId)?.toplevels?.values?.length ?? 0) + " WIN"
+                            color: wsCol.current ? Theme.accent : Theme.overlay
+                            font.pixelSize: 11
+                        }
                     }
                 }
             }
         }
 
-        Label {
+        Caps {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "click to go   ·   drag a window to move it   ·   ← → Enter   ·   Esc"
+            text: "CLICK TO DEPLOY   ·   DRAG A WINDOW TO MOVE IT   ·   ← → ENTER   ·   ESC"
             color: Theme.subtext
             font.pixelSize: 12
         }

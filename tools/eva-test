@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+# eva-test — run a copy of nerv-shell in a nested Hyprland on a hidden headless
+# output, so panels, lock screens and setups can be tried and screenshotted
+# without touching the real session.
+#
+#   eva-test start [shell-dir]   nested desktop + test shell (default: this repo's)
+#   eva-test setup unit01|magi   switch the test shell's setup
+#   eva-test ipc <fn> [args]     qs ipc call nerv … in the test shell
+#   eva-test type <text> | key <name>   keyboard into the nested desktop only
+#   eva-test notify <args>       notify-send on the test shell's own D-Bus
+#   eva-test shot [file]         screenshot the nested desktop
+#   eva-test sheet [file]        every panel in both setups on one contact sheet
+#   eva-test stop                close everything, put the real session back
+#
+# Isolation: own D-Bus (dbus-run-session), own state dir, own lock flag, and
+# HYPRLAND_NO_SD_VARS so the nested Hyprland doesn't export its WAYLAND_DISPLAY
+# to systemd (that once crash-looped the real shell); the real values are
+# re-imported on start and stop anyway.
+set -u
+here=$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)
+run="${XDG_RUNTIME_DIR:-/tmp}/eva-test"
+mkdir -p "$run/state/eva"
+real_wd=${WAYLAND_DISPLAY:-wayland-1}
+real_sig=${HYPRLAND_INSTANCE_SIGNATURE:-}
+
+restore_env() {
+  [ -f "$run/real.env" ] && . "$run/real.env"
+  dbus-update-activation-environment --systemd WAYLAND_DISPLAY="$REAL_WD" HYPRLAND_INSTANCE_SIGNATURE="$REAL_SIG" 2>/dev/null
+}
+nested() {  # run a command against the nested compositor
+  read -r WD SIG < "$run/nested.env" || { echo "eva-test: not running" >&2; exit 1; }
+  WAYLAND_DISPLAY=$WD HYPRLAND_INSTANCE_SIGNATURE=$SIG "$@"
+}
+qsipc() { nested qs ipc -p "$shell" call nerv "$@"; }
+shell=$(cat "$run/shell" 2>/dev/null || echo "$here/config/quickshell")
+
+case "${1:-}" in
+start)
+  "$0" stop >/dev/null 2>&1   # never two at once
+  shell=${2:-$here/config/quickshell}
+  echo "$shell" > "$run/shell"
+  printf 'REAL_WD=%s\nREAL_SIG=%s\n' "$real_wd" "$real_sig" > "$run/real.env"
+  echo "${3:-unit01}" > "$run/state/eva/setup"
+  rm -f "$run/stop"
+  cat > "$run/inner.sh" <<IN
+#!/bin/sh
+echo "\$WAYLAND_DISPLAY \$HYPRLAND_INSTANCE_SIGNATURE" > "$run/nested.env"
+export EVA_DOTS="$here" XDG_STATE_HOME="$run/state" EVA_LOCK_FLAG="$run/lockflag" EVA_PAM=hyprlock EVA_LOCK_PREVIEW=\${EVA_LOCK_PREVIEW:-1}
+while [ ! -e "$run/stop" ]; do
+  dbus-run-session -- sh -c 'echo "\$DBUS_SESSION_BUS_ADDRESS" > "$run/bus"; exec quickshell -p "$shell"' > "$run/qs.log" 2>&1
+  sleep 1
+done
+IN
+  chmod +x "$run/inner.sh"
+  cat > "$run/nested.lua" <<LUA
+hl.monitor({ output = "", mode = "preferred", position = "0x0", scale = 1 })
+hl.config({
+  misc = { disable_hyprland_logo = true, disable_splash_rendering = true, allow_session_lock_restore = true },
+  decoration = { rounding = 0, blur = { enabled = true, size = 7, passes = 3 } },
+  debug = { suppress_errors = true },
+})
+hl.layer_rule({ match = { namespace = "^(eva-.*)\$" }, blur = true, ignore_alpha = 0.2 })
+hl.on("hyprland.start", function() hl.exec_cmd("$run/inner.sh") end)
+LUA
+  # the test output starts on (and only shows) the test workspace — a window
+  # on a workspace that isn't shown never draws, and screenshots hang
+  hyprctl eval 'hl.workspace_rule({ workspace = "name:evatest", monitor = "EVATEST", default = true })' >/dev/null
+  hyprctl eval 'hl.monitor({ output = "EVATEST", mode = "1920x1200@60", position = "20000x20000", scale = 1 })' >/dev/null
+  hyprctl output create headless EVATEST >/dev/null
+  sleep 1
+  hyprctl dispatch "hl.dsp.exec_cmd(\"HYPRLAND_NO_SD_VARS=1 Hyprland -c $run/nested.lua\", { workspace = \"name:evatest silent\", fullscreen = true })" >/dev/null
+  sleep 5
+  restore_env
+  echo "eva-test: running ($(cat "$run/nested.env" 2>/dev/null))"
+  ;;
+setup) echo "$2" > "$run/state/eva/setup"; sleep 1.5 ;;
+ipc) shift; qsipc "$@" ;;
+type) shift; nested "$(nix build --no-link --print-out-paths nixpkgs#wtype 2>/dev/null)/bin/wtype" -- "$*" ;;
+key) nested "$(nix build --no-link --print-out-paths nixpkgs#wtype 2>/dev/null)/bin/wtype" -k "$2" ;;
+notify) shift; DBUS_SESSION_BUS_ADDRESS=$(cat "$run/bus") notify-send "$@" ;;
+shot) nested timeout 10 grim "${2:-$run/shot.png}" && echo "${2:-$run/shot.png}" ;;
+sheet)
+  out=${2:-$run/sheet.png}; tiles=()
+  for s in unit01 magi; do
+    echo "$s" > "$run/state/eva/setup"; sleep 2; qsipc close >/dev/null
+    nested timeout 10 grim "$run/t-$s-desktop.png"; tiles+=("$run/t-$s-desktop.png")
+    for p in control dashboard power settings cheatsheet overview; do
+      qsipc toggle "$p" >/dev/null; sleep 1.2
+      nested timeout 10 grim "$run/t-$s-$p.png"; tiles+=("$run/t-$s-$p.png")
+      qsipc close >/dev/null; sleep 0.4
+    done
+    qsipc launcher apps >/dev/null; sleep 1.2; nested timeout 10 grim "$run/t-$s-launcher.png"; tiles+=("$run/t-$s-launcher.png"); qsipc close >/dev/null
+    qsipc lock >/dev/null; sleep 2; nested timeout 10 grim "$run/t-$s-lock.png"; tiles+=("$run/t-$s-lock.png")
+    printf 'lock\n' > /dev/null; rm -f "$run/lockflag"
+    # unlock the test lock by restarting the test shell (no password needed)
+    pkill -f "quickshell -p $shell" ; sleep 3
+  done
+  magick montage "${tiles[@]}" -tile 9x -geometry 480x300+3+3 -background '#111' "$out" && echo "$out"
+  ;;
+stop)
+  touch "$run/stop"
+  pkill -f "quickshell -p $shell"
+  # nested Hyprland ignores SIGTERM: ask, then insist
+  pkill -f "Hyprland -c $run/nested.lua"; sleep 1
+  pkill -9 -f "Hyprland -c $run/nested.lua"
+  sleep 1
+  hyprctl output remove EVATEST >/dev/null 2>&1
+  restore_env
+  echo "eva-test: stopped"
+  ;;
+*) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//' ;;
+esac
