@@ -118,6 +118,7 @@ PanelWindow {
                 Tile { Layout.fillWidth: true; icon: "layers"; title: "Depth"; subtitle: "the painting drifts as you change workspace"; active: Settings.parallax; onToggled: Settings.parallax = !Settings.parallax }
                 Tile { Layout.fillWidth: true; icon: "graphic_eq"; title: "Follows music"; subtitle: Theme.magi ? "AT field and signal trace react" : "embers and Unit-01's eye react"; active: Settings.musicReactive; onToggled: Settings.musicReactive = !Settings.musicReactive }
                 Tile { Layout.fillWidth: true; icon: "local_fire_department"; title: "Embers"; subtitle: "sparks rising from the shore (UNIT-01)"; active: Settings.embers; onToggled: Settings.embers = !Settings.embers }
+                Tile { Layout.fillWidth: true; icon: "tv"; title: "Screen filter"; subtitle: Theme.magi ? "CRT scanlines, off for games and video" : "film grain, off for games and video"; active: Settings.screenFx; onToggled: Settings.screenFx = !Settings.screenFx }
                 Tile { Layout.fillWidth: true; icon: "calendar_today"; title: "Title-card date"; subtitle: "vertical Mincho date (UNIT-01)"; active: Settings.skyClock; onToggled: Settings.skyClock = !Settings.skyClock }
             }
 

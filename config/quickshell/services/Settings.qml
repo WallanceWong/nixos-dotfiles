@@ -16,7 +16,8 @@ Singleton {
     property alias skyClock: adapter.skyClock        // the vertical title-card date
     property alias embers: adapter.embers            // UNIT-01: embers rising
     property alias klaxon: adapter.klaxon            // NERV HQ: alarms for critical things
-    property alias leds: adapter.leds                // the ThinkPad's lid dot and mic light join in
+    property alias leds: adapter.leds
+    property alias screenFx: adapter.screenFx        // the setup's screen filter (CRT / film)                // the ThinkPad's lid dot and mic light join in
     property alias ambience: adapter.ambience
     property alias ambienceVolume: adapter.ambienceVolume
     property alias corners: adapter.corners
@@ -46,6 +47,7 @@ Singleton {
             property bool embers: true
             property bool klaxon: true
             property bool leds: true
+            property bool screenFx: true
             property bool ambience: false
             property real ambienceVolume: 0.6
             property bool corners: true

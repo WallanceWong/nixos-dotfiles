@@ -89,6 +89,36 @@ let
     hl.animation({ leaf = "${at a 0}", enabled = true, speed = ${n (at a 1)}, bezier = "${at a 2}"${if at a 3 != "" then '', style = "${at a 3}"'' else ""} })
   '') anims;
 
+  # the screen filter (Settings → Screen filter; nerv-shell applies it and
+  # lifts it for games and fullscreen video). No time uniform: Hyprland only
+  # redraws what changed, so it costs a single extra pass per frame drawn.
+  screenShader = p: ''
+    #version 300 es
+    // ${p.name}: ${if p.id == "magi" then "CRT — scanlines, colour fringing toward the edges, vignette" else "film — fine static grain, soft vignette"}
+    precision highp float;
+    in vec2 v_texcoord;
+    uniform sampler2D tex;
+    out vec4 fragColor;
+    void main() {
+        vec2 c = v_texcoord - 0.5;
+        float d = dot(c, c);
+  '' + (if p.id == "magi" then ''
+        float ca = 0.0048 * d;
+        vec4 col = texture(tex, v_texcoord);
+        col.r = texture(tex, v_texcoord + c * ca).r;
+        col.b = texture(tex, v_texcoord - c * ca).b;
+        float line = mod(gl_FragCoord.y, 3.0) < 1.0 ? 0.86 : 1.0;
+        float vig = 1.0 - smoothstep(0.16, 0.62, d) * 0.38;
+        fragColor = vec4(col.rgb * line * vig, col.a);
+    }
+  '' else ''
+        vec4 col = texture(tex, v_texcoord);
+        float n = fract(sin(dot(floor(gl_FragCoord.xy), vec2(12.9898, 78.233))) * 43758.5453);
+        float vig = 1.0 - smoothstep(0.20, 0.66, d) * 0.28;
+        fragColor = vec4((col.rgb + (n - 0.5) * 0.028) * vig, col.a);
+    }
+  '');
+
   kitty = p: ''
     # ${p.name} — generated from theme/setups/${p.id}.json
     foreground              ${p.text}
@@ -463,6 +493,7 @@ let
   perSetup = p: {
     "eva/${p.id}/hypr.conf".text = hyprConf p;
     "eva/${p.id}/hypr.lua".text = hypr p;
+    "eva/${p.id}/screen.frag".text = screenShader p;
     "eva/${p.id}/kitty.conf".text = kitty p;
     "eva/${p.id}/gtk3.css".text = gtk3 p;
     "eva/${p.id}/gtk4.css".text = gtk4 p;

@@ -45,13 +45,28 @@ Singleton {
         id: modeProbe
         running: true
         command: ["hyprctl", "eval", "return 0"]
-        stdout: StdioCollector { onStreamFinished: root.luaMode = text.trim() === "ok" }
+        stdout: StdioCollector { onStreamFinished: { root.luaMode = text.trim() === "ok"; shaderApply.restart(); } }
     }
     Connections {
         target: Hyprland
-        function onRawEvent(e) { if (e.name === "configreloaded") modeProbe.running = true; }
+        function onRawEvent(e) { if (e.name === "configreloaded") { modeProbe.running = true; shaderApply.restart(); } }
     }
     function q(v) { return JSON.stringify(String(v)); }
+
+    // ── the screen filter: the setup's shader (~/.config/eva/current/screen.frag),
+    // lifted for games and fullscreen video; set again after a setup switch or a
+    // config reload (both drop or change it)
+    readonly property string shaderPath: (Quickshell.env("XDG_CONFIG_HOME") || (Quickshell.env("HOME") + "/.config")) + "/eva/current/screen.frag"
+    readonly property bool shaderWanted: luaMode && Settings.screenFx && !Settings.gameMode && !fullscreen && !Locker.locked
+    onShaderWantedChanged: shaderApply.restart()
+    Connections { target: Theme; function onSetupChanged() { shaderApply.restart(); } }
+    Timer { id: shaderApply; interval: 400; onTriggered: root.applyShader() }
+    function applyShader() {
+        if (!luaMode) return;
+        // empty first, so a changed file is read again
+        Quickshell.execDetached(["sh", "-c", "hyprctl eval 'hl.config({ decoration = { screen_shader = \"\" } })' >/dev/null; "
+            + (shaderWanted ? "hyprctl eval 'hl.config({ decoration = { screen_shader = \"" + shaderPath + "\" } })' >/dev/null" : "true")]);
+    }
     function dispatch(lua, legacy) { Hyprland.dispatch(luaMode ? lua : legacy); }
     function workspace(ws) { dispatch("hl.dsp.focus({ workspace = " + q(ws) + " })", "workspace " + ws); }
     function focusWindow(addr) { dispatch("hl.dsp.focus({ window = " + q("address:" + addr) + " })", "focuswindow address:" + addr); }
