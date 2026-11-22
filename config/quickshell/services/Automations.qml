@@ -31,12 +31,11 @@ Singleton {
         if (saving) {
             profileBefore = PowerProfiles.profile;
             PowerProfiles.profile = PowerProfile.PowerSaver;
-            if (!Settings.gameMode)
-                Quickshell.execDetached(["hyprctl", "--batch", "keyword animations:enabled 0; keyword decoration:blur:enabled 0; keyword decoration:shadow:enabled 0"]);
-            Quickshell.execDetached(["notify-send", "-a", "NERV", "-i", "battery-caution", "battery saver", Math.round(pct * 100) + "% left — the night goes still until you plug in"]);
+            if (!Settings.gameMode) Desktop.effects(false, false);
+            Quickshell.execDetached(["notify-send", "-a", "NERV", "-i", "battery-caution", "Battery saver", Math.round(pct * 100) + "% left — the wallpaper rests until you plug in"]);
         } else {
             if (PowerProfiles.profile === PowerProfile.PowerSaver) PowerProfiles.profile = profileBefore;
-            if (!Settings.gameMode) Quickshell.execDetached(["hyprctl", "reload"]);
+            if (!Settings.gameMode) Desktop.restoreEffects();
         }
     }
 
@@ -46,10 +45,7 @@ Singleton {
     function followCharger() {
         if (!Settings.autoPower || saving || !bat?.isLaptopBattery) return;
         PowerProfiles.profile = onBattery ? PowerProfile.Balanced : PowerProfile.Performance;
-        // the shimmering window border redraws the screen every frame (~2% CPU,
-        // and the GPU never idles): keep it on the charger, rest it on battery
-        if (!Settings.gameMode)
-            Quickshell.execDetached(["hyprctl", "keyword", "animation", onBattery ? "borderangle,0" : "borderangle,1,120,linear,loop"]);
+        Desktop.restBorder(onBattery);
     }
 
     // ── auto game mode ──

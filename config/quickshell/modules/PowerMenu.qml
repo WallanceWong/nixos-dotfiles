@@ -25,7 +25,7 @@ PanelWindow {
     readonly property var actions: [
         { icon: "hexagon", name: "AT FIELD", real: "LOCK", key: "l", fn: () => Locker.lock() },
         { icon: "bedtime", name: "STANDBY", real: "SLEEP", key: "s", cmd: ["systemctl", "suspend"] },
-        { icon: "eject", name: "EJECT PLUG", real: "LOG OUT", key: "e", cmd: ["hyprctl", "dispatch", "exit"] },
+        { icon: "eject", name: "EJECT PLUG", real: "LOG OUT", key: "e", fn: () => Desktop.exitSession() },
         { icon: "restart_alt", name: "REACTIVATE", real: "RESTART", key: "r", cmd: ["systemctl", "reboot"] },
         { icon: "power_settings_new", name: Theme.magi ? "SELF-DESTRUCT" : "SHUTDOWN", real: "POWER OFF", key: "p", cmd: ["systemctl", "poweroff"] }
     ]

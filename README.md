@@ -29,7 +29,7 @@ autologin.
 - `theme/plymouth/` — the boot splash; `theme/nerv-crest.txt` — the crest for fastfetch
 - `wallpapers/unit01/wall.jpg` — the UNIT-01 wallpaper (the NERV HQ one is drawn live by the shell)
 - `config/quickshell/` — **nerv-shell**: `shell.qml`, `modules/` (wallpaper, bar, panels…), `services/` (theme, setups, stats, audio, notifications…), `components/` (HUD frames, seven-segment digits, the two scenes, the two lock screens), `assets/` (NERV crest, glows, sounds per setup)
-- `config/hypr/` — Hyprland, hypridle (idle), `lock.sh` (locks with nerv-shell, hyprlock as the fallback), hyprlock, `screenshot.sh`, `annotate.sh`, `picker.sh`
+- `config/hypr/` — Hyprland (`hyprland.lua`; the setup's look comes from `~/.config/eva/current/hypr.lua`), hypridle (idle), `lock.sh` (locks with nerv-shell, hyprlock as the fallback), hyprlock, `screenshot.sh`, `annotate.sh`, `picker.sh`
 - `config/kitty/` — terminal settings (colours are generated)
 - `config/firefox/` — the Firefox stylesheets and `user.js`; `theme/firefox/` builds them with each setup's colours and new tab
 - `config/vscode/` — starter VS Code settings; copied only if VS Code has none yet

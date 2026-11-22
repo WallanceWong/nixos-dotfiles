@@ -23,15 +23,16 @@ let
   ffProfile = ".config/mozilla/firefox/btea7p9y.default";
   evaFirefox = import ./firefox { inherit pkgs lib; };
 
-  # ── Hyprland: colours + the setup's look (borders, motion) ──────────
-  hypr = p: ''
+  # ── Hyprland ──────────────────────────────────────────────────────
+  # hypr.lua: the setup's look for Hyprland (borders, rounding, motion), run by
+  # config/hypr/hyprland.lua and again by eva-switch. hypr.conf: the colours as
+  # hyprlang variables, for hyprlock (the fallback lock).
+  hyprConf = p: ''
     # ${p.name} — generated from theme/setups/${p.id}.json by theme/eva.nix
     $crust    = rgb(${hex p.crust})
-    $mantle   = rgb(${hex p.mantle})
     $base     = rgb(${hex p.base})
     $surface0 = rgb(${hex p.surface0})
     $surface1 = rgb(${hex p.surface1})
-    $surface2 = rgb(${hex p.surface2})
     $overlay  = rgb(${hex p.overlay})
     $subtext  = rgb(${hex p.subtext})
     $text     = rgb(${hex p.text})
@@ -41,53 +42,46 @@ let
     $info     = rgb(${hex p.info})
     $caution  = rgb(${hex p.caution})
     $alert    = rgb(${hex p.alert})
-    $inactiveBorder = rgba(${hex p.surface1}cc)
-    $shadow         = rgba(${hex p.crust}cc)
-
-    general {
-        col.active_border = ${if p.id == "magi" then "$accent $alert 90deg" else "$armour $accent 45deg"}
-        col.inactive_border = $inactiveBorder
-    }
-    decoration {
-        rounding = 0
-        shadow {
-            color = $shadow
-        }
-    }
-    misc {
-        background_color = $crust
-    }
-    animations {
-        enabled = true
-  '' + (if p.id == "magi" then ''
-        # NERV HQ: fast and mechanical — panels slam in, borders run
-        bezier = slam, 0.1, 1, 0.1, 1
-        bezier = snap, 0.7, 0, 0.3, 1
-        bezier = linear, 0, 0, 1, 1
-        animation = windows, 1, 3, slam, popin 92%
-        animation = windowsOut, 1, 2, snap, popin 92%
-        animation = fade, 1, 2, snap
-        animation = border, 1, 4, snap
-        animation = borderangle, 1, 30, linear, loop
-        animation = layers, 1, 2, slam, slide
-        animation = workspaces, 1, 3, slam, slide
-        animation = specialWorkspace, 1, 3, slam, slidevert
-    }
-  '' else ''
-        # UNIT-01: slow and smooth, like the evening tide
-        bezier = tide, 0.22, 1, 0.36, 1
-        bezier = settle, 0.05, 0.9, 0.1, 1.02
-        bezier = linear, 0, 0, 1, 1
-        animation = windows, 1, 5, settle, popin 88%
-        animation = windowsOut, 1, 4, tide, popin 88%
-        animation = fade, 1, 5, tide
-        animation = border, 1, 8, tide
-        animation = borderangle, 1, 120, linear, loop
-        animation = layers, 1, 4, tide, fade
-        animation = workspaces, 1, 5, tide, slidefade 12%
-        animation = specialWorkspace, 1, 5, tide, slidevert
-    }
-  '');
+    $shadow   = rgba(${hex p.crust}cc)
+  '';
+  hypr = p: let
+    magi = p.id == "magi";
+    # name, x0 y0 x1 y1
+    curves = if magi then [ [ "slam" 0.1 1 0.1 1 ] [ "snap" 0.7 0 0.3 1 ] [ "linear" 0 0 1 1 ] ]
+             else [ [ "tide" 0.22 1 0.36 1 ] [ "settle" 0.05 0.9 0.1 1.02 ] [ "linear" 0 0 1 1 ] ];
+    # leaf, speed, curve, style
+    anims = if magi then [
+      [ "windows" 3 "slam" "popin 92%" ] [ "windowsOut" 2 "snap" "popin 92%" ] [ "fade" 2 "snap" "" ]
+      [ "border" 4 "snap" "" ] [ "borderangle" 30 "linear" "loop" ] [ "layers" 2 "slam" "slide" ]
+      [ "workspaces" 3 "slam" "slide" ] [ "specialWorkspace" 3 "slam" "slidevert" ]
+    ] else [
+      [ "windows" 5 "settle" "popin 88%" ] [ "windowsOut" 4 "tide" "popin 88%" ] [ "fade" 5 "tide" "" ]
+      [ "border" 8 "tide" "" ] [ "borderangle" 100 "linear" "loop" ] [ "layers" 4 "tide" "fade" ]
+      [ "workspaces" 5 "tide" "slidefade 12%" ] [ "specialWorkspace" 5 "tide" "slidevert" ]
+    ];
+    n = x: toString x;
+    at = builtins.elemAt;
+  in ''
+    -- ${p.name} — generated from theme/setups/${p.id}.json by theme/eva.nix
+    hl.config({
+        general = {
+            col = {
+                active_border = { colors = { "rgb(${hex (if magi then p.accent else p.armour)})", "rgb(${hex (if magi then p.alert else p.accent)})" }, angle = ${if magi then "90" else "45"} },
+                inactive_border = "rgba(${hex p.surface1}cc)",
+            },
+        },
+        decoration = {
+            rounding = 0,
+            shadow = { color = "rgba(${hex p.crust}cc)" },
+        },
+        misc = { background_color = "rgb(${hex p.crust})" },
+        animations = { enabled = true },
+    })
+  '' + lib.concatMapStrings (c: ''
+    hl.curve("${at c 0}", { type = "bezier", points = { { ${n (at c 1)}, ${n (at c 2)} }, { ${n (at c 3)}, ${n (at c 4)} } } })
+  '') curves + lib.concatMapStrings (a: ''
+    hl.animation({ leaf = "${at a 0}", enabled = true, speed = ${n (at a 1)}, bezier = "${at a 2}"${if at a 3 != "" then '', style = "${at a 3}"'' else ""} })
+  '') anims;
 
   kitty = p: ''
     # ${p.name} — generated from theme/setups/${p.id}.json
@@ -442,7 +436,8 @@ let
   '';
 
   perSetup = p: {
-    "eva/${p.id}/hypr.conf".text = hypr p;
+    "eva/${p.id}/hypr.conf".text = hyprConf p;
+    "eva/${p.id}/hypr.lua".text = hypr p;
     "eva/${p.id}/kitty.conf".text = kitty p;
     "eva/${p.id}/gtk3.css".text = gtk3 p;
     "eva/${p.id}/gtk4.css".text = gtk4 p;
@@ -490,7 +485,8 @@ let
       fi
 
       # live reloads
-      command -v hyprctl >/dev/null && hyprctl reload >/dev/null 2>&1 || true
+      # Hyprland re-runs the setup's hypr.lua (borders, motion) — no full reload
+      command -v hyprctl >/dev/null && hyprctl eval 'EvaLoadSetup()' >/dev/null 2>&1 || true
       pkill -USR1 -x kitty 2>/dev/null || true                     # kitty re-reads its config
       # GTK 3/4 apps re-read gtk.css when the theme name changes
       t=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null || echo "'adw-gtk3-dark'")

@@ -126,7 +126,7 @@ Variants {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: Hyprland.dispatch("workspace " + cell.wsId)
+                                onClicked: Desktop.workspace(cell.wsId)
                             }
                         }
                     }
@@ -134,7 +134,7 @@ Variants {
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.NoButton
-                    onWheel: e => Hyprland.dispatch("workspace " + (e.angleDelta.y > 0 ? "e-1" : "e+1"))
+                    onWheel: e => Desktop.workspace(e.angleDelta.y > 0 ? "e-1" : "e+1")
                 }
             }
 

@@ -50,14 +50,15 @@ PanelWindow {
         return m;
     }
 
+    // grouped by description: with the Lua config every dispatcher reads "__lua"
     function category(b) {
-        const a = b.arg, d = b.dispatcher;
+        const d = b.description;
         if (b.key.startsWith("XF86")) return "Media";
-        if (/restart nerv-shell|hyprpaper/.test(a)) return "Rescue";
-        if (/screenshot|annotate|picker|quickshell:record/.test(a)) return "Capture";
-        if (["workspace", "movetoworkspace", "togglespecialworkspace"].includes(d)) return "Workspaces";
-        if (["killactive", "togglefloating", "pseudo", "layoutmsg", "fullscreen", "movefocus", "movewindow"].includes(d)) return "Windows";
-        if (d === "exec" && !/lock\.sh/.test(a)) return "Apps";
+        if (/shell|Fallback|touchpad/i.test(d)) return "Rescue";
+        if (/Screenshot|Record|Draw|colour/i.test(d)) return "Capture";
+        if (/workspace|Drop-down|minimized/i.test(d)) return "Workspaces";
+        if (/window|Float|Pseudo|split|Fullscreen|Minimize/i.test(d) && !/switcher/i.test(d)) return "Windows";
+        if (/^(Terminal|Files|Code editor)/.test(d)) return "Apps";
         return "Shell";
     }
 

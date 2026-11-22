@@ -121,7 +121,7 @@ PanelWindow {
                 const entry = DesktopEntries.heuristicLookup(cls);
                 return { t: t, s: Math.max(fuzzy(q, t.title), fuzzy(q, cls)), icon: entry?.icon ?? "application-x-executable",
                          name: t.title, desc: (entry?.name ?? cls) + "  ·  workspace " + (t.workspace?.id ?? "?"),
-                         run: () => Hyprland.dispatch("focuswindow address:" + (t.lastIpcObject?.address ?? ("0x" + t.address))) };
+                         run: () => Desktop.focusWindow(t.lastIpcObject?.address ?? ("0x" + t.address)) };
             }).filter(x => x.s >= 0).sort((a, b) => b.s - a.s);
         }
         return [];

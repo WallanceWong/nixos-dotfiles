@@ -37,7 +37,7 @@ PanelWindow {
         keys.forceActiveFocus();
     }
 
-    function go(ws) { Panels.close(); Hyprland.dispatch("workspace " + ws); }
+    function go(ws) { Panels.close(); Desktop.workspace(ws); }
 
     Rectangle {
         id: veil
@@ -83,7 +83,7 @@ PanelWindow {
                         width: panel.cardW
                         height: panel.cardH
                         keys: ["eva-window"]
-                        onDropped: d => Hyprland.dispatch("movetoworkspacesilent " + wsCol.wsId + ",address:" + d.source.address)
+                        onDropped: d => Desktop.moveWindowSilent(d.source.address, wsCol.wsId)
 
                         ClippingRectangle {
                             id: card
@@ -167,7 +167,7 @@ PanelWindow {
                                         onReleased: {
                                             if (drag.active) { win.Drag.drop(); win.x = Qt.binding(() => win.homeX); win.y = Qt.binding(() => win.homeY); Qt.callLater(Hyprland.refreshToplevels); }
                                         }
-                                        onClicked: { Panels.close(); Hyprland.dispatch("focuswindow address:" + win.address); }
+                                        onClicked: { Panels.close(); Desktop.focusWindow(win.address); }
                                     }
                                 }
                             }
