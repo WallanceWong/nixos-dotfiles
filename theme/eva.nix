@@ -487,7 +487,7 @@ let
       # live reloads
       # Hyprland re-runs the setup's hypr.lua (borders, motion) — no full reload
       command -v hyprctl >/dev/null && hyprctl eval 'EvaLoadSetup()' >/dev/null 2>&1 || true
-      pkill -USR1 -x kitty 2>/dev/null || true                     # kitty re-reads its config
+      pkill -USR1 -x .kitty-wrapped 2>/dev/null || pkill -USR1 -x kitty 2>/dev/null || true   # kitty re-reads its config
       # GTK 3/4 apps re-read gtk.css when the theme name changes
       t=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null || echo "'adw-gtk3-dark'")
       gsettings set org.gnome.desktop.interface gtk-theme "Adwaita" 2>/dev/null || true
