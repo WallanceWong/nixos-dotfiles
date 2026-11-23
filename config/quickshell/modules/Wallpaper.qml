@@ -20,8 +20,6 @@ Variants {
         WlrLayershell.layer: WlrLayer.Background
         WlrLayershell.namespace: "eva-wallpaper"
         exclusionMode: ExclusionMode.Ignore
-        // NERV HQ: the wallpaper takes the keyboard when you click its question line
-        WlrLayershell.keyboardFocus: Theme.magi ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
         anchors { top: true; bottom: true; left: true; right: true }
         color: Theme.crust
 
@@ -44,7 +42,6 @@ Variants {
             MagiScene {
                 animate: Desktop.skyVisible
                 screenName: win.modelData.name
-                askable: true
             }
         }
     }

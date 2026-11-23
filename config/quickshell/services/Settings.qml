@@ -18,7 +18,6 @@ Singleton {
     property alias klaxon: adapter.klaxon            // NERV HQ: alarms for critical things
     property alias leds: adapter.leds
     property alias screenFx: adapter.screenFx        // the setup's screen filter (CRT / film)
-    property alias magiModel: adapter.magiModel      // Ollama model the MAGI think with (NERV HQ wallpaper)
     property alias ambience: adapter.ambience
     property alias ambienceVolume: adapter.ambienceVolume
     property alias corners: adapter.corners
@@ -49,7 +48,6 @@ Singleton {
             property bool klaxon: true
             property bool leds: true
             property bool screenFx: true
-            property string magiModel: "huihui_ai/qwen2.5-abliterate:7b"
             property bool ambience: false
             property real ambienceVolume: 0.6
             property bool corners: true
