@@ -44,6 +44,42 @@
 		After = [ "graphical-session-pre.target" ];
 	};
 
+	# Weekly encrypted home backup into ~/restic-thinkpad (the restic-home alias;
+	# the dashboard's BACKUP line reads its newest snapshot). Things that can be
+	# downloaded or rebuilt again are left out. Missed weeks run at the next boot.
+	systemd.user.services.restic-home = {
+		Unit.Description = "Weekly restic backup of the home folder";
+		Service = {
+			Type = "oneshot";
+			Nice = 19;
+			IOSchedulingClass = "idle";
+			ExecStart = toString (pkgs.writeShellScript "restic-home-backup" ''
+				r() { ${pkgs.restic}/bin/restic --cache-dir "$HOME/.cache/restic" --password-file "$HOME/.config/restic/password" -r "$HOME/restic-thinkpad" "$@"; }
+				if r backup "$HOME" --exclude-caches \
+					--exclude "$HOME/.cache" --exclude "$HOME/restic-thinkpad" --exclude "$HOME/restic-thinkpad.tar" \
+					--exclude "$HOME/.local/share/Trash" --exclude "$HOME/.var/app/*/cache" \
+					--exclude "$HOME/.var/app/org.vinegarhq.Sober" --exclude "$HOME/Downloads/*.iso" \
+					--exclude "$HOME/.platformio/packages" --exclude "$HOME/.vscode/extensions" \
+					--exclude "$HOME/.cursor/extensions" --exclude "$HOME/.npm" --exclude "$HOME/.npm-global" \
+					--exclude "$HOME/.platformio/.cache" --exclude "$HOME/.codex/.tmp" \
+					--exclude "$HOME/.config/Code/CachedExtensionVSIXs" --exclude "$HOME/.config/Code/CachedData" \
+					--exclude "$HOME/.config/Cursor/snapshots" --exclude "$HOME/.config/Cursor/CachedData" \
+					--exclude "$HOME/Operating System (testing)/build"; then
+					# keep the last 8 weeks and one per month for 6 months
+					r forget --keep-weekly 8 --keep-monthly 6 --prune
+				else
+					${pkgs.libnotify}/bin/notify-send -u critical "Backup failed" "journalctl --user -u restic-home"
+					exit 1
+				fi
+			'');
+		};
+	};
+	systemd.user.timers.restic-home = {
+		Unit.Description = "Weekly restic backup of the home folder";
+		Timer = { OnCalendar = "weekly"; Persistent = true; RandomizedDelaySec = "1h"; };
+		Install.WantedBy = [ "timers.target" ];
+	};
+
 	# Dark theme for GTK apps and the portal (Firefox and libadwaita apps follow color-scheme)
 	gtk = {
 		enable = true;
