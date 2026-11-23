@@ -16,10 +16,11 @@ Singleton {
         { id: "magi", name: "NERV HQ", subtitle: "MAGI · FULL DRAMA", icon: "hub", tone: "#ff7a1a" }
     ]
     property bool switching: false
-    property bool greet: false          // play the new setup's "grant" once it's in
+    property bool greet: false          // greet the new setup once it's in
     Connections {
         target: Theme
-        function onSetupChanged() { if (root.greet) { root.greet = false; Sounds.play("grant", 0.6); } }
+        // UNIT-01: Misato's launch order (発進！); NERV HQ: its own "grant"
+        function onSetupChanged() { if (root.greet) { root.greet = false; Sounds.play(Theme.setup === "unit01" ? "launch" : "grant", 0.6); } }
     }
 
     function set(id) {
