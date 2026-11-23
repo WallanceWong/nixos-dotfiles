@@ -118,6 +118,7 @@ Item {
                 id: comp
                 property int index: 0
                 property string name: ""
+                property string side: ""
                 readonly property bool shown: root.revealed > index
                 readonly property string vote: root.phase === "thinking" ? "審議中"
                     : root.phase === "yes" ? (shown ? "承認" : "審議中")
@@ -138,12 +139,13 @@ Item {
                     anchors.centerIn: parent
                     spacing: 2 * ui.u
                     Text { anchors.horizontalCenter: parent.horizontalCenter; text: comp.name; color: Theme.text; font.family: Theme.hud; font.pixelSize: 24 * ui.u; font.weight: Font.Bold; font.letterSpacing: 4 * ui.u }
+                    Text { anchors.horizontalCenter: parent.horizontalCenter; text: comp.side; color: Qt.alpha(comp.tone, 0.9); font.family: Theme.hud; font.pixelSize: 13 * ui.u; font.weight: Font.Bold; font.letterSpacing: 4 * ui.u }
                     Text { anchors.horizontalCenter: parent.horizontalCenter; text: comp.vote; color: comp.tone; font.family: Theme.title; font.weight: Font.Black; font.pixelSize: 66 * ui.u }
                 }
             }
-            Computer { index: 0; name: "CASPER · 3"; x: (magi.width - width) / 2; y: 0 }
-            Computer { index: 1; name: "BALTHASAR · 2"; x: 0; y: magi.height - height }
-            Computer { index: 2; name: "MELCHIOR · 1"; x: magi.width - width; y: magi.height - height }
+            Computer { index: 0; name: "CASPER · 3"; side: "THE BOY"; x: (magi.width - width) / 2; y: 0 }
+            Computer { index: 1; name: "BALTHASAR · 2"; side: "ME"; x: 0; y: magi.height - height }
+            Computer { index: 2; name: "MELCHIOR · 1"; side: "THE BUILDER"; x: magi.width - width; y: magi.height - height }
         }
 
         // ── the authorization code ──

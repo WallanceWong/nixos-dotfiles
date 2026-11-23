@@ -6,8 +6,11 @@ import qs.services
 
 // NERV HQ / MAGI — the command display, all live:
 //   left    angel-detection radar, NERV crest
-//   centre  the MAGI: CASPER-3, BALTHASAR-2, MELCHIOR-1, each watching a reading
-//           (temperature, memory, processor) and voting on the system's state
+//   centre  the MAGI: three sides of you (CASPER-3 THE BOY, BALTHASAR-2 ME,
+//           MELCHIOR-1 THE BUILDER), each watching a reading (temperature,
+//           memory, processor) and voting on the system's state; on the
+//           wallpaper you can also ask them: type a question in the line under
+//           them and each side answers as you would (services/Magi.qml)
 //   right   SYNC RATIO (CPU) with its trace, LCL density (memory), core temp,
 //           and the power panel: EXTERNAL / INTERNAL lamps + the countdown
 //   bottom  signal trace (follows your music) and a scrolling status ticker
@@ -18,6 +21,7 @@ Item {
     property string screenName: ""
     property bool compact: false        // lock screen / screensaver: fewer panels
     property bool showMagi: true        // the lock screen draws its own, bigger MAGI
+    property bool askable: false        // the wallpaper: the question line under the MAGI
 
     StatsUser { active: scene.animate || scene.visible }
 
@@ -283,13 +287,28 @@ Item {
         property int round: 0
         property real roundStart: 0
         Timer {
-            running: scene.animate
+            running: scene.animate && !magi.live
             interval: 25000
             repeat: true
             triggeredOnStart: true
             onTriggered: { magi.round++; magi.roundStart = scene.t; }
         }
+        // a real question: each computer deliberates until its side of you has
+        // answered (they arrive one by one); a minute later, back to the readings
+        readonly property bool live: scene.askable && (Magi.busy || Magi.count > 0)
+        readonly property var sideOf: ["boy", "me", "builder"]      // CASPER, BALTHASAR, MELCHIOR
+        Connections {
+            target: Magi
+            enabled: scene.askable
+            function onDoneChanged() { if (Magi.done) hold.restart(); }
+        }
+        Timer { id: hold; interval: 60000; onTriggered: Magi.dismiss() }
+        function answer(i) { return live ? Magi.votes[sideOf[i]] ?? null : null; }
         function state(i) {
+            if (live) {
+                const v = answer(i);
+                return !v ? "審議中" : v.verdict === "APPROVE" ? "承認" : v.verdict === "CONDITIONAL" ? "条件付" : "否決";
+            }
             const dt = scene.t - roundStart;
             const decide = 1.2 + i * 0.9;
             if (dt < decide) return "審議中";          // deliberating
@@ -319,13 +338,20 @@ Item {
         }
 
         Text {
-            anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: -60 * scene.u }
+            anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: -72 * scene.u }
             text: "MAGI SYSTEM"
             color: Theme.text
             font.family: Theme.hud
             font.pixelSize: 28 * scene.u
             font.weight: Font.Bold
             font.letterSpacing: 8 * scene.u
+        }
+        // like the show's personality-transplant OS: whose mind this is
+        Tag {
+            anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: -32 * scene.u }
+            text: "PERSONALITY SOURCE · " + Settings.magiName
+            color: Qt.alpha(scene.hud, 0.8)
+            font.pixelSize: 11 * scene.u
         }
         Text {
             anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 262 * scene.u }
@@ -341,9 +367,11 @@ Item {
             id: comp
             property int index: 0
             property string name: ""
+            property string side: ""
             property string reading: ""
             property real value: 0
             readonly property string vote: magi.state(index)
+            readonly property var answer: magi.answer(index)
             readonly property color tone: vote === "承認" ? Theme.signal : vote === "否決" ? Theme.alert : Theme.caution
             width: 300 * scene.u; height: 200 * scene.u
             HudFrame {
@@ -357,7 +385,7 @@ Item {
             }
             Column {
                 anchors.centerIn: parent
-                spacing: 4 * scene.u
+                spacing: 3 * scene.u
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: comp.name
@@ -369,40 +397,135 @@ Item {
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
+                    text: comp.side
+                    color: Qt.alpha(comp.tone, 0.9)
+                    font.family: Theme.hud
+                    font.pixelSize: 11 * scene.u
+                    font.weight: Font.Bold
+                    font.letterSpacing: 3 * scene.u
+                }
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
                     text: comp.vote
                     color: comp.tone
                     font.family: Theme.title
                     font.weight: Font.Black
-                    font.pixelSize: 52 * scene.u
+                    font.pixelSize: (comp.vote.length > 2 ? 46 : 50) * scene.u
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: comp.reading
-                    color: Theme.subtext
+                    width: 268 * scene.u
+                    horizontalAlignment: Text.AlignHCenter
+                    text: comp.answer ? comp.answer.reason : comp.reading
+                    color: comp.answer ? Theme.text : Theme.subtext
                     font.family: Theme.mono
                     font.pixelSize: 12 * scene.u
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 2
+                    elide: Text.ElideRight
+                }
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    visible: !!comp.answer && comp.answer.condition.length > 0
+                    width: 268 * scene.u
+                    horizontalAlignment: Text.AlignHCenter
+                    text: comp.answer ? "IF · " + comp.answer.condition : ""
+                    color: Theme.caution
+                    font.family: Theme.mono
+                    font.pixelSize: 11 * scene.u
+                    elide: Text.ElideRight
                 }
             }
         }
         Computer {
-            index: 0; name: "CASPER · 3"
+            index: 0; name: "CASPER · 3"; side: "THE BOY"
             x: (magi.width - width) / 2; y: 0
             reading: "CORE TEMP " + Math.round(Stats.temp) + "°C"
         }
         Computer {
-            index: 1; name: "BALTHASAR · 2"
+            index: 1; name: "BALTHASAR · 2"; side: "ME"
             x: 0; y: magi.height - height - 40 * scene.u
             reading: "LCL DENSITY " + Math.round(Stats.mem * 100) + "%"
         }
         Computer {
-            index: 2; name: "MELCHIOR · 1"
+            index: 2; name: "MELCHIOR · 1"; side: "THE BUILDER"
             x: magi.width - width; y: magi.height - height - 40 * scene.u
             reading: "SYNC RATIO " + (Stats.cpu * 100).toFixed(1) + "%"
         }
         Tag {
             anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom }
-            text: "CODE 601 · " + (magi.state(2) === "審議中" ? "DELIBERATING" : "RESOLUTION: " + ([0, 1, 2].filter(i => magi.state(i) === "承認").length >= 2 ? "APPROVED" : "REJECTED"))
+            readonly property int yes: [0, 1, 2].filter(i => magi.state(i) === "承認").length
+            text: "CODE 601 · " + (magi.live && Magi.busy ? "DELIBERATING · " + (scene.t, Math.floor((Date.now() - Magi.askedAt) / 1000)) + " S"
+                : magi.live ? "RESOLUTION: " + Magi.resolution + " · " + Magi.approvals + " / 3"
+                : magi.state(2) === "審議中" ? "DELIBERATING" : "RESOLUTION: " + (yes >= 2 ? "APPROVED" : "REJECTED"))
             color: scene.hud
+        }
+    }
+
+    // ═══════════ under the MAGI: put a question to them (wallpaper only) ═══════════
+    Item {
+        id: query
+        visible: scene.askable && scene.showMagi && !scene.compact
+        width: 620 * scene.u; height: 52 * scene.u
+        x: magi.x + (magi.width - width) / 2
+        y: magi.y + magi.height + 26 * scene.u
+        readonly property color tone: Magi.error.length ? Theme.alert : input.activeFocus || Magi.busy ? scene.hud : Qt.alpha(scene.hud, 0.6)
+
+        HudFrame {
+            anchors.fill: parent
+            fill: Qt.alpha(Theme.base, input.activeFocus ? 0.9 : 0.7)
+            stroke: query.tone
+            strokeWidth: input.activeFocus ? 2 : 1
+            cut: 14 * scene.u
+            cutTopRight: true
+            cutBottomLeft: true
+        }
+        Text {
+            id: prompt
+            anchors { left: parent.left; leftMargin: 22 * scene.u; verticalCenter: parent.verticalCenter }
+            text: "QUERY ▸"
+            color: query.tone
+            font.family: Theme.hud
+            font.pixelSize: 15 * scene.u
+            font.weight: Font.Bold
+            font.letterSpacing: 2.5 * scene.u
+        }
+        TextInput {
+            id: input
+            anchors { left: prompt.right; leftMargin: 14 * scene.u; right: parent.right; rightMargin: 22 * scene.u; verticalCenter: parent.verticalCenter }
+            color: Theme.text
+            selectionColor: Qt.alpha(scene.hud, 0.5)
+            font.family: Theme.mono
+            font.pixelSize: 16 * scene.u
+            clip: true
+            readOnly: Magi.busy
+            maximumLength: 200
+            onActiveFocusChanged: if (activeFocus) Magi.warm()
+            Text {
+                anchors.fill: parent
+                leftPadding: 6 * scene.u
+                visible: !input.text.length
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+                text: Magi.busy ? "審議中 · DELIBERATING" : input.activeFocus ? "ASK YOURSELF · ENTER" : "ASK THE MAGI"
+                color: Theme.overlay
+                font.family: Theme.hud
+                font.pixelSize: 15 * scene.u
+                font.letterSpacing: 2 * scene.u
+            }
+            Keys.onReturnPressed: { if (text.trim().length) { Magi.ask(text); text = ""; } }
+            Keys.onEnterPressed: { if (text.trim().length) { Magi.ask(text); text = ""; } }
+            Keys.onEscapePressed: { text = ""; Magi.dismiss(); hold.stop(); focus = false; }
+        }
+        // the question being decided, how long it took, or why the MAGI are silent
+        Tag {
+            anchors { left: parent.left; leftMargin: 22 * scene.u; right: parent.right; top: parent.bottom; topMargin: 8 * scene.u }
+            elide: Text.ElideRight
+            visible: text.length
+            color: Magi.error.length ? Theme.alert : Theme.subtext
+            text: Magi.error.length ? Magi.error
+                : Magi.question.length ? "Q · " + Magi.question.toUpperCase() + (Magi.busy ? "" : "  ·  " + (Magi.tookMs / 1000).toFixed(1) + " S")
+                : ""
         }
     }
 

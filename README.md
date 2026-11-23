@@ -89,6 +89,16 @@ on the status plate means unread messages.
 
 ## Extras
 
+- **The MAGI are you** (NERV HQ wallpaper) — like Naoko Akagi's three sides,
+  the computers are three sides of you: MELCHIOR-1 THE BUILDER (logic,
+  learning, code), BALTHASAR-2 ME (character, duty), CASPER-3 THE BOY (fun,
+  curiosity, impulse). Click the QUERY line under them, ask, Enter: each side
+  answers 承認 / 条件付 / 否決 with a reason (and a condition), one by one, and
+  2 of 3 decide. Runs on a local model (Ollama `qwen3.5:4b`, nothing leaves
+  the laptop): about a minute per question, ~2.9 GB only while thinking, a
+  notification if you've switched away. The profile lives outside this repo in
+  `~/.config/magi-profile/{builder,me,boy}.json`; edit it and the next question
+  uses the change.
 - **MAGI log** — real events (power, Wi-Fi, Bluetooth, USB devices, messages,
   locks, setup switches, game mode, rebuilds) scroll along the NERV HQ
   wallpaper and appear in the dashboard.
