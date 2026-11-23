@@ -81,11 +81,6 @@ PanelWindow {
 
     readonly property var results: {
         const q = search.text.trim();
-        if (mode === "apps" && q.startsWith("?")) {
-            const question = q.slice(1).trim();
-            return [{ icon: "hub", glyph: true, name: question.length ? question : "ask the MAGI a yes / no question",
-                      desc: "MAGI SYSTEM · local model · Enter asks", run: () => { if (question.length) { Panels.show("magi"); Magi.ask(question); } } }];
-        }
         if (mode === "apps" && q.startsWith("=")) {
             const v = calc(q.slice(1));
             return v === null ? [{ icon: "calculate", glyph: true, name: "type a sum, e.g. =12*7", desc: "calculator", run: () => {} }]
@@ -197,7 +192,7 @@ PanelWindow {
                         background: null
                         color: Theme.text
                         placeholderTextColor: Theme.overlay
-                        placeholderText: panel.mode === "clipboard" ? "SEARCH CLIPBOARD" : panel.mode === "emoji" ? "FIND AN EMOJI (COPIES IT)" : panel.mode === "windows" ? "SWITCH TO A WINDOW" : (Theme.magi ? "ENTER COMMAND   ( = MATHS · ? MAGI )" : "LAUNCH   ( = MATHS · ? MAGI )")
+                        placeholderText: panel.mode === "clipboard" ? "SEARCH CLIPBOARD" : panel.mode === "emoji" ? "FIND AN EMOJI (COPIES IT)" : panel.mode === "windows" ? "SWITCH TO A WINDOW" : (Theme.magi ? "ENTER COMMAND   ( = FOR MATHS )" : "LAUNCH   ( = FOR MATHS )")
                         font.family: Theme.hud
                         font.pixelSize: 19
                         font.weight: Font.DemiBold

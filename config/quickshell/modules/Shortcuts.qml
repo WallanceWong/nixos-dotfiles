@@ -30,7 +30,6 @@ Scope {
             Shortcut { name: "cheatsheet"; description: "Keyboard shortcuts"; onPressed: Panels.toggle("cheatsheet") }
             Shortcut { name: "settings"; description: "Settings"; onPressed: Panels.toggle("settings") }
             Shortcut { name: "setup"; description: "Switch setup (UNIT-01 / NERV HQ)"; onPressed: Setups.next() }
-            Shortcut { name: "magi"; description: "Ask the MAGI"; onPressed: Panels.toggle("magi") }
         }
     }
 
@@ -47,8 +46,6 @@ Scope {
         function lock(): void { Locker.lock(); }
         // the autologin lock (lock.sh login): always the Eva-01 screen
         function lockboot(): void { Locker.lock(true); }
-        // put a question to the MAGI (opens the panel)
-        function ask(q: string): void { Panels.show("magi"); Magi.ask(q); }
         // switch setup: "unit01", "magi" or "next"
         function setup(id: string): void { id === "next" ? Setups.next() : Setups.set(id); }
         // hypridle: screensaver after 2 minutes idle, wake on any input

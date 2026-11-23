@@ -17,8 +17,8 @@ Singleton {
     property alias embers: adapter.embers            // UNIT-01: embers rising
     property alias klaxon: adapter.klaxon            // NERV HQ: alarms for critical things
     property alias leds: adapter.leds
-    property alias screenFx: adapter.screenFx
-    property alias magiModel: adapter.magiModel      // Ollama model the MAGI think with        // the setup's screen filter (CRT / film)                // the ThinkPad's lid dot and mic light join in
+    property alias screenFx: adapter.screenFx        // the setup's screen filter (CRT / film)
+    property alias magiModel: adapter.magiModel      // Ollama model the MAGI think with (NERV HQ wallpaper)
     property alias ambience: adapter.ambience
     property alias ambienceVolume: adapter.ambienceVolume
     property alias corners: adapter.corners

@@ -89,10 +89,13 @@ on the status plate means unread messages.
 
 ## Extras
 
-- **Ask the MAGI** — **Super + A**, or type `?` in the launcher. Your local
-  model (Ollama, `huihui_ai/qwen2.5-abliterate:7b`; nothing leaves the laptop)
+- **Ask the MAGI** — NERV HQ only, on the wallpaper: click the QUERY line under
+  the three computers, type a yes / no question, Enter. Your local model
+  (Ollama, `huihui_ai/qwen2.5-abliterate:7b`; nothing leaves the laptop)
   answers as MELCHIOR-1 (the scientist), BALTHASAR-2 (the mother) and CASPER-3
-  (the woman): three reasons, three votes, the majority decides. About 15–20 s.
+  (the woman): the computers show each vote and reason, the majority decides.
+  About 15–40 s; the model is unloaded as soon as it answers (it needs ~5.5 GB
+  while thinking). The answer stays a minute, or Esc clears it.
 - **MAGI log** — real events (power, Wi-Fi, Bluetooth, USB devices, messages,
   locks, setup switches, game mode, rebuilds) scroll along the NERV HQ
   wallpaper and appear in the dashboard.

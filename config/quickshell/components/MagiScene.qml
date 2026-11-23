@@ -10,6 +10,8 @@ import qs.services
 //           (temperature, memory, processor) and voting on the system's state
 //   right   SYNC RATIO (CPU) with its trace, LCL density (memory), core temp,
 //           and the power panel: EXTERNAL / INTERNAL lamps + the countdown
+//           — on the wallpaper you can also ask them: type a yes / no question
+//           in the line under them and the local model answers (services/Magi.qml)
 //   bottom  signal trace (follows your music) and a scrolling status ticker
 Item {
     id: scene
@@ -18,6 +20,7 @@ Item {
     property string screenName: ""
     property bool compact: false        // lock screen / screensaver: fewer panels
     property bool showMagi: true        // the lock screen draws its own, bigger MAGI
+    property bool askable: false        // the wallpaper: the question line under the MAGI
 
     StatsUser { active: scene.animate || scene.visible }
 
@@ -283,13 +286,29 @@ Item {
         property int round: 0
         property real roundStart: 0
         Timer {
-            running: scene.animate
+            running: scene.animate && !magi.live
             interval: 25000
             repeat: true
             triggeredOnStart: true
             onTriggered: { magi.round++; magi.roundStart = scene.t; }
         }
+        // a real question: the computers deliberate until the model answers, then
+        // reveal its votes one after another; a minute later, back to the readings
+        readonly property bool live: scene.askable && (Magi.busy || Magi.votes.length > 0)
+        readonly property bool answered: live && !Magi.busy
+        Connections {
+            target: Magi
+            enabled: scene.askable
+            function onVotesChanged() {
+                if (!Magi.votes.length) return;
+                magi.roundStart = scene.t;
+                hold.restart();
+            }
+        }
+        Timer { id: hold; interval: 60000; onTriggered: Magi.dismiss() }
+        function revealed(i) { return answered && scene.t - roundStart >= 1.2 + i * 0.9; }
         function state(i) {
+            if (live) return revealed(i) ? (Magi.votes[i].yes ? "承認" : "否決") : "審議中";
             const dt = scene.t - roundStart;
             const decide = 1.2 + i * 0.9;
             if (dt < decide) return "審議中";          // deliberating
@@ -377,10 +396,16 @@ Item {
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: comp.reading
-                    color: Theme.subtext
+                    readonly property bool reason: magi.revealed(comp.index)
+                    width: 264 * scene.u
+                    horizontalAlignment: Text.AlignHCenter
+                    text: reason ? Magi.votes[comp.index].reason : comp.reading
+                    color: reason ? Theme.text : Theme.subtext
                     font.family: Theme.mono
                     font.pixelSize: 12 * scene.u
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 3
+                    elide: Text.ElideRight
                 }
             }
         }
@@ -401,8 +426,74 @@ Item {
         }
         Tag {
             anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom }
-            text: "CODE 601 · " + (magi.state(2) === "審議中" ? "DELIBERATING" : "RESOLUTION: " + ([0, 1, 2].filter(i => magi.state(i) === "承認").length >= 2 ? "APPROVED" : "REJECTED"))
+            readonly property int yes: [0, 1, 2].filter(i => magi.state(i) === "承認").length
+            text: "CODE 601 · " + (magi.state(2) === "審議中" ? "DELIBERATING" : "RESOLUTION: " + (yes >= 2 ? "APPROVED" : "REJECTED") + (magi.live ? " · " + yes + " / 3" : ""))
             color: scene.hud
+        }
+    }
+
+    // ═══════════ under the MAGI: put a question to them (wallpaper only) ═══════════
+    Item {
+        id: query
+        visible: scene.askable && scene.showMagi && !scene.compact
+        width: 620 * scene.u; height: 52 * scene.u
+        x: magi.x + (magi.width - width) / 2
+        y: magi.y + magi.height + 26 * scene.u
+        readonly property color tone: Magi.error.length ? Theme.alert : input.activeFocus || Magi.busy ? scene.hud : Qt.alpha(scene.hud, 0.6)
+
+        HudFrame {
+            anchors.fill: parent
+            fill: Qt.alpha(Theme.base, input.activeFocus ? 0.9 : 0.7)
+            stroke: query.tone
+            strokeWidth: input.activeFocus ? 2 : 1
+            cut: 14 * scene.u
+            cutTopRight: true
+            cutBottomLeft: true
+        }
+        Text {
+            id: prompt
+            anchors { left: parent.left; leftMargin: 22 * scene.u; verticalCenter: parent.verticalCenter }
+            text: "QUERY ▸"
+            color: query.tone
+            font.family: Theme.hud
+            font.pixelSize: 15 * scene.u
+            font.weight: Font.Bold
+            font.letterSpacing: 2.5 * scene.u
+        }
+        TextInput {
+            id: input
+            anchors { left: prompt.right; leftMargin: 14 * scene.u; right: parent.right; rightMargin: 22 * scene.u; verticalCenter: parent.verticalCenter }
+            color: Theme.text
+            selectionColor: Qt.alpha(scene.hud, 0.5)
+            font.family: Theme.mono
+            font.pixelSize: 16 * scene.u
+            clip: true
+            readOnly: Magi.busy
+            maximumLength: 200
+            Text {
+                anchors.fill: parent
+                visible: !input.text.length
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+                text: Magi.busy ? "審議中 · DELIBERATING" : input.activeFocus ? "A YES / NO QUESTION · ENTER" : "ASK THE MAGI"
+                color: Theme.overlay
+                font.family: Theme.hud
+                font.pixelSize: 15 * scene.u
+                font.letterSpacing: 2 * scene.u
+            }
+            Keys.onReturnPressed: { if (text.trim().length) { Magi.ask(text); text = ""; } }
+            Keys.onEnterPressed: { if (text.trim().length) { Magi.ask(text); text = ""; } }
+            Keys.onEscapePressed: { text = ""; Magi.dismiss(); focus = false; }
+        }
+        // the question being decided, how long it took, or why the MAGI are silent
+        Tag {
+            anchors { left: parent.left; leftMargin: 22 * scene.u; right: parent.right; top: parent.bottom; topMargin: 8 * scene.u }
+            elide: Text.ElideRight
+            visible: text.length
+            color: Magi.error.length ? Theme.alert : Theme.subtext
+            text: Magi.error.length ? Magi.error
+                : Magi.question.length ? "Q · " + Magi.question.toUpperCase() + (Magi.busy ? "" : "  ·  " + (Magi.tookMs / 1000).toFixed(1) + " S")
+                : ""
         }
     }
 

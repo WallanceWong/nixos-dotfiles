@@ -5,8 +5,9 @@ import Quickshell.Io
 
 // Ask the MAGI: a question goes to the local language model (Ollama, on this
 // laptop — nothing leaves it), which answers as MELCHIOR-1, BALTHASAR-2 and
-// CASPER-3, each with a reason and a vote. modules/MagiAsk.qml shows the
-// deliberation. The model stays loaded for a few minutes after a question.
+// CASPER-3, each with a reason and a vote. Asked from the NERV HQ wallpaper
+// (components/MagiScene.qml), whose three computers show the vote. The model
+// is unloaded as soon as it answers, so its ~5 GB of memory comes straight back.
 Singleton {
     id: root
 
@@ -21,6 +22,14 @@ Singleton {
 
     FileView { id: promptFile; path: Quickshell.shellDir + "/data/magi-prompt.txt"; blockLoading: true }
 
+    // back to the idle display
+    function dismiss() {
+        if (busy) return;
+        question = "";
+        votes = [];
+        error = "";
+    }
+
     function ask(q) {
         q = (q ?? "").trim();
         if (!q.length || busy) return;
@@ -31,7 +40,7 @@ Singleton {
         askedAt = Date.now();
         Sounds.play("toggle");
         const body = {
-            model: model, stream: false, format: "json", keep_alive: "5m",
+            model: model, stream: false, format: "json", keep_alive: 0,
             options: { num_predict: 220, temperature: 0.6 },
             prompt: promptFile.text().replace("QUESTION", q)
         };
