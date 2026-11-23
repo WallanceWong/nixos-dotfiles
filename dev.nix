@@ -10,7 +10,7 @@
   environment.systemPackages = [
     pkgs.man-pages
     pkgs.man-pages-posix
-    config.boot.kernelPackages.perf   # matches the running kernel
+    pkgs.perf
     pkgs.bpftrace
     pkgs.trace-cmd
   ];

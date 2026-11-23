@@ -30,9 +30,9 @@ let
       gtk3 glib nss nspr dbus at-spi2-atk at-spi2-core atk cups libdrm mesa
       libgbm expat libxkbcommon alsa-lib pango cairo libnotify libsecret
       libuuid libappindicator-gtk3 xdg-utils systemd udev libGL vulkan-loader
-      xorg.libX11 xorg.libXcomposite xorg.libXdamage xorg.libXext xorg.libXfixes
-      xorg.libXrandr xorg.libxcb xorg.libxshmfence xorg.libXScrnSaver xorg.libXtst
-      xorg.libXi xorg.libXrender xorg.libXcursor
+      libx11 libxcomposite libxdamage libxext libxfixes
+      libxrandr libxcb libxshmfence libxscrnsaver libxtst
+      libxi libxrender libxcursor
       gdk-pixbuf fontconfig freetype harfbuzz libpulseaudio pipewire
       zlib stdenv.cc.cc.lib python3 libusb1
     ];

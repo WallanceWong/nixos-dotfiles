@@ -5,7 +5,7 @@
 let
   load = id: builtins.fromJSON (builtins.readFile (../setups + "/${id}.json"));
   theme = name: p: body: edge: pkgs.runCommand "eva-cursor-${name}"
-    { nativeBuildInputs = [ pkgs.python3 pkgs.librsvg pkgs.xorg.xcursorgen ]; } ''
+    { nativeBuildInputs = [ pkgs.python3 pkgs.librsvg pkgs.xcursorgen ]; } ''
       mkdir work && cd work
       python3 ${./gen.py} '${body}' '${edge}' '${p.alert}' .
       for f in *.svg; do
