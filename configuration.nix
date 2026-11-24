@@ -87,6 +87,8 @@ in
   # UNIT-01 colours for the text consoles (TTYs); colour 0 is the background
   console.colors = [ (hex palette.base) ] ++ map hex (lib.drop 1 palette.terminal);
   services.getty.autologinUser = "Wallance";
+  # no "Welcome to NixOS" / "(automatic login)" text between the boot splash and Hyprland
+  services.getty.extraArgs = [ "--noissue" "--nohostname" "--skip-login" ];
 
   programs.hyprland = {
 	enable = true;
