@@ -6,11 +6,12 @@ import qs.components
 
 // NERV HQ → UNIT-01 as a launch, over everything for 4.5 s (Setups.sequences.unit01 has
 // the timings, and plays the sounds and the switch on the same beats):
-//   0–1.25 s   the cage: hazard bands, EVANGELION 初号機, the launch checklist
-//   1.25 s     発進！ slams in with a flash; everything turns Unit-01 green
+//   0–0.33 s   blast doors shut over the desktop
+//   0.33–1.25  the cage: Unit-01 (the real wallpaper) red-lit, the launch checklist
+//   1.25 s     発進！ slams in with a flash, the eye flares; everything turns green
 //              (the real switch happens behind it at 1.4 s)
-//   2.1–3.3 s  the catapult: the display rockets up, streaks, the screen shakes
-//   3.9–4.5 s  a green flash, then the Unit-01 desktop
+//   2.1–3.3 s  the catapult: Unit-01 and the display rocket up, streaks, shaking
+//   3.9–4.4 s  a green flash, the doors open onto the Unit-01 desktop
 // Colours are fixed here: the theme flips halfway through.
 Variants {
     model: Quickshell.screens.filter(s => !Quickshell.env("EVA_ONLY") || s.name === Quickshell.env("EVA_ONLY"))
@@ -40,7 +41,7 @@ Variants {
             function onSequenceChanged() { if (Setups.sequence === "unit01" && win.frozen < 0) clock.restart(); }
         }
         readonly property real now: frozen >= 0 ? frozen : t
-        readonly property bool on: frozen >= 0 || clock.running
+        readonly property bool on: frozen >= 0 || clock.running || Setups.sequence === "unit01"
 
         function clamp(x) { return Math.max(0, Math.min(1, x)); }
         function span(a, b) { return clamp((now - a) / (b - a)); }
@@ -58,13 +59,30 @@ Variants {
         anchors { top: true; bottom: true; left: true; right: true }
         color: "transparent"
 
+        // how far the blast doors are shut (they open onto the new desktop)
+        readonly property real shut: span(l.shut[0], l.shut[1]) * (1 - Math.pow(span(l.open[0], l.open[1]), 2))
+
+        // the desktop as it was, held still while the doors close over it
+        ScreencopyView {
+            anchors.fill: parent
+            captureSource: win.on ? win.modelData : null
+            live: false
+            visible: win.now < win.l.shut[1] + 40
+            Rectangle { anchors.fill: parent; color: win.red; opacity: 0.35 * win.span(0, win.l.shut[1]) }
+        }
+        BlastDoors {
+            anchors.fill: parent
+            shut: win.shut
+            edge: win.go ? win.green : win.nerv
+            label: "CAGE 07 · BLAST DOOR · " + (win.go ? "EVA-01 CLEARED" : "SEALED")
+        }
+
         Item {
             id: stage
             anchors.fill: parent
-            opacity: win.span(0, 200) * (1 - win.span(3900, win.l.end))
+            opacity: win.span(win.l.shut[1], win.l.shut[1] + 120) * (1 - win.span(win.l.open[0] - 150, win.l.open[0]))
+            visible: opacity > 0
             clip: true
-
-            Rectangle { anchors.fill: parent; color: win.dark }
 
             // red alert wash that pulses during the countdown, green once launched
             Rectangle {
@@ -117,6 +135,24 @@ Variants {
                 height: parent.height
                 x: win.shake * Math.sin(win.now / 23)
                 y: -win.rise * win.height * 1.4 + win.shake * Math.cos(win.now / 17)
+
+                // Unit-01 in the cage: the real wallpaper, red-lit and dark until
+                // 発進 lights it and the eye flares; it rides the catapult up
+                Item {
+                    anchors.fill: parent
+                    clip: true
+                    Unit01Scene {
+                        anchors.fill: parent
+                        scale: 1.0 + 0.06 * win.span(win.l.shut[1], win.l.go)
+                        animate: win.on
+                        showDate: false
+                        showCaption: false
+                        eyeGlow: win.go ? "../assets/glow-green.png" : "../assets/glow-red.png"
+                        eyeBoost: win.go ? 1.8 : 0.4 * win.span(win.l.shut[1], win.l.go)
+                    }
+                    Rectangle { anchors.fill: parent; color: win.dark; opacity: win.go ? 0.45 : 0.74 }
+                    Rectangle { anchors.fill: parent; color: win.red; opacity: win.go ? 0 : 0.16 }
+                }
 
                 // hazard bands
                 Hazard {

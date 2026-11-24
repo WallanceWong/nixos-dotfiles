@@ -23,13 +23,16 @@ Singleton {
     //   → NERV HQ (modules/Scramble.qml): the Pattern Blue klaxon (if Klaxon is
     //     on), the MAGI coming online one by one, NERV slamming in
     property string sequence: ""        // the setup being switched to while its sequence plays
+    // both: blast doors shut over the desktop (`shut`), the sequence plays on
+    // them, and they open onto the new desktop (`open`)
     readonly property var sequences: ({
-        unit01: { checks: [150, 380, 610, 840, 1070], go: 1250, swap: 1400, end: 4500,
-                  cues: [[150, "toggle", 0.35, "magi"], [380, "toggle", 0.35, "magi"], [610, "toggle", 0.35, "magi"],
-                         [840, "toggle", 0.35, "magi"], [1070, "toggle", 0.35, "magi"], [1250, "launch", 0.7, "unit01"]] },
-        magi: { magi: [1550, 1850, 2150], nerv: 2700, swap: 1600, end: 4500,
-                cues: [[120, "alarm", 0.6, "magi"], [1550, "grant", 0.5, "magi"], [1850, "grant", 0.5, "magi"],
-                       [2150, "grant", 0.5, "magi"], [2700, "deny", 0.6, "magi"]] }
+        unit01: { shut: [150, 330], open: [3900, 4350], checks: [420, 590, 760, 930, 1100], go: 1250, swap: 1400, end: 4500,
+                  cues: [[300, "door", 0.7], [420, "toggle", 0.35, "magi"], [590, "toggle", 0.35, "magi"], [760, "toggle", 0.35, "magi"],
+                         [930, "toggle", 0.35, "magi"], [1100, "toggle", 0.35, "magi"], [1250, "launch", 0.7, "unit01"],
+                         [3900, "door", 0.4]] },
+        magi: { glitch: [0, 300], shut: [200, 340], open: [3900, 4350], magi: [1550, 1850, 2150], nerv: 2700, swap: 1600, end: 4500,
+                cues: [[120, "alarm", 0.6, "magi"], [310, "door", 0.7], [1550, "grant", 0.5, "magi"], [1850, "grant", 0.5, "magi"],
+                       [2150, "grant", 0.5, "magi"], [2700, "deny", 0.6, "magi"], [3900, "door", 0.4]] }
     })
 
     function set(id) {

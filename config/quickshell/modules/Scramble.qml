@@ -7,10 +7,11 @@ import qs.components
 
 // UNIT-01 → NERV HQ as a scramble, over everything for 4.5 s (Setups.sequences.magi
 // has the timings, and plays the sounds and the switch on the same beats):
-//   0–1.5 s    EMERGENCY: a red cut, the Pattern Blue klaxon, tickers, 総員第一種戦闘配置
+//   0–0.35 s   the desktop tears apart in red, the klaxon starts, blast doors slam
+//   0.35–1.5 s EMERGENCY on the doors: tickers, 総員第一種戦闘配置, PATTERN BLUE
 //   1.5–2.7 s  the MAGI come online one by one (承認); the real switch at 1.6 s
 //   2.7 s      the NERV crest and 特務機関ネルフ slam in with an orange flash
-//   3.8–4.5 s  fade to the NERV HQ desktop
+//   3.9–4.4 s  the doors open onto the NERV HQ desktop
 // Colours are fixed here: the theme flips halfway through.
 Variants {
     model: Quickshell.screens.filter(s => !Quickshell.env("EVA_ONLY") || s.name === Quickshell.env("EVA_ONLY"))
@@ -39,7 +40,7 @@ Variants {
             function onSequenceChanged() { if (Setups.sequence === "magi") clock.restart(); }
         }
         readonly property real now: t
-        readonly property bool on: clock.running
+        readonly property bool on: clock.running || Setups.sequence === "magi"
 
         function clamp(x) { return Math.max(0, Math.min(1, x)); }
         function span(a, b) { return clamp((now - a) / (b - a)); }
@@ -57,15 +58,65 @@ Variants {
         anchors { top: true; bottom: true; left: true; right: true }
         color: "transparent"
 
+        readonly property real shut: span(s.shut[0], s.shut[1]) * (1 - Math.pow(span(s.open[0], s.open[1]), 2))
+
+        // the desktop as it was, tearing apart in red as the klaxon starts
+        Item {
+            id: glitch
+            anchors.fill: parent
+            visible: win.now < win.s.shut[1] + 40
+            readonly property real amount: win.span(win.s.glitch[0] + 60, win.s.glitch[1])
+            ScreencopyView {
+                id: cap
+                anchors.fill: parent
+                captureSource: win.on ? win.modelData : null
+                live: false
+                visible: false
+            }
+            // horizontal slices, knocked sideways a little more every frame
+            Repeater {
+                model: 16
+                Item {
+                    required property int index
+                    readonly property real h: win.height / 16
+                    readonly property real jolt: Math.sin(index * 12.9898 + Math.floor(win.now / 40) * 78.233) * 43758.5453 % 1
+                    y: index * h
+                    width: win.width; height: h
+                    clip: true
+                    ShaderEffectSource {
+                        sourceItem: cap
+                        width: win.width; height: win.height
+                        y: -parent.y
+                        x: glitch.amount * parent.jolt * 180
+                    }
+                    // the red channel, pulled the other way
+                    Rectangle {
+                        width: win.width; height: parent.h
+                        x: -glitch.amount * parent.jolt * 120
+                        color: win.red
+                        opacity: glitch.amount * 0.5
+                    }
+                }
+            }
+        }
+        BlastDoors {
+            anchors.fill: parent
+            shut: win.shut
+            edge: win.red
+            plate: "#120708"
+            label: "CENTRAL DOGMA · BLAST DOOR · " + (win.slam ? "NERV HQ" : "LOCKDOWN")
+        }
+
         Item {
             id: stage
             anchors.fill: parent
-            opacity: win.span(0, 60) * (1 - win.span(3800, win.s.end))
+            opacity: win.span(win.s.shut[1], win.s.shut[1] + 100) * (1 - win.span(win.s.open[0] - 150, win.s.open[0]))
+            visible: opacity > 0
             clip: true
             x: win.shake * Math.sin(win.now / 21)
             y: win.shake * Math.cos(win.now / 15)
 
-            Rectangle { anchors.fill: parent; color: win.dark }
+            Rectangle { anchors.fill: parent; color: win.dark; opacity: 0.8 }
 
             // the red pulse behind everything
             Rectangle {
@@ -241,7 +292,7 @@ Variants {
             }
 
             // flashes: the red cut at the start, orange on the slam
-            Rectangle { anchors.fill: parent; color: win.red; opacity: 0.9 * (1 - win.span(0, 180)) }
+            Rectangle { anchors.fill: parent; color: win.red; opacity: 0.7 * (1 - win.span(win.s.shut[1], win.s.shut[1] + 200)) }
             Rectangle { anchors.fill: parent; color: win.orange; opacity: win.slam ? 0.8 * (1 - win.span(win.s.nerv, win.s.nerv + 300)) : 0 }
         }
     }
