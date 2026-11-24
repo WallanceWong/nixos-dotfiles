@@ -5,13 +5,15 @@ import Quickshell.Wayland
 import qs.services
 import qs.components
 
-// UNIT-01 → NERV HQ as a scramble, over everything for 4.5 s (Setups.sequences.magi
+// UNIT-01 → NERV HQ as a scramble, over everything for ~7.5 s (Setups.sequences.magi
 // has the timings, and plays the sounds and the switch on the same beats):
 //   0–0.35 s   the desktop tears apart in red, the klaxon starts, blast doors slam
-//   0.35–1.5 s EMERGENCY on the doors: tickers, 総員第一種戦闘配置, PATTERN BLUE
-//   1.5–2.7 s  the MAGI come online one by one (承認); the real switch at 1.6 s
-//   2.7 s      the NERV crest and 特務機関ネルフ slam in with an orange flash
-//   3.9–4.4 s  the doors open onto the NERV HQ desktop
+//   0.4–3.7 s  EMERGENCY on the doors: パターン青 as Shigeru reports it, then
+//              ANGEL CONFIRMED on 間違いなく使徒です
+//   3.7 s      総員第一種戦闘配置 slams in on the order
+//   4.3–4.9 s  the MAGI come online one by one (承認); the real switch behind them
+//   5.8 s      the NERV crest and 特務機関ネルフ slam in (第3新東京市、戦闘形態に移行します)
+//   7.0–7.45 s the doors open onto the NERV HQ desktop
 // Colours are fixed here: the theme flips halfway through.
 Variants {
     model: Quickshell.screens.filter(s => !Quickshell.env("EVA_ONLY") || s.name === Quickshell.env("EVA_ONLY"))
@@ -46,6 +48,7 @@ Variants {
         function span(a, b) { return clamp((now - a) / (b - a)); }
         readonly property bool magiUp: now >= s.magi[0] - 100
         readonly property bool slam: now >= s.nerv
+        readonly property bool battle: now >= s.battle
         // the alarm blinks twice a second until the MAGI take over
         readonly property real blink: magiUp ? 0 : (Math.floor(now / 250) % 2 === 0 ? 1 : 0.35)
         readonly property real shake: slam && now < s.nerv + 600 ? (1 - span(s.nerv, s.nerv + 600)) * 16 : 0
@@ -177,19 +180,20 @@ Variants {
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: win.height * 0.17
                 spacing: 10
-                opacity: win.span(150, 260) * (1 - win.span(win.s.nerv - 150, win.s.nerv))
-                scale: 1.25 - 0.25 * win.span(150, 320)
+                opacity: win.span(win.s.shut[1], win.s.shut[1] + 100) * (1 - win.span(win.s.nerv - 150, win.s.nerv))
+                // the title slams in twice: パターン青 as the report comes in, then the order
+                scale: 1.3 - 0.3 * win.span(win.battle ? win.s.battle : win.s.shut[1], (win.battle ? win.s.battle : win.s.shut[1]) + 170)
 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: "総員第一種戦闘配置"
+                    text: win.battle ? "総員第一種戦闘配置" : "パターン青"
                     color: win.text
                     style: Text.Outline; styleColor: Qt.alpha(win.red, 0.6)
                     font { family: Theme.title; pixelSize: 104; weight: Font.Black }
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: "ALL PERSONNEL · LEVEL-1 BATTLE STATIONS"
+                    text: win.battle ? "ALL PERSONNEL · LEVEL-1 BATTLE STATIONS" : "WAVE PATTERN BLUE · 波長パターン青"
                     color: win.red
                     font { family: Theme.hud; pixelSize: 30; letterSpacing: 9; weight: Font.Bold }
                 }
@@ -199,11 +203,11 @@ Variants {
                     width: blue.implicitWidth + 60; height: 58
                     color: "transparent"
                     border.color: win.amber; border.width: 3
-                    opacity: win.span(450, 520) * (win.magiUp ? 1 : win.blink)
+                    opacity: win.span(win.s.angel, win.s.angel + 70) * (win.magiUp ? 1 : win.blink)
                     Text {
                         id: blue
                         anchors.centerIn: parent
-                        text: "PATTERN BLUE · 使徒 · ANGEL CONFIRMED"
+                        text: "間違いなく使徒です · ANGEL CONFIRMED"
                         color: win.amber
                         font { family: Theme.hud; pixelSize: 28; letterSpacing: 6; weight: Font.Bold }
                     }

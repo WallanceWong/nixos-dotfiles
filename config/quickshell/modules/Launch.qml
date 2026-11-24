@@ -4,14 +4,15 @@ import Quickshell.Wayland
 import qs.services
 import qs.components
 
-// NERV HQ → UNIT-01 as a launch, over everything for 4.5 s (Setups.sequences.unit01 has
+// NERV HQ → UNIT-01 as a launch, over everything for ~7 s (Setups.sequences.unit01 has
 // the timings, and plays the sounds and the switch on the same beats):
 //   0–0.33 s   blast doors shut over the desktop
-//   0.33–1.25  the cage: Unit-01 (the real wallpaper) red-lit, the launch checklist
-//   1.25 s     発進！ slams in with a flash, the eye flares; everything turns green
-//              (the real switch happens behind it at 1.4 s)
-//   2.1–3.3 s  the catapult: Unit-01 and the display rocket up, streaks, shaking
-//   3.9–4.4 s  a green flash, the doors open onto the Unit-01 desktop
+//   0.33–4.3 s the cage: Unit-01 (the real wallpaper) red-lit, the launch
+//              checklist, 発進準備！ and 進路クリア、オールグリーン！
+//   4.3 s      発進！ slams in with a flash, the eye flares; everything turns green
+//              (the real switch happens behind it)
+//   5.1–6.3 s  the catapult: Unit-01 and the display rocket up, streaks, shaking
+//   6.75–7.2 s a green flash, the doors open onto the Unit-01 desktop
 // Colours are fixed here: the theme flips halfway through.
 Variants {
     model: Quickshell.screens.filter(s => !Quickshell.env("EVA_ONLY") || s.name === Quickshell.env("EVA_ONLY"))
@@ -48,8 +49,8 @@ Variants {
         readonly property bool go: now >= l.go                       // after 発進
         readonly property color tone: go ? green : nerv
         readonly property real rise: Math.pow(span(l.go + 850, l.go + 2050), 3)   // catapult (ease-in)
-        readonly property real rush: span(l.go + 850, l.go + 1200) * (1 - span(3700, 4100))
-        readonly property real shake: now > l.go && now < 3600 ? (1 - span(l.go, 3600)) * 14 : 0
+        readonly property real rush: span(l.go + 850, l.go + 1200) * (1 - span(l.go + 2450, l.go + 2850))
+        readonly property real shake: now > l.go && now < l.go + 2350 ? (1 - span(l.go, l.go + 2350)) * 14 : 0
 
         visible: on
         WlrLayershell.layer: WlrLayer.Overlay
@@ -313,7 +314,7 @@ Variants {
             Rectangle {
                 anchors.fill: parent
                 color: win.green
-                opacity: 0.55 * win.span(3600, 3800) * (1 - win.span(3800, 4300))
+                opacity: 0.55 * win.span(win.l.go + 2250, win.l.go + 2450) * (1 - win.span(win.l.go + 2450, win.l.go + 2950))
             }
         }
     }
