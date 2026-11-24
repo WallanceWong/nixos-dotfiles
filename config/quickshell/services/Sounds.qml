@@ -18,7 +18,7 @@ Singleton {
     // `setup` picks another setup's set (the launch order plays before the switch)
     function play(name, volume, setup) {
         if (!Settings.sounds) return;
-        if (name === "alarm" && !(Theme.drama && Settings.klaxon)) name = "deny";
+        if (name === "alarm" && !((setup ? setup === "magi" : Theme.drama) && Settings.klaxon)) name = "deny";
         const dir = common.includes(name) ? "common" : (setup ?? Theme.setup);
         Quickshell.execDetached(["pw-play", "--volume", String(volume ?? 0.55),
                                  Theme.assets + "/sounds/" + dir + "/" + name + ".wav"]);

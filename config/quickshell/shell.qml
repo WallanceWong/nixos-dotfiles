@@ -19,6 +19,7 @@ ShellRoot {
     PolkitDialog {}
     Screensaver {}
     Launch {}
+    Scramble {}
     Lock {}
     Cheatsheet {}
     SettingsPanel {}

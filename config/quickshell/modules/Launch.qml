@@ -4,7 +4,7 @@ import Quickshell.Wayland
 import qs.services
 import qs.components
 
-// NERV HQ → UNIT-01 as a launch, over everything for 4.5 s (Setups.launch has
+// NERV HQ → UNIT-01 as a launch, over everything for 4.5 s (Setups.sequences.unit01 has
 // the timings, and plays the sounds and the switch on the same beats):
 //   0–1.25 s   the cage: hazard bands, EVANGELION 初号機, the launch checklist
 //   1.25 s     発進！ slams in with a flash; everything turns Unit-01 green
@@ -25,7 +25,7 @@ Variants {
         readonly property color green: "#9be34a"
         readonly property color purple: "#9a7fe6"
         readonly property color dark: "#05060f"
-        readonly property var l: Setups.launch
+        readonly property var l: Setups.sequences.unit01
 
         // ms since the launch began; EVA_LAUNCH_T freezes it (for screenshots)
         property real t: 0
@@ -37,7 +37,7 @@ Variants {
         }
         Connections {
             target: Setups
-            function onLaunchingChanged() { if (Setups.launching && win.frozen < 0) clock.restart(); }
+            function onSequenceChanged() { if (Setups.sequence === "unit01" && win.frozen < 0) clock.restart(); }
         }
         readonly property real now: frozen >= 0 ? frozen : t
         readonly property bool on: frozen >= 0 || clock.running
