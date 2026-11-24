@@ -54,6 +54,10 @@ in
 pkgs.runCommand "eva-firefox" { nativeBuildInputs = [ pkgs.imagemagick ]; } ''
   mkdir -p $out/chrome $out/setups
   cp ${../../config/firefox/chrome}/*.css $out/chrome/
+  # userContent.css is copied into the profile, not linked: Firefox resolves a
+  # linked stylesheet to its store path, and its @import of eva-colors.css
+  # (which only exists in the profile) then fails on Firefox's own pages
+  mkdir -p $out/content && mv $out/chrome/userContent.css $out/content/
   magick ${../../wallpapers/unit01/wall.jpg} -resize 2240x -strip -quality 88 $out/chrome/eva-newtab-unit01.jpg
   ${lib.concatMapStrings (p: ''
     cat > $out/chrome/eva-crest-${p.id}.svg <<'EOF'

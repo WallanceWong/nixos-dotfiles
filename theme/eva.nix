@@ -621,6 +621,7 @@ in
       run install -m 644 "$cfg/eva/$id/firefox.css" "$HOME/${ffProfile}/chrome/eva-colors.css"
       run install -m 644 "$cfg/eva/$id/firefox.js" "$HOME/${ffProfile}/user.js"
       run rm -f "$HOME/${ffProfile}/chrome/whisper-colors.css"
+      run install -m 644 ${evaFirefox}/content/userContent.css "$HOME/${ffProfile}/chrome/userContent.css"
     fi
   '';
 
@@ -647,7 +648,7 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # ── Firefox: chrome/ from theme/firefox (eva-colors.css and user.js are
-  # copied in by the activation above / eva-switch) ──
+  # ── Firefox: chrome/ from theme/firefox (eva-colors.css, userContent.css and
+  # user.js are copied in by the activation above / eva-switch) ──
   home.file."${ffProfile}/chrome" = { source = "${evaFirefox}/chrome"; recursive = true; };
 }
