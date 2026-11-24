@@ -60,6 +60,9 @@ in
     theme = "eva";
     themePackages = [ (import ./theme/plymouth { inherit pkgs; }) ];
   };
+  # the Intel driver in the initrd: Plymouth then draws on it from the start,
+  # instead of on the firmware framebuffer that goes black when i915 takes over
+  boot.initrd.kernelModules = [ "i915" ];
   boot.consoleLogLevel = 3;
   boot.initrd.verbose = false;
   boot.kernelParams = [ "quiet" "splash" "loglevel=3" "rd.systemd.show_status=auto" "udev.log_level=3" "vt.global_cursor_default=0" ];

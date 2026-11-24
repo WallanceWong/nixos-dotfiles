@@ -22,7 +22,8 @@
 		'';
 		profileExtra =''
 			if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = "1" ]; then
-				exec hyprland
+				# start-hyprland: Hyprland's watchdog (bare `hyprland` shows a warning bar)
+				exec start-hyprland
 			fi
 		'';
 		};
