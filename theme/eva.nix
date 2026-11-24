@@ -20,7 +20,7 @@ let
   home = config.home.homeDirectory;
   cur = "${config.xdg.configHome}/eva/current";
   link = config.lib.file.mkOutOfStoreSymlink;
-  ffProfile = ".config/mozilla/firefox/btea7p9y.default";
+  ffProfile = ".config/mozilla/firefox/zqrxnfnx.default-1795397238238";
   evaFirefox = import ./firefox { inherit pkgs lib; };
   evaCursors = import ./cursors { inherit pkgs lib; };
   evaIcons = import ./icons { inherit pkgs lib; };

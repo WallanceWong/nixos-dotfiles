@@ -181,8 +181,8 @@ reboot
      --include /home/Wallance/.claude.json \
      --include /home/Wallance/.config/mozilla \
      --include /home/Wallance/.var \
-     --exclude /home/Wallance/.config/mozilla/firefox/btea7p9y.default/chrome \
-     --exclude /home/Wallance/.config/mozilla/firefox/btea7p9y.default/user.js
+     --exclude /home/Wallance/.config/mozilla/firefox/zqrxnfnx.default-1795397238238/chrome \
+     --exclude /home/Wallance/.config/mozilla/firefox/zqrxnfnx.default-1795397238238/user.js
    ```
    **Don't open Firefox normally before this step** — it would create a fresh profile.
    The two `--exclude` lines skip the Firefox theme links, which Home Manager
