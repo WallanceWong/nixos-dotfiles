@@ -3,8 +3,8 @@ import QtQuick
 import Quickshell
 
 // UI sounds, played through PipeWire. Each setup has its own set
-// (assets/sounds/<setup>/*.wav): quiet clicks for UNIT-01, Misato's
-// "okaerinasai" when you come back and her launch order (発進！) when you
+// (assets/sounds/<setup>/*.wav): quiet clicks for UNIT-01, an Eva powering
+// up when you come back (grant) and Misato's launch order (発進！) when you
 // switch to it; command-room beeps for NERV HQ, the real
 // Pattern Blue klaxon ("alarm", only with Settings.klaxon on) and the AT field
 // slamming shut on a wrong code. assets/sounds/common: sounds both share

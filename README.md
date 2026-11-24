@@ -114,7 +114,7 @@ on the status plate means unread messages.
   Eva-NERV) and folder colours (`theme/icons`: violet / deep orange over
   Papirus-Dark) follow the setup.
 - **Sounds** — the real Pattern Blue klaxon and the AT field slamming shut
-  (NERV HQ), Misato's 「おかえりなさい」 on unlock (UNIT-01), the umbilical cable
+  (NERV HQ), an Eva powering up on unlock (UNIT-01), the umbilical cable
   disconnecting when you unplug the charger (both).
 - **`eva`** — `eva` switches setup, `eva status`, `eva lock`, `eva sheet` (every
   panel in both setups on one image, from a hidden test desktop),
