@@ -15,10 +15,11 @@ Singleton {
     property double lastTick: 0
     readonly property var common: ["unplug"]
 
-    function play(name, volume) {
+    // `setup` picks another setup's set (the launch order plays before the switch)
+    function play(name, volume, setup) {
         if (!Settings.sounds) return;
         if (name === "alarm" && !(Theme.drama && Settings.klaxon)) name = "deny";
-        const dir = common.includes(name) ? "common" : Theme.setup;
+        const dir = common.includes(name) ? "common" : (setup ?? Theme.setup);
         Quickshell.execDetached(["pw-play", "--volume", String(volume ?? 0.55),
                                  Theme.assets + "/sounds/" + dir + "/" + name + ".wav"]);
     }

@@ -45,6 +45,8 @@ start)
   cat > "$run/inner.sh" <<IN
 #!/bin/sh
 echo "\$WAYLAND_DISPLAY \$HYPRLAND_INSTANCE_SIGNATURE" > "$run/nested.env"
+# a stand-in eva-switch: switching in the test shell must never flip the real desktop
+export PATH="$run/bin:\$PATH"
 export EVA_DOTS="$here" XDG_STATE_HOME="$run/state" EVA_LOCK_FLAG="$run/lockflag" EVA_PAM=hyprlock EVA_LOCK_PREVIEW=\${EVA_LOCK_PREVIEW:-1}
 while [ ! -e "$run/stop" ]; do
   dbus-run-session -- sh -c 'echo "\$DBUS_SESSION_BUS_ADDRESS" > "$run/bus"; exec quickshell -p "$shell"' > "$run/qs.log" 2>&1
@@ -52,6 +54,9 @@ while [ ! -e "$run/stop" ]; do
 done
 IN
   chmod +x "$run/inner.sh"
+  mkdir -p "$run/bin"
+  printf '#!/bin/sh\nprintf "%%s\\n" "$1" > "%s/state/eva/setup"\n' "$run" > "$run/bin/eva-switch"
+  chmod +x "$run/bin/eva-switch"
   cat > "$run/nested.lua" <<LUA
 hl.monitor({ output = "", mode = "preferred", position = "0x0", scale = 1 })
 hl.config({
